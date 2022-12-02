@@ -2,7 +2,7 @@
 local renderTexture = Material("pp/colour");
 
 local pattern = Material("effects/splinter_cell/gradient.png");
-local interlace = Material("effects/splinter_cell/thermal_noise");
+local interlace = Material("vgui/splinter_cell/interlace_overlay");
 
 --!
 --! @brief      Draws a thermal screen space effect.
@@ -44,7 +44,7 @@ function SPLINTERCELL_NVG_GOGGLES:DrawThermalScreenSpaceEffect(owner, width, hei
 	render.SetMaterial(renderTexture);
 	render.DrawScreenQuad();
 
-	--surface.SetMaterial(interlace);
+	surface.SetMaterial(interlace);
 	surface.SetDrawColor(155, 155, 155, 128);
 	surface.DrawTexturedRect(0 + math.Rand(-1,1), 0 + math.Rand(-1,1), width, height);
 end
