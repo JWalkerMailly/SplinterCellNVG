@@ -25,9 +25,9 @@ hook.Add("HUDPaint", "SPLINTERCELL_NVG_DRAWHUD", function()
 
 	-- This is the autoload logic for the network var. Network vars will be handled serverside.
 	-- For testing purposes, this value is hard coded but will be handled correctly later on.
-	local nwVar = "Night";
+	local nwVar = "Thermal";
 	local goggle = SPLINTERCELL_NVG_CONFIG[nwVar].Hud;
 
 	-- Delegate call to the configuration file for which goggle to render.
-	SPLINTERCELL_NVG_GOGGLES[goggle]();
+	SPLINTERCELL_NVG_GOGGLES[goggle](SPLINTERCELL_NVG_GOGGLES);
 end);
