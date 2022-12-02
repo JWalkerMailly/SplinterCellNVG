@@ -1,7 +1,7 @@
 
 local renderTexture = Material("pp/colour");
 
-local pattern = Material("effects/splinter_cell/gradient.png");
+local gradient = Material("effects/splinter_cell/gradient.png");
 local interlace = Material("vgui/splinter_cell/interlace_overlay");
 
 --!
@@ -27,7 +27,7 @@ function SPLINTERCELL_NVG_GOGGLES:DrawThermalScreenSpaceEffect(owner, width, hei
 
 	-- Shader rendering portion of the thermal vision. We offload the screen space effect texture
 	-- to the renderTexture render target and reuse it later to render a full screen quad for the effect.
-	DrawTexturize(1, pattern);
+	DrawTexturize(1, gradient);
 	render.UpdateScreenEffectTexture();
 
 		renderTexture:SetTexture("$fbtexture", render.GetScreenEffectTexture());
@@ -56,5 +56,6 @@ function SPLINTERCELL_NVG_GOGGLES:DrawThermalVision()
 	local scrW = ScrW();
 	local hcrH = ScrH();
 
+	-- Render screenspace effect for the thermal goggle onto the screen.
 	self:DrawThermalScreenSpaceEffect(owner, scrW, hcrH);
 end

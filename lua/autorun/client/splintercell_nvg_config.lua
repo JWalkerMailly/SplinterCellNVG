@@ -7,7 +7,11 @@ SPLINTERCELL_NVG_CONFIG["Night"] = {
 };
 
 SPLINTERCELL_NVG_CONFIG["Thermal"] = {
-	Hud = "DrawThermalVision"
+	Hud = "DrawThermalVision",
+	Filter = function(ent)
+		return ent:IsPlayer() || ent:IsNPC() || ent:IsNextBot();
+	end,
+	MaterialOverride = "effects/splinter_cell/orgsen_overlay"
 };
 
 SPLINTERCELL_NVG_CONFIG["Electromagnetic"] = {
