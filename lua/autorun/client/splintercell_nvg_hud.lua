@@ -1,6 +1,7 @@
 
 -- This acts like a static class.
 SPLINTERCELL_NVG_GOGGLES = {};
+SPLINTERCELL_NVG_GOGGLES.CurrentGoggles = nil;
 SPLINTERCELL_NVG_GOGGLES.ShouldCleanupMaterials = false;
 
 if (SERVER) then
@@ -83,6 +84,12 @@ hook.Add("HUDPaint", "SPLINTERCELL_NVG_SHADER", function()
 	-- Do nothing if no goggle is currently toggled.
 	if (currentGoggle == 0 || lastGoggle == 0) then return; end
 
+	-- This is only used clientside to handle animations and sounds. It has nothing to
+	-- do with the network var found on the client entity.
+	if (SPLINTERCELL_NVG_GOGGLES.CurrentGoggles == nil) then
+		SPLINTERCELL_NVG_GOGGLES.CurrentGoggles = currentGoggle;
+	end
+
 	local currentConfig = SPLINTERCELL_NVG_CONFIG[currentGoggle];
 	--local lastConfig = SPLINTERCELL_NVG_CONFIG[lastGoggle];
 
@@ -95,6 +102,12 @@ hook.Add("HUDPaint", "SPLINTERCELL_NVG_SHADER", function()
 		-- Handle material overrides for the goggle being used.
 		if (currentConfig.Filter != nil) then
 			SPLINTERCELL_NVG_GOGGLES:HandleMaterialOverrides(currentConfig);
+		end
+
+		-- Play goggle mode switch sound only clientside.
+		if (currentGoggle != SPLINTERCELL_NVG_GOGGLES.CurrentGoggles) then
+			SPLINTERCELL_NVG_GOGGLES.CurrentGoggles = currentGoggle;
+			surface.PlaySound("splinter_cell/goggles/standard/goggles_mode.wav");
 		end
 	else
 		SPLINTERCELL_NVG_GOGGLES:CleanupMaterials();
