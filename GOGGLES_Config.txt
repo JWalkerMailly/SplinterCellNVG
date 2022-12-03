@@ -1,0 +1,289 @@
+CONFIG FILE
+===========
+
+Common Sounds:
+==============
+Activate:	"splinter_cell/goggles/standard/goggles_activate.wav"
+
+Toggle:		"splinter_cell/goggles/standard/goggles_toggle.wav"
+
+Swap Modes: "splinter_cell/goggles/standard/goggles_mode.wav"
+
+Thermal Vision:
+===============
+
+Sobel:
+Threshold:				0.5
+
+Accumulation Motion Blur:
+Add Transparency:		0.3
+Draw Transparency:		1.00
+Frame Capture Delay: 	0
+
+Bloom:
+Number of Passes:		2
+Darken Amount:			0.65
+Multiply Amount:		3.10
+Horizontal Blur:		1.75
+Vertical Blur:			0.45
+Color Multiplier:		-99.00
+Color:					{ 155 155 155 }
+
+Affects:								Players, NextBots, NPC's within a certain radius.
+
+Material Applied to Detected Stuff:		"effects/splinter_cell/thermal_radius"
+
+Colorizer Texture:						"effects/splinter_cell/thermal.png"
+
+Overlay:									"vgui/splinter_cell/nvg_anim"
+
+EMP Vision:
+===========
+
+Sharpen:
+Distance:				0.25
+Contrast:				10.00
+
+Accumulation Motion Blur:
+Add Transparency:		0.55
+Draw Transparency:		0.80
+Frame Capture Delay: 	0
+
+Bloom:
+Number of Passes:		2
+Darken Amount:			2
+Multiply Amount:		3.10
+Horizontal Blur:		1.75
+Vertical Blur:			0.5
+Color Multiplier:		-99.00
+Color:					{ 0 0 0 }
+
+
+Affects:									Scripted Entities, Vehicles
+
+Material Applied to Detected Stuff:			"effects/splinter_cell/bright_white"
+
+Colorizer Texture:						"effects/splinter_cell/emp.png"
+
+Overlay:									"vgui/splinter_cell/nvg_anim"
+
+
+Motion-Tracker Vision:
+======================
+
+Accumulation Motion Blur:
+Add Transparency:		0.15
+Draw Transparency:		0.65
+Frame Capture Delay: 	0
+
+Color Correction:
+Brightness:				0
+Contrast:				-2.50
+Color Multiplier:		2.10
+Color Add:				{10 30 35}
+Color Multiplier:		{40 40 105}
+
+
+Bloom:
+Number of Passes:		2
+Darken Amount:			0.07
+Multiply Amount:		0.1
+Horizontal Blur:		1.75
+Vertical Blur:			0.5
+Color Multiplier:		-99.00
+Color:					{ 0 0 0 }
+
+Affects:								Scripted Entities, Vehicles, Players, NextBots, NPC's, props, basically anything with a velocity above a certain threshold.
+
+Material Applied to Detected Stuff:		"effects/splinter_cell/thermal_radius"
+
+Overlay:								"vgui/splinter_cell/overlay_honeycomb"
+
+Colorizer Texture:						NONE
+
+Activate:		"splinter_cell/goggles/tracking/toggle_on.wav"
+
+Toggle:			"splinter_cell/goggles/tracking/toggle_off.wav"
+
+Swap Modes: 	"splinter_cell/goggles/tracking/toggle_off.wav"
+
+Looping Sound: 	"splinter_cell/goggles/tracking/motion_tracking_lp.wav"
+
+Detect Sound:	"splinter_cell/goggles/tracking/motion_alert.wav"
+
+Electromagnetic-Tracking Vision:
+================================
+Bloom:
+Number of Passes:		0
+Darken Amount:			1.00
+Multiply Amount:		999999.00
+Horizontal Blur:		0.5
+Vertical Blur:			5.00
+Color Multiplier:		999999.00
+Color:					{ 255 255 255 }
+
+Sharpen:
+Distance:				0.25
+Contrast:				10.00
+
+Accumulation Motion Blur:
+Add Transparency:		0.55
+Draw Transparency:		0.80
+Frame Capture Delay: 	0
+
+Affects:	Scripted Entities, Vehicles, Players with active Goggles
+
+Material Applied to Detected Stuff:		"effects/splinter_cell/bright_white"
+
+Overlay:								"vgui/splinter_cell/overlay_honeycomb"
+
+Colorizer Texture:						"effects/splinter_cell/emptracking.png"
+
+Activate:		"splinter_cell/goggles/tracking/toggle_on.wav"
+
+Toggle:			"splinter_cell/goggles/tracking/toggle_off.wav"
+
+Swap Modes: 	"splinter_cell/goggles/tracking/toggle_off.wav"
+
+Looping Sound: 	"splinter_cell/goggles/tracking/emp_tracking_lp.wav"
+
+Thermal Vision (Splinter Cell Double Agent MP):
+===============
+
+Sobel:
+Threshold:				0.5
+
+Accumulation Motion Blur:
+Add Transparency:		0.3
+Draw Transparency:		1.00
+Frame Capture Delay: 	0
+
+Bloom:
+Number of Passes:		2
+Darken Amount:			0.7
+Multiply Amount:		1
+Horizontal Blur:		1.75
+Vertical Blur:			0.45
+Color Multiplier:		-99.00
+Color:					{ 155 155 155 }
+
+Affects:								Players, NextBots, NPC's within a certain radius.
+
+Material Applied to Detected Stuff:		"effects/splinter_cell/thermal_radius"
+
+Overlay:									"vgui/splinter_cell/nvg_anim"
+
+Colorizer Texture:						"effects/splinter_cell/gradient.png"
+
+Night Vision (SCDA MP):
+=========================
+
+Color Correction:
+Brightness:				0.04
+Contrast:				1.2
+Color Multiplier:		0.0
+Color Add:				{0 0 0}
+Color Multiply:			{0 0 0}
+
+Bloom:		
+Number of Passes:		2
+Darken Amount:			0.2
+Multiply Amount:		3.5
+Horizontal Blur:		5.00
+Vertical Blur:			10.00
+Color Multiplier:		0.00
+Color:					{255 255 255}
+
+Depth of Field:
+Spacting Between Nodes:	2000.00
+Initial Node Distance:	570
+
+Overlay:									"vgui/splinter_cell/nvg_lens"
+
+Night Vision:
+=============
+
+Color Correction:
+Brightness:				0.03
+Contrast:				1.00
+Color Multiplier:		0.01
+Color Add:				{3 4 0}
+Color Multiply:			{0 0 0}
+
+Bloom:		
+Number of Passes:		3
+Darken Amount:			0.2
+Multiply Amount:		3
+Horizontal Blur:		5.00
+Vertical Blur:			10.00
+Color Multiplier:		2.5
+Color:					{165 185 135}
+
+Depth of Field:
+Spacting Between Nodes:	2000.00
+Initial Node Distance:	570
+
+Overlay:									"vgui/splinter_cell/nvg_anim"
+
+Enhanced-Lighting Vision:
+=========================
+
+Color Correction:
+Brightness:				0.03
+Contrast:				1.00
+Color Multiplier:		0.01
+Color Add:				{3 4 0}
+Color Multiply:			{0 0 0}
+
+Bloom:		
+Number of Passes:		3
+Darken Amount:			0.05
+Multiply Amount:		1
+Horizontal Blur:		5.00
+Vertical Blur:			10.00
+Color Multiplier:		2.5
+Color:					{245 255 190}
+
+Depth of Field:
+Spacting Between Nodes:	2000.00
+Initial Node Distance:	570
+
+Overlay:									"vgui/splinter_cell/noise"
+
+Sonar Vision:
+===========
+
+Sharpen:
+Distance:				0.25
+Contrast:				10.00
+
+Accumulation Motion Blur:
+Add Transparency:		0.55
+Draw Transparency:		0.80
+Frame Capture Delay: 	0
+
+Bloom:
+Number of Passes:		2
+Darken Amount:			2
+Multiply Amount:		3.10
+Horizontal Blur:		1.75
+Vertical Blur:			0.5
+Color Multiplier:		-99.00
+Color:					{ 0 0 0 }
+
+
+Affects:									Scripted Entities, Vehicles, Nextbots in a small radius
+
+Material Applied to Detected Stuff:			"effects/splinter_cell/bright_white_noz"
+
+Colorizer Texture:						"effects/splinter_cell/sonar.png"
+
+Overlay:									"vgui/splinter_cell/noise"
+
+Activate:		"splinter_cell/goggles/sonar/sonar_goggles_toggle.wav"
+
+Deactivate:			"splinter_cell/goggles/sonar/sonar_goggles_toggle_off.wav"
+
+Scan Sound: 	"splinter_cell/goggles/sonar/sonar_goggles_scan.wav"
+
+Every 10 seconds, the Sonar Goggles will sweep the surrounding area for new targets. The previously scanned targets will fade out right before the next sweep. The user's vision will distort more and more deponding on their velocity.
