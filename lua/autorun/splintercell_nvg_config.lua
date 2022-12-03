@@ -125,7 +125,7 @@ SPLINTERCELL_NVG_CONFIG[8] = {
 	end,
 	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
 	Sounds = {
-		ToggleOn = "splinter_cell/goggles/standard/goggles_toggle.wav",
-		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav"
+		ToggleOn = "splinter_cell/goggles/sonar/sonar_goggles_toggle.wav",
+		ToggleOff = "splinter_cell/goggles/sonar/sonar_goggles_toggle_off.wav"
 	}
 };
