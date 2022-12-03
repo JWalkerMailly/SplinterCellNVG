@@ -32,7 +32,7 @@ SPLINTERCELL_NVG_CONFIG[2] = {
 	Hud = "DrawThermalVision",
 
 	MaterialOverlay = Material("vgui/splinter_cell/nvg_anim"),
-	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
+	MaterialOverride = "effects/splinter_cell/orgscan_overlay",
 	Filter = function(ent)
 		return ent:IsPlayer() || ent:IsNPC() || ent:IsNextBot();
 	end,

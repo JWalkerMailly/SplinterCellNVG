@@ -13,17 +13,17 @@ local interlace = Material("vgui/splinter_cell/interlace_overlay");
 --!
 function SPLINTERCELL_NVG_GOGGLES:DrawThermalScreenSpaceEffect(owner, width, height)
 
-	local dlight      = DynamicLight(owner:EntIndex());
-	dlight.r          = 255;
-	dlight.g          = 255;
-	dlight.b          = 255;
-	dlight.minlight   = 0;
-	dlight.style      = 1;
-	dlight.Brightness = 1;
-	dlight.Pos        = EyePos();
-	dlight.Size       = 8192;
-	dlight.Decay      = 8000;
-	dlight.DieTime    = CurTime() + 0.05;
+	local dlight = DynamicLight(owner:EntIndex());
+	dlight.r = 25;
+	dlight.g = 25;
+	dlight.b = 25;
+	dlight.minlight = 0;
+	dlight.style = 0;
+	dlight.Brightness = 0.1;
+	dlight.Pos = EyePos();
+	dlight.Size = 8192;
+	dlight.Decay = 16000;
+	dlight.DieTime = CurTime() + 0.05;
 
 	-- Do post processing.
 	DrawTexturize(1, gradient);

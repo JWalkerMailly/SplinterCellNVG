@@ -206,16 +206,16 @@ hook.Add("PreDrawHUD", "SPLINTERCELL_NVG_SHADER", function()
 				local goggles = SPLINTERCELL_NVG_GOGGLES;
 				goggles[currentConfig.Hud](SPLINTERCELL_NVG_GOGGLES);
 
+				-- Handle material overrides for the goggle being used.
+				if (currentConfig.Filter != nil) then
+					SPLINTERCELL_NVG_GOGGLES:HandleMaterialOverrides(currentConfig);
+				end
+
 				-- Play activate sound on client only after delay expired.
 				if (!SPLINTERCELL_NVG_GOGGLES.ToggledSound) then
 					SPLINTERCELL_NVG_GOGGLES.ToggledSound = true;
 					surface.PlaySound(currentConfig.Sounds.Activate);
 				end
-			end
-
-			-- Handle material overrides for the goggle being used.
-			if (currentConfig.Filter != nil) then
-				SPLINTERCELL_NVG_GOGGLES:HandleMaterialOverrides(currentConfig);
 			end
 		else
 
