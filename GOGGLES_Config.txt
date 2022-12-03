@@ -9,6 +9,31 @@ Toggle:		"splinter_cell/goggles/standard/goggles_toggle.wav"
 
 Swap Modes: "splinter_cell/goggles/standard/goggles_mode.wav"
 
+Night Vision:
+=============
+
+Color Correction:
+Brightness:				-0.17
+Contrast:				1.00
+Color Multiplier:		0.25
+Color Add:				{22 35 0}
+Color Multiply:			{0 0 0}
+
+Bloom:		
+Number of Passes:		1
+Darken Amount:			0.4
+Multiply Amount:		5
+Horizontal Blur:		5.00
+Vertical Blur:			10.00
+Color Multiplier:		10
+Color:					{250 235 0}
+
+Depth of Field:
+Spacting Between Nodes:	2000.00
+Initial Node Distance:	570
+
+Overlay:									"vgui/splinter_cell/nvg_anim"
+
 Thermal Vision:
 ===============
 
@@ -199,31 +224,6 @@ Spacting Between Nodes:	2000.00
 Initial Node Distance:	570
 
 Overlay:									"vgui/splinter_cell/nvg_lens"
-
-Night Vision:
-=============
-
-Color Correction:
-Brightness:				0.03
-Contrast:				1.00
-Color Multiplier:		0.01
-Color Add:				{3 4 0}
-Color Multiply:			{0 0 0}
-
-Bloom:		
-Number of Passes:		3
-Darken Amount:			0.2
-Multiply Amount:		3
-Horizontal Blur:		5.00
-Vertical Blur:			10.00
-Color Multiplier:		2.5
-Color:					{165 185 135}
-
-Depth of Field:
-Spacting Between Nodes:	2000.00
-Initial Node Distance:	570
-
-Overlay:									"vgui/splinter_cell/nvg_anim"
 
 Enhanced-Lighting Vision:
 =========================
