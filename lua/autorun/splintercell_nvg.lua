@@ -8,7 +8,12 @@ CreateClientConVar("SPLINTERCELL_NVG_CYCLE", "23", true, true, "Which key to cyc
 -- Setup toggle and cycle commands for goggles.
 CreateClientConVar("SPLINTERCELL_NVG_TOGGLE", "0", false, false);
 
-local function SetupDefaults(player)
+--!
+--! @brief      Internal function. Creates the necessary network integers on the client.
+--!
+--! @param      player  The player to setup netowrking on.
+--!
+local function __SetupDefaults(player)
 
 	if (player:GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", 0) == 0) then
 		player:SetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", 3);
@@ -19,9 +24,12 @@ local function SetupDefaults(player)
 	end
 end
 
+--! 
+--! Main input entry point for the goggles. Will process the toggle and cycle key.
+--!
 hook.Add("PlayerButtonDown", "SPLINTERCELL_NVG_INPUT", function(player, button)
 
-	SetupDefaults(player);
+	__SetupDefaults(player);
 
 	-- Toggle on and off.
 	if (button == GetConVar("SPLINTERCELL_NVG_INPUT"):GetInt()) then
