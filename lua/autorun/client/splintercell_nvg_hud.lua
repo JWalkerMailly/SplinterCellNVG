@@ -80,11 +80,10 @@ hook.Add("HUDPaint", "SPLINTERCELL_NVG_SHADER", function()
 
 	-- This is the autoload logic for the network var. Network vars will be handled serverside.
 	local currentGoggle = LocalPlayer():GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", 0);
-	local lastGoggle = LocalPlayer():GetNWInt("SPLINTERCELL_NVG_LAST_GOGGLE", 0);
-	local toggle = GetConVar("SPLINTERCELL_NVG_TOGGLE"):GetBool();
 
 	-- Do nothing if no goggle is currently toggled.
-	if (currentGoggle == 0 || lastGoggle == 0) then return; end
+	if (currentGoggle == 0) then return; end
+	local toggle = GetConVar("SPLINTERCELL_NVG_TOGGLE"):GetBool();
 
 	-- This is only used clientside to handle animations and sounds. It has nothing to
 	-- do with the network var found on the client entity.
@@ -93,10 +92,8 @@ hook.Add("HUDPaint", "SPLINTERCELL_NVG_SHADER", function()
 		SPLINTERCELL_NVG_GOGGLES.CurrentGoggles = currentGoggle;
 	end
 
-	local currentConfig = SPLINTERCELL_NVG_CONFIG[currentGoggle];
-	--local lastConfig = SPLINTERCELL_NVG_CONFIG[lastGoggle];
-
 	-- Delegate call to the configuration file for which goggle to render.
+	local currentConfig = SPLINTERCELL_NVG_CONFIG[currentGoggle];
 	if (toggle) then
 
 		local goggles = SPLINTERCELL_NVG_GOGGLES;
