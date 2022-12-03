@@ -4,6 +4,7 @@ SPLINTERCELL_NVG_GOGGLES = {};
 SPLINTERCELL_NVG_GOGGLES.ShouldCleanupMaterials = false;
 
 if (SERVER) then
+	AddCSLuaFile("goggles/splintercell_nvg_test.lua");
 	AddCSLuaFile("goggles/splintercell_nvg_thermal.lua");
 	AddCSLuaFile("goggles/splintercell_nvg_sonar.lua");
 	AddCSLuaFile("goggles/splintercell_nvg_night.lua");
@@ -13,11 +14,7 @@ if (SERVER) then
 	AddCSLuaFile("goggles/splintercell_nvg_electro.lua");
 end
 
--- Used for debuggin at the moment, will eventually be replaced for something more suited for the job.
-if (CLIENT) then
-	CreateClientConVar("SPLINTERCELL_NVG_GOGGLES_ENABLE", "0", false, false);
-end
-
+include("goggles/splintercell_nvg_test.lua");
 include("goggles/splintercell_nvg_thermal.lua");
 include("goggles/splintercell_nvg_sonar.lua");
 include("goggles/splintercell_nvg_night.lua");
@@ -80,14 +77,25 @@ end
 hook.Add("HUDPaint", "SPLINTERCELL_NVG_SHADER", function()
 
 	-- This is the autoload logic for the network var. Network vars will be handled serverside.
-	-- For testing purposes, this value is hard coded but will be handled correctly later on.
-	local nwVar = "Thermal";
-	local goggle = SPLINTERCELL_NVG_CONFIG[nwVar];
+	local currentGoggle = LocalPlayer():GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", 0);
+	local lastGoggle = LocalPlayer():GetNWInt("SPLINTERCELL_NVG_LAST_GOGGLE", 0);
+
+	-- Do nothing if no goggle is currently toggled.
+	if (currentGoggle == 0 || lastGoggle == 0) then return; end
+
+	local currentConfig = SPLINTERCELL_NVG_CONFIG[currentGoggle];
+	--local lastConfig = SPLINTERCELL_NVG_CONFIG[lastGoggle];
 
 	-- Delegate call to the configuration file for which goggle to render.
-	if (GetConVar("SPLINTERCELL_NVG_GOGGLES_ENABLE"):GetBool()) then
-		SPLINTERCELL_NVG_GOGGLES[goggle.Hud](SPLINTERCELL_NVG_GOGGLES);
-		SPLINTERCELL_NVG_GOGGLES:HandleMaterialOverrides(goggle);
+	if (GetConVar("SPLINTERCELL_NVG_TOGGLE"):GetBool()) then
+
+		local goggles = SPLINTERCELL_NVG_GOGGLES;
+		goggles[currentConfig.Hud](SPLINTERCELL_NVG_GOGGLES);
+
+		-- Handle material overrides for the goggle being used.
+		if (currentConfig.Filter != nil) then
+			SPLINTERCELL_NVG_GOGGLES:HandleMaterialOverrides(currentConfig);
+		end
 	else
 		SPLINTERCELL_NVG_GOGGLES:CleanupMaterials();
 	end
