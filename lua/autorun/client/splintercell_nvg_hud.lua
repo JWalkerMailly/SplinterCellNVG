@@ -95,39 +95,39 @@ end
 --!
 --! @brief      Used to render the lens transitioning in view.
 --!
-function SPLINTERCELL_NVG_GOGGLES:TransitionIn(overlay)
+function SPLINTERCELL_NVG_GOGGLES:TransitionIn()
 
 	-- Render lens coming in.
 	self.Transition = Lerp(FrameTime() * __TransitionRate, self.Transition, 2);
 
 	local transition = math.Clamp(self.Transition, 0, 1);
 	if (transition < 0.9) then
-		surface.SetMaterial(overlay);
+		surface.SetMaterial(nvgOverlayAnim);
 		surface.SetDrawColor(255, 255, 255, transition * 255);
-		surface.DrawTexturedRect(0, -ScrH() + (ScrH() * 1.3 * self.Transition), ScrW(), ScrH());
+		surface.DrawTexturedRect(0, -ScrH() + (ScrH() * 1.3 * transition), ScrW(), ScrH());
 	end
 end
 
 --!
 --! @brief      Used to render the lens transitioning out of view.
 --!
-function SPLINTERCELL_NVG_GOGGLES:TransitionOut(overlay)
+function SPLINTERCELL_NVG_GOGGLES:TransitionOut()
 
 	-- Render lens going out.
 	self.Transition = Lerp(FrameTime() * __TransitionRate, self.Transition, 0);
 
 	local transition = math.Clamp(self.Transition - 1, 0, 1);
 	if (transition > 0.1) then
-		surface.SetMaterial(overlay);
-		surface.SetDrawColor(255, 255, 255, self.Transition * 255);
-		surface.DrawTexturedRect(0, -ScrH() + (ScrH() * 1.3 * self.Transition), ScrW(), ScrH());
+		surface.SetMaterial(nvgOverlayAnim);
+		surface.SetDrawColor(255, 255, 255, transition * 255);
+		surface.DrawTexturedRect(0, -ScrH() + (ScrH() * 1.3 * transition), ScrW(), ScrH());
 	end
 end
 
 --!
 --! @brief      Renders the overlay effect for vignette and animated lens.
 --!
-function SPLINTERCELL_NVG_GOGGLES:DrawOverlay()
+function SPLINTERCELL_NVG_GOGGLES:DrawOverlay(overlay)
 
 	local transition = math.Clamp(self.Transition - 1, 0, 1);
 
@@ -137,7 +137,7 @@ function SPLINTERCELL_NVG_GOGGLES:DrawOverlay()
 	surface.DrawTexturedRect(0, 0, ScrW(), ScrH());
 
 	-- Animated overlay texture.
-	surface.SetMaterial(nvgOverlay);
+	surface.SetMaterial(overlay);
 	surface.SetDrawColor(255, 255, 255, transition * 255);
 	surface.DrawTexturedRect(0, 0, ScrW(), ScrH());
 end
@@ -148,24 +148,24 @@ end
 --!
 hook.Add("PreDrawHUD", "SPLINTERCELL_NVG_SHADER", function()
 
+	-- This is the autoload logic for the network var. Network vars will be handled serverside.
+	local currentGoggle = LocalPlayer():GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", 0);
+	if (currentGoggle == 0) then return; end
+
+	-- This is gets clientside to handle animations and sounds.
+	local toggle = GetConVar("SPLINTERCELL_NVG_TOGGLE"):GetBool();
+	if (SPLINTERCELL_NVG_GOGGLES.Toggled == nil) then
+		SPLINTERCELL_NVG_GOGGLES.Toggled = toggle;
+		SPLINTERCELL_NVG_GOGGLES.CurrentGoggles = currentGoggle;
+	end
+
 	cam.Start2D();
-
-		-- This is the autoload logic for the network var. Network vars will be handled serverside.
-		local currentGoggle = LocalPlayer():GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", 0);
-		if (currentGoggle == 0) then return; end
-
-		-- This is gets clientside to handle animations and sounds.
-		local toggle = GetConVar("SPLINTERCELL_NVG_TOGGLE"):GetBool();
-		if (SPLINTERCELL_NVG_GOGGLES.Toggled == nil) then
-			SPLINTERCELL_NVG_GOGGLES.Toggled = toggle;
-			SPLINTERCELL_NVG_GOGGLES.CurrentGoggles = currentGoggle;
-		end
 
 		-- Delegate call to the configuration file for which goggle to render.
 		local currentConfig = SPLINTERCELL_NVG_CONFIG[currentGoggle];
 		if (toggle) then
 
-			SPLINTERCELL_NVG_GOGGLES:TransitionIn(currentConfig.MaterialOverlay);
+			SPLINTERCELL_NVG_GOGGLES:TransitionIn(nvgOverlayAnim);
 
 			-- Play the toggle sound specific to the goggles.
 			if (!SPLINTERCELL_NVG_GOGGLES.Toggled) then
@@ -199,7 +199,7 @@ hook.Add("PreDrawHUD", "SPLINTERCELL_NVG_SHADER", function()
 		else
 
 			-- Transition lens out.
-			SPLINTERCELL_NVG_GOGGLES:TransitionOut(currentConfig.MaterialOverlay);
+			SPLINTERCELL_NVG_GOGGLES:TransitionOut(nvgOverlayAnim);
 
 			-- Reset defaults for next toggle.
 			SPLINTERCELL_NVG_GOGGLES.Toggled = false;
@@ -208,6 +208,6 @@ hook.Add("PreDrawHUD", "SPLINTERCELL_NVG_SHADER", function()
 		end
 
 		-- This is always called but will not interfere with other addons.
-		SPLINTERCELL_NVG_GOGGLES:DrawOverlay();
+		SPLINTERCELL_NVG_GOGGLES:DrawOverlay(currentConfig.MaterialOverlay);
 	cam.End2D();
 end);

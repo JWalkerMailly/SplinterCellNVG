@@ -17,6 +17,7 @@ SPLINTERCELL_NVG_CONFIG[1] = {
 	end,
 
 	Sounds = {
+		Loop = nil,
 		ToggleOn = "splinter_cell/goggles/standard/goggles_toggle.wav",
 		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav",
 		Activate = "splinter_cell/goggles/standard/goggles_activate.wav"
@@ -37,6 +38,7 @@ SPLINTERCELL_NVG_CONFIG[2] = {
 	end,
 
 	Sounds = {
+		Loop = nil,
 		ToggleOn = "splinter_cell/goggles/standard/goggles_toggle.wav",
 		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav",
 		Activate = "splinter_cell/goggles/standard/goggles_activate.wav"
@@ -57,6 +59,7 @@ SPLINTERCELL_NVG_CONFIG[3] = {
 	end,
 
 	Sounds = {
+		Loop = nil,
 		ToggleOn = "splinter_cell/goggles/standard/goggles_toggle.wav",
 		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav",
 		Activate = "splinter_cell/goggles/standard/goggles_activate.wav"
@@ -77,6 +80,7 @@ SPLINTERCELL_NVG_CONFIG[4] = {
 	end,
 
 	Sounds = {
+		Loop = nil,
 		ToggleOn = "splinter_cell/goggles/standard/goggles_toggle.wav",
 		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav",
 		Activate = "splinter_cell/goggles/standard/goggles_activate.wav"
@@ -97,6 +101,7 @@ SPLINTERCELL_NVG_CONFIG[5] = {
 	end,
 
 	Sounds = {
+		Loop = "splinter_cell/goggles/tracking/motion_tracking_lp.wav",
 		ToggleOn = "splinter_cell/goggles/standard/goggles_toggle.wav",
 		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav",
 		Activate = "splinter_cell/goggles/standard/goggles_activate.wav"
@@ -117,6 +122,7 @@ SPLINTERCELL_NVG_CONFIG[6] = {
 	end,
 
 	Sounds = {
+		Loop = nil,
 		ToggleOn = "splinter_cell/goggles/standard/goggles_toggle.wav",
 		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav",
 		Activate = "splinter_cell/goggles/standard/goggles_activate.wav"
@@ -137,6 +143,7 @@ SPLINTERCELL_NVG_CONFIG[7] = {
 	end,
 
 	Sounds = {
+		Loop = nil,
 		ToggleOn = "splinter_cell/goggles/sonar/sonar_goggles_toggle.wav",
 		ToggleOff = "splinter_cell/goggles/sonar/sonar_goggles_toggle_off.wav",
 		Activate = "splinter_cell/goggles/standard/goggles_activate.wav"
