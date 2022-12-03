@@ -13,10 +13,8 @@ SPLINTERCELL_NVG_CONFIG[1] = {
 	end,
 	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
 	Sounds = {
-		On = nil,
-		Off = nil,
-		Loop = nil,
-		Activate = nil
+		ToggleOn = "splinter_cell/goggles/standard/goggles_toggle.wav",
+		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav"
 	}
 };
 
@@ -31,10 +29,8 @@ SPLINTERCELL_NVG_CONFIG[2] = {
 	end,
 	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
 	Sounds = {
-		On = nil,
-		Off = nil,
-		Loop = nil,
-		Activate = nil
+		ToggleOn = "splinter_cell/goggles/standard/goggles_toggle.wav",
+		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav"
 	}
 };
 
@@ -49,10 +45,8 @@ SPLINTERCELL_NVG_CONFIG[3] = {
 	end,
 	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
 	Sounds = {
-		On = nil,
-		Off = nil,
-		Loop = nil,
-		Activate = nil
+		ToggleOn = "splinter_cell/goggles/standard/goggles_toggle.wav",
+		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav"
 	}
 };
 
@@ -67,10 +61,8 @@ SPLINTERCELL_NVG_CONFIG[4] = {
 	end,
 	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
 	Sounds = {
-		On = nil,
-		Off = nil,
-		Loop = nil,
-		Activate = nil
+		ToggleOn = "splinter_cell/goggles/standard/goggles_toggle.wav",
+		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav"
 	}
 };
 
@@ -85,10 +77,8 @@ SPLINTERCELL_NVG_CONFIG[5] = {
 	end,
 	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
 	Sounds = {
-		On = nil,
-		Off = nil,
-		Loop = nil,
-		Activate = nil
+		ToggleOn = "splinter_cell/goggles/standard/goggles_toggle.wav",
+		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav"
 	}
 };
 
@@ -103,10 +93,8 @@ SPLINTERCELL_NVG_CONFIG[6] = {
 	end,
 	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
 	Sounds = {
-		On = nil,
-		Off = nil,
-		Loop = nil,
-		Activate = nil
+		ToggleOn = "splinter_cell/goggles/standard/goggles_toggle.wav",
+		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav"
 	}
 };
 
@@ -121,10 +109,8 @@ SPLINTERCELL_NVG_CONFIG[7] = {
 	end,
 	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
 	Sounds = {
-		On = nil,
-		Off = nil,
-		Loop = nil,
-		Activate = nil
+		ToggleOn = "splinter_cell/goggles/standard/goggles_toggle.wav",
+		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav"
 	}
 };
 
@@ -139,9 +125,7 @@ SPLINTERCELL_NVG_CONFIG[8] = {
 	end,
 	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
 	Sounds = {
-		On = nil,
-		Off = nil,
-		Loop = nil,
-		Activate = nil
+		ToggleOn = "splinter_cell/goggles/standard/goggles_toggle.wav",
+		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav"
 	}
 };
