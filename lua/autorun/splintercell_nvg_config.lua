@@ -11,7 +11,13 @@ SPLINTERCELL_NVG_CONFIG[1] = {
 	Filter = function(ent)
 		return ent:IsPlayer() || ent:IsNPC() || ent:IsNextBot();
 	end,
-	MaterialOverride = "effects/splinter_cell/orgsen_overlay"
+	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
+	Sounds = {
+		On = nil,
+		Off = nil,
+		Loop = nil,
+		Activate = nil
+	}
 };
 
 ----------------------------------------------------------------
@@ -23,7 +29,13 @@ SPLINTERCELL_NVG_CONFIG[2] = {
 	Filter = function(ent)
 		return ent:IsPlayer() || ent:IsNPC() || ent:IsNextBot();
 	end,
-	MaterialOverride = "effects/splinter_cell/orgsen_overlay"
+	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
+	Sounds = {
+		On = nil,
+		Off = nil,
+		Loop = nil,
+		Activate = nil
+	}
 };
 
 ----------------------------------------------------------------
@@ -35,7 +47,13 @@ SPLINTERCELL_NVG_CONFIG[3] = {
 	Filter = function(ent)
 		return ent:IsPlayer() || ent:IsNPC() || ent:IsNextBot();
 	end,
-	MaterialOverride = "effects/splinter_cell/orgsen_overlay"
+	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
+	Sounds = {
+		On = nil,
+		Off = nil,
+		Loop = nil,
+		Activate = nil
+	}
 };
 
 ----------------------------------------------------------------
@@ -47,7 +65,13 @@ SPLINTERCELL_NVG_CONFIG[4] = {
 	Filter = function(ent)
 		return ent:IsPlayer() || ent:IsNPC() || ent:IsNextBot();
 	end,
-	MaterialOverride = "effects/splinter_cell/orgsen_overlay"
+	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
+	Sounds = {
+		On = nil,
+		Off = nil,
+		Loop = nil,
+		Activate = nil
+	}
 };
 
 ----------------------------------------------------------------
@@ -59,7 +83,13 @@ SPLINTERCELL_NVG_CONFIG[5] = {
 	Filter = function(ent)
 		return ent:IsPlayer() || ent:IsNPC() || ent:IsNextBot();
 	end,
-	MaterialOverride = "effects/splinter_cell/orgsen_overlay"
+	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
+	Sounds = {
+		On = nil,
+		Off = nil,
+		Loop = nil,
+		Activate = nil
+	}
 };
 
 ----------------------------------------------------------------
@@ -71,7 +101,13 @@ SPLINTERCELL_NVG_CONFIG[6] = {
 	Filter = function(ent)
 		return ent:IsPlayer() || ent:IsNPC() || ent:IsNextBot();
 	end,
-	MaterialOverride = "effects/splinter_cell/orgsen_overlay"
+	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
+	Sounds = {
+		On = nil,
+		Off = nil,
+		Loop = nil,
+		Activate = nil
+	}
 };
 
 ----------------------------------------------------------------
@@ -83,7 +119,13 @@ SPLINTERCELL_NVG_CONFIG[7] = {
 	Filter = function(ent)
 		return ent:IsPlayer() || ent:IsNPC() || ent:IsNextBot();
 	end,
-	MaterialOverride = "effects/splinter_cell/orgsen_overlay"
+	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
+	Sounds = {
+		On = nil,
+		Off = nil,
+		Loop = nil,
+		Activate = nil
+	}
 };
 
 ----------------------------------------------------------------
@@ -95,5 +137,11 @@ SPLINTERCELL_NVG_CONFIG[8] = {
 	Filter = function(ent)
 		return ent:IsPlayer() || ent:IsNPC() || ent:IsNextBot();
 	end,
-	MaterialOverride = "effects/splinter_cell/orgsen_overlay"
+	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
+	Sounds = {
+		On = nil,
+		Off = nil,
+		Loop = nil,
+		Activate = nil
+	}
 };
