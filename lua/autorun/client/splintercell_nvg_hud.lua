@@ -146,65 +146,68 @@ end
 --! Draw hook entry point for all goggles. This will use the network var currently set on the player
 --! to determine which goggle to use.
 --!
-hook.Add("HUDPaint", "SPLINTERCELL_NVG_SHADER", function()
+hook.Add("PreDrawHUD", "SPLINTERCELL_NVG_SHADER", function()
 
-	-- This is the autoload logic for the network var. Network vars will be handled serverside.
-	local currentGoggle = LocalPlayer():GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", 0);
-	if (currentGoggle == 0) then return; end
+	cam.Start2D();
 
-	-- This is gets clientside to handle animations and sounds.
-	local toggle = GetConVar("SPLINTERCELL_NVG_TOGGLE"):GetBool();
-	if (SPLINTERCELL_NVG_GOGGLES.Toggled == nil) then
-		SPLINTERCELL_NVG_GOGGLES.Toggled = toggle;
-		SPLINTERCELL_NVG_GOGGLES.CurrentGoggles = currentGoggle;
-	end
+		-- This is the autoload logic for the network var. Network vars will be handled serverside.
+		local currentGoggle = LocalPlayer():GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", 0);
+		if (currentGoggle == 0) then return; end
 
-	-- Delegate call to the configuration file for which goggle to render.
-	local currentConfig = SPLINTERCELL_NVG_CONFIG[currentGoggle];
-	if (toggle) then
-
-		SPLINTERCELL_NVG_GOGGLES:TransitionIn(currentConfig.Overlay);
-
-		-- Play the toggle sound specific to the goggles.
-		if (!SPLINTERCELL_NVG_GOGGLES.Toggled) then
-			SPLINTERCELL_NVG_GOGGLES.NextTransition = CurTime() + __TransitionDelay;
-			SPLINTERCELL_NVG_GOGGLES.Toggled = true;
-		end
-
-		-- Play goggle mode switch sound only clientside.
-		if (currentGoggle != SPLINTERCELL_NVG_GOGGLES.CurrentGoggles) then
+		-- This is gets clientside to handle animations and sounds.
+		local toggle = GetConVar("SPLINTERCELL_NVG_TOGGLE"):GetBool();
+		if (SPLINTERCELL_NVG_GOGGLES.Toggled == nil) then
+			SPLINTERCELL_NVG_GOGGLES.Toggled = toggle;
 			SPLINTERCELL_NVG_GOGGLES.CurrentGoggles = currentGoggle;
-			surface.PlaySound("splinter_cell/goggles/standard/goggles_mode.wav");
 		end
 
-		if (CurTime() > SPLINTERCELL_NVG_GOGGLES.NextTransition) then
+		-- Delegate call to the configuration file for which goggle to render.
+		local currentConfig = SPLINTERCELL_NVG_CONFIG[currentGoggle];
+		if (toggle) then
 
-			-- Begin rendering screen space effects of the current goggles.
-			local goggles = SPLINTERCELL_NVG_GOGGLES;
-			goggles[currentConfig.Hud](SPLINTERCELL_NVG_GOGGLES);
+			SPLINTERCELL_NVG_GOGGLES:TransitionIn(currentConfig.MaterialOverlay);
 
-			-- Play activate sound on client only after delay expired.
-			if (!SPLINTERCELL_NVG_GOGGLES.ToggledSound) then
-				SPLINTERCELL_NVG_GOGGLES.ToggledSound = true;
-				surface.PlaySound(currentConfig.Sounds.Activate);
+			-- Play the toggle sound specific to the goggles.
+			if (!SPLINTERCELL_NVG_GOGGLES.Toggled) then
+				SPLINTERCELL_NVG_GOGGLES.NextTransition = CurTime() + __TransitionDelay;
+				SPLINTERCELL_NVG_GOGGLES.Toggled = true;
 			end
+
+			-- Play goggle mode switch sound only clientside.
+			if (currentGoggle != SPLINTERCELL_NVG_GOGGLES.CurrentGoggles) then
+				SPLINTERCELL_NVG_GOGGLES.CurrentGoggles = currentGoggle;
+				surface.PlaySound("splinter_cell/goggles/standard/goggles_mode.wav");
+			end
+
+			if (CurTime() > SPLINTERCELL_NVG_GOGGLES.NextTransition) then
+
+				-- Begin rendering screen space effects of the current goggles.
+				local goggles = SPLINTERCELL_NVG_GOGGLES;
+				goggles[currentConfig.Hud](SPLINTERCELL_NVG_GOGGLES);
+
+				-- Play activate sound on client only after delay expired.
+				if (!SPLINTERCELL_NVG_GOGGLES.ToggledSound) then
+					SPLINTERCELL_NVG_GOGGLES.ToggledSound = true;
+					surface.PlaySound(currentConfig.Sounds.Activate);
+				end
+			end
+
+			-- Handle material overrides for the goggle being used.
+			if (currentConfig.Filter != nil) then
+				SPLINTERCELL_NVG_GOGGLES:HandleMaterialOverrides(currentConfig);
+			end
+		else
+
+			-- Transition lens out.
+			SPLINTERCELL_NVG_GOGGLES:TransitionOut(currentConfig.MaterialOverlay);
+
+			-- Reset defaults for next toggle.
+			SPLINTERCELL_NVG_GOGGLES.Toggled = false;
+			SPLINTERCELL_NVG_GOGGLES.ToggledSound = false;
+			SPLINTERCELL_NVG_GOGGLES:CleanupMaterials();
 		end
 
-		-- Handle material overrides for the goggle being used.
-		if (currentConfig.Filter != nil) then
-			SPLINTERCELL_NVG_GOGGLES:HandleMaterialOverrides(currentConfig);
-		end
-	else
-
-		-- Transition lens out.
-		SPLINTERCELL_NVG_GOGGLES:TransitionOut(currentConfig.Overlay);
-
-		-- Reset defaults for next toggle.
-		SPLINTERCELL_NVG_GOGGLES.Toggled = false;
-		SPLINTERCELL_NVG_GOGGLES.ToggledSound = false;
-		SPLINTERCELL_NVG_GOGGLES:CleanupMaterials();
-	end
-
-	-- This is always called but will not interfere with other addons.
-	SPLINTERCELL_NVG_GOGGLES:DrawOverlay();
+		-- This is always called but will not interfere with other addons.
+		SPLINTERCELL_NVG_GOGGLES:DrawOverlay();
+	cam.End2D();
 end);
