@@ -8,17 +8,17 @@
 	"$nocull"	1
 	"$basetexture" "effects\splinter_cell\orgscan_overlay"
 	"$lightwarptexture" "effects/splinter_cell/orgscan_overlay"
-	"$detail"	"effects\splinter_cell\orgscan_spectrum"
+	"$detail"	"effects\splinter_cell\orgscan_overlay"
 	"$detailscale"	.4
-	"$detailblendmode"	1
-	"$detailblendfactor"	2
+	"$detailblendmode"	2
+	"$detailblendfactor"	20
 	$emissiveBlendEnabled 1
-	$emissiveBlendTexture     		"effects\splinter_cell\orgscan_overlay"
+	$emissiveBlendTexture     		"effects\splinter_cell\orgsen_overlay"
 	$emissiveBlendBaseTexture		"effects\splinter_cell\orgscan_overlay"
-	$emissiveBlendFlowTexture     	"effects/splinter_cell/orgscan_spectrum"
-	$emissiveBlendTint "[1 1 1]"
+	$emissiveBlendFlowTexture     	"effects/splinter_cell/orgscan_overlay"
+	$emissiveBlendTint "[10 10 10]"
 	$emissiveBlendStrength 15
-	$emissiveBlendScrollVector "[.02 .05]"
+	$emissiveBlendScrollVector "[.02 .04]"
 
 
 }
