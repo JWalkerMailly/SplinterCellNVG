@@ -1,11 +1,11 @@
 
-local player = getmetatable("Player");
+local player = FindMetaTable("Player");
 
 --!
 --! @brief      Return the table config of the player's current goggle.
 --!
 --! @return     NVG Table.
---! @debug      lua_run print(Entity(1):SCNVG_GetGoggle())
+--! @debug      lua_run PrintTable(Entity(1):SCNVG_GetGoggle())
 --!
 function player:SCNVG_GetGoggle()
 	local goggle = self:GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", 0);
@@ -20,6 +20,7 @@ end
 --! @param      name  The name of the goggle to use when toggling.
 --!
 --! @return     True on success, False otherwise.
+--! @debug      lua_run print(Entity(1):SCNVG_SetGoggle("Thermal"))
 --!
 function player:SCNVG_SetGoggle(name)
 
@@ -35,6 +36,7 @@ end
 --! @brief      Return the table config of the player's last goggle.
 --!
 --! @return     NVG Table.
+--! @debug      lua_run PrintTable(Entity(1):SCNVG_GetPreviousGoggle())
 --!
 function player:SCNVG_GetPreviousGoggle()
 	local goggle = self:GetNWInt("SPLINTERCELL_NVG_LAST_GOGGLE", 0);
