@@ -41,7 +41,6 @@ include("goggles/splintercell_nvg_electro.lua");
 local __TransitionRate = 5;
 local __TransitionDelay = 0.225;
 
-local nvgOverlay = Material("vgui/splinter_cell/nvg_anim");
 local nvgVignette = Material("vgui/splinter_cell/overlay_vignette");
 local nvgOverlayAnim = Material("vgui/splinter_cell/nvg_turnon_static");
 
