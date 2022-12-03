@@ -2,6 +2,9 @@
 -- This acts like a static class.
 SPLINTERCELL_NVG_CONFIG = {};
 
+----------------------------------------------------------------
+-- Test goggle, will be removed before production
+----------------------------------------------------------------
 SPLINTERCELL_NVG_CONFIG[1] = {
 	Name = "Test",
 	Hud = "DrawTestVision",
@@ -11,11 +14,21 @@ SPLINTERCELL_NVG_CONFIG[1] = {
 	MaterialOverride = "effects/splinter_cell/orgsen_overlay"
 };
 
+----------------------------------------------------------------
+-- Night vision
+----------------------------------------------------------------
 SPLINTERCELL_NVG_CONFIG[2] = {
 	Name = "Night",
-	Hud = "DrawNightVision"
+	Hud = "DrawNightVision",
+	Filter = function(ent)
+		return ent:IsPlayer() || ent:IsNPC() || ent:IsNextBot();
+	end,
+	MaterialOverride = "effects/splinter_cell/orgsen_overlay"
 };
 
+----------------------------------------------------------------
+-- Thermal vision
+----------------------------------------------------------------
 SPLINTERCELL_NVG_CONFIG[3] = {
 	Name = "Thermal",
 	Hud = "DrawThermalVision",
@@ -25,27 +38,62 @@ SPLINTERCELL_NVG_CONFIG[3] = {
 	MaterialOverride = "effects/splinter_cell/orgsen_overlay"
 };
 
+----------------------------------------------------------------
+-- Electromagnetic vision
+----------------------------------------------------------------
 SPLINTERCELL_NVG_CONFIG[4] = {
 	Name = "Electromagnetic",
-	Hud = "DrawElectromagneticVision"
+	Hud = "DrawElectromagneticVision",
+	Filter = function(ent)
+		return ent:IsPlayer() || ent:IsNPC() || ent:IsNextBot();
+	end,
+	MaterialOverride = "effects/splinter_cell/orgsen_overlay"
 };
 
+----------------------------------------------------------------
+-- Enhanced Night vision
+----------------------------------------------------------------
 SPLINTERCELL_NVG_CONFIG[5] = {
-	Name = "Enhanced",
-	Hud = "DrawEnhancedVision"
+	Name = "Enhanced Night",
+	Hud = "DrawEnhancedVision",
+	Filter = function(ent)
+		return ent:IsPlayer() || ent:IsNPC() || ent:IsNextBot();
+	end,
+	MaterialOverride = "effects/splinter_cell/orgsen_overlay"
 };
 
+----------------------------------------------------------------
+-- Motion Tracking vision
+----------------------------------------------------------------
 SPLINTERCELL_NVG_CONFIG[6] = {
-	Name = "MotionTracker",
-	Hud = "DrawMotionTrackerVision"
+	Name = "Motion Tracking",
+	Hud = "DrawMotionTrackerVision",
+	Filter = function(ent)
+		return ent:IsPlayer() || ent:IsNPC() || ent:IsNextBot();
+	end,
+	MaterialOverride = "effects/splinter_cell/orgsen_overlay"
 };
 
+----------------------------------------------------------------
+-- Electromagnetic Tracking vision
+----------------------------------------------------------------
 SPLINTERCELL_NVG_CONFIG[7] = {
-	Name = "ElectroTracker",
-	Hud = "DrawElectroTrackerVision"
+	Name = "Electromagnetic Tracking",
+	Hud = "DrawElectroTrackerVision",
+	Filter = function(ent)
+		return ent:IsPlayer() || ent:IsNPC() || ent:IsNextBot();
+	end,
+	MaterialOverride = "effects/splinter_cell/orgsen_overlay"
 };
 
+----------------------------------------------------------------
+-- Sonar vision
+----------------------------------------------------------------
 SPLINTERCELL_NVG_CONFIG[8] = {
 	Name = "Sonar",
-	Hud = "DrawSonarVision"
+	Hud = "DrawSonarVision",
+	Filter = function(ent)
+		return ent:IsPlayer() || ent:IsNPC() || ent:IsNextBot();
+	end,
+	MaterialOverride = "effects/splinter_cell/orgsen_overlay"
 };
