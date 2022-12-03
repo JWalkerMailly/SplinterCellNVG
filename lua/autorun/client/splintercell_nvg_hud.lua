@@ -31,7 +31,7 @@ include("goggles/splintercell_nvg_electrotracker.lua");
 include("goggles/splintercell_nvg_electro.lua");
 
 -- Constants.
-local __TransitionDelay = 0.1;
+local __TransitionDelay = 0.2;
 local __TransitionRate = 10;
 
 local nvgOverlay = Material("vgui/splinter_cell/nvg_anim");
@@ -159,7 +159,5 @@ hook.Add("HUDPaint", "SPLINTERCELL_NVG_SHADER", function()
 		SPLINTERCELL_NVG_GOGGLES:CleanupMaterials();
 	end
 
-	-- We always render the overlay, transition out will make sure its not visible
-	-- when not using the goggles and will not interfere with other addons.
 	SPLINTERCELL_NVG_GOGGLES:DrawOverlay();
 end);
