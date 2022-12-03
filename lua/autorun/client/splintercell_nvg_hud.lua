@@ -95,14 +95,14 @@ end
 --!
 --! @brief      Used to render the lens transitioning in view.
 --!
-function SPLINTERCELL_NVG_GOGGLES:TransitionIn()
+function SPLINTERCELL_NVG_GOGGLES:TransitionIn(overlay)
 
 	-- Render lens coming in.
 	self.Transition = Lerp(FrameTime() * __TransitionRate, self.Transition, 2);
 
 	local transition = math.Clamp(self.Transition, 0, 1);
 	if (transition < 0.9) then
-		surface.SetMaterial(nvgOverlayAnim);
+		surface.SetMaterial(overlay);
 		surface.SetDrawColor(255, 255, 255, transition * 255);
 		surface.DrawTexturedRect(0, -ScrH() + (ScrH() * 1.3 * self.Transition), ScrW(), ScrH());
 	end
@@ -111,14 +111,14 @@ end
 --!
 --! @brief      Used to render the lens transitioning out of view.
 --!
-function SPLINTERCELL_NVG_GOGGLES:TransitionOut()
+function SPLINTERCELL_NVG_GOGGLES:TransitionOut(overlay)
 
 	-- Render lens going out.
 	self.Transition = Lerp(FrameTime() * __TransitionRate, self.Transition, 0);
 
 	local transition = math.Clamp(self.Transition - 1, 0, 1);
 	if (transition > 0.1) then
-		surface.SetMaterial(nvgOverlayAnim);
+		surface.SetMaterial(overlay);
 		surface.SetDrawColor(255, 255, 255, self.Transition * 255);
 		surface.DrawTexturedRect(0, -ScrH() + (ScrH() * 1.3 * self.Transition), ScrW(), ScrH());
 	end
@@ -163,7 +163,7 @@ hook.Add("HUDPaint", "SPLINTERCELL_NVG_SHADER", function()
 	local currentConfig = SPLINTERCELL_NVG_CONFIG[currentGoggle];
 	if (toggle) then
 
-		SPLINTERCELL_NVG_GOGGLES:TransitionIn();
+		SPLINTERCELL_NVG_GOGGLES:TransitionIn(currentConfig.Overlay);
 
 		-- Play the toggle sound specific to the goggles.
 		if (!SPLINTERCELL_NVG_GOGGLES.Toggled) then
@@ -197,7 +197,7 @@ hook.Add("HUDPaint", "SPLINTERCELL_NVG_SHADER", function()
 	else
 
 		-- Transition lens out.
-		SPLINTERCELL_NVG_GOGGLES:TransitionOut();
+		SPLINTERCELL_NVG_GOGGLES:TransitionOut(currentConfig.Overlay);
 
 		-- Reset defaults for next toggle.
 		SPLINTERCELL_NVG_GOGGLES.Toggled = false;

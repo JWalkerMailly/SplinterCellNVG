@@ -20,7 +20,7 @@ local __SwitchDelay = 0.5;
 local function __SetupDefaults(player)
 
 	if (player:GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", 0) == 0) then
-		player:SetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", 3);
+		player:SetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", 1);
 	end
 
 	if (player:GetNWInt("SPLINTERCELL_NVG_LAST_GOGGLE", 0) == 0) then
