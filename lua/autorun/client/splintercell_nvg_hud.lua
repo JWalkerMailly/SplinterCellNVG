@@ -12,6 +12,7 @@ end
 
 -- This acts like a static class.
 SPLINTERCELL_NVG_GOGGLES = {};
+SPLINTERCELL_NVG_GOGGLES.SoundsCacheReady = false;
 
 -- Toggle flags use to switch animation states.
 SPLINTERCELL_NVG_GOGGLES.Toggled = nil;
@@ -141,11 +142,32 @@ function SPLINTERCELL_NVG_GOGGLES:DrawOverlay(overlay)
 	surface.DrawTexturedRect(0, 0, ScrW(), ScrH());
 end
 
+--!
+--! @brief      Creates a sound cache client side to handle looping sounds for
+--!             all goggle types. Each sound will be a CSoundPatch. 
+--!
+function SPLINTERCELL_NVG_GOGGLES:SetupLoopingSounds()
+
+	if (self.SoundsCacheReady) then return; end
+
+	-- Initialize looping sound cache, this 
+	for k,v in pairs(SPLINTERCELL_NVG_CONFIG) do
+		if (v.SoundsCache == nil) then v.SoundsCache = {}; end
+		if (v.Sounds.Loop == nil) then continue; end
+		v.SoundsCache["Loop"] = CreateSound(LocalPlayer(), Sound(v.Sounds.Loop));
+	end
+
+	self.SoundsCacheReady = true;
+end
+
 --! 
 --! Draw hook entry point for all goggles. This will use the network var currently set on the player
 --! to determine which goggle to use.
 --!
 hook.Add("PreDrawHUD", "SPLINTERCELL_NVG_SHADER", function()
+
+	-- Initializes the looping sound cache.
+	SPLINTERCELL_NVG_GOGGLES:SetupLoopingSounds();
 
 	-- This is the autoload logic for the network var. Network vars will be handled serverside.
 	local currentGoggle = LocalPlayer():GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", 0);
