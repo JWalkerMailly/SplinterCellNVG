@@ -38,7 +38,7 @@ include("goggles/splintercell_nvg_electrotracker.lua");
 include("goggles/splintercell_nvg_electro.lua");
 
 -- Constants.
-local __TransitionRate = 10;
+local __TransitionRate = 5;
 local __TransitionDelay = 0.225;
 
 local nvgOverlay = Material("vgui/splinter_cell/nvg_anim");
@@ -98,10 +98,12 @@ end
 function SPLINTERCELL_NVG_GOGGLES:TransitionIn()
 
 	-- Render lens coming in.
-	self.Transition = Lerp(FrameTime() * __TransitionRate, self.Transition, 1);
-	if (self.Transition < 0.9) then
+	self.Transition = Lerp(FrameTime() * __TransitionRate, self.Transition, 2);
+
+	local transition = math.Clamp(self.Transition, 0, 1);
+	if (transition < 0.9) then
 		surface.SetMaterial(nvgOverlayAnim);
-		surface.SetDrawColor(255, 255, 255, self.Transition * 255);
+		surface.SetDrawColor(255, 255, 255, transition * 255);
 		surface.DrawTexturedRect(0, -ScrH() + (ScrH() * 1.3 * self.Transition), ScrW(), ScrH());
 	end
 end
@@ -113,7 +115,9 @@ function SPLINTERCELL_NVG_GOGGLES:TransitionOut()
 
 	-- Render lens going out.
 	self.Transition = Lerp(FrameTime() * __TransitionRate, self.Transition, 0);
-	if (self.Transition > 0.1) then
+
+	local transition = math.Clamp(self.Transition - 1, 0, 1);
+	if (transition > 0.1) then
 		surface.SetMaterial(nvgOverlayAnim);
 		surface.SetDrawColor(255, 255, 255, self.Transition * 255);
 		surface.DrawTexturedRect(0, -ScrH() + (ScrH() * 1.3 * self.Transition), ScrW(), ScrH());
@@ -125,14 +129,16 @@ end
 --!
 function SPLINTERCELL_NVG_GOGGLES:DrawOverlay()
 
+	local transition = math.Clamp(self.Transition - 1, 0, 1);
+
 	-- Vignetting effect.
 	surface.SetMaterial(nvgVignette);
-	surface.SetDrawColor(255, 255, 255, self.Transition * 255);
+	surface.SetDrawColor(255, 255, 255, transition * 255);
 	surface.DrawTexturedRect(0, 0, ScrW(), ScrH());
 
 	-- Animated overlay texture.
 	surface.SetMaterial(nvgOverlay);
-	surface.SetDrawColor(255, 255, 255, self.Transition * 255);
+	surface.SetDrawColor(255, 255, 255, transition * 255);
 	surface.DrawTexturedRect(0, 0, ScrW(), ScrH());
 end
 
