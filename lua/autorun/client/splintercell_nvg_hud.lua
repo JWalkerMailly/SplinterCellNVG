@@ -5,6 +5,11 @@ SPLINTERCELL_NVG_GOGGLES.Toggled = nil;
 SPLINTERCELL_NVG_GOGGLES.CurrentGoggles = nil;
 SPLINTERCELL_NVG_GOGGLES.ShouldCleanupMaterials = false;
 
+-- Used to handle transition and blending. NextTransition
+-- is only used to delay the screenspace effects and overlays.
+SPLINTERCELL_NVG_GOGGLES.Transition = 0;
+SPLINTERCELL_NVG_GOGGLES.NextTransition = 0;
+
 if (SERVER) then
 	AddCSLuaFile("goggles/splintercell_nvg_test.lua");
 	AddCSLuaFile("goggles/splintercell_nvg_thermal.lua");
@@ -24,6 +29,13 @@ include("goggles/splintercell_nvg_motion.lua");
 include("goggles/splintercell_nvg_enhanced.lua");
 include("goggles/splintercell_nvg_electrotracker.lua");
 include("goggles/splintercell_nvg_electro.lua");
+
+-- Constants.
+local __TransitionDelay = 0.1;
+local __TransitionRate = 10;
+
+local nvgOverlay = Material("vgui/splinter_cell/nvg_anim");
+local nvgVignette = Material("vgui/splinter_cell/overlay_vignette");
 
 --!
 --! @brief      Utility function to cleanup goggle model material overrides.
@@ -72,6 +84,25 @@ function SPLINTERCELL_NVG_GOGGLES:HandleMaterialOverrides(goggle)
 	SPLINTERCELL_NVG_GOGGLES.ShouldCleanupMaterials = true;
 end
 
+function SPLINTERCELL_NVG_GOGGLES:TransitionIn()
+	self.Transition = Lerp(FrameTime() * __TransitionRate, self.Transition, 1);
+end
+
+function SPLINTERCELL_NVG_GOGGLES:TransitionOut()
+	self.Transition = Lerp(FrameTime() * __TransitionRate, self.Transition, 0);
+end
+
+function SPLINTERCELL_NVG_GOGGLES:DrawOverlay()
+
+	surface.SetMaterial(nvgVignette);
+	surface.SetDrawColor(255, 255, 255, self.Transition * 255);
+	surface.DrawTexturedRect(0, 0, ScrW(), ScrH());
+
+	surface.SetMaterial(nvgOverlay);
+	surface.SetDrawColor(255, 255, 255, self.Transition * 255);
+	surface.DrawTexturedRect(0, 0, ScrW(), ScrH());
+end
+
 --! 
 --! Draw hook entry point for all goggles. This will use the network var currently set on the player
 --! to determine which goggle to use.
@@ -96,11 +127,12 @@ hook.Add("HUDPaint", "SPLINTERCELL_NVG_SHADER", function()
 	local currentConfig = SPLINTERCELL_NVG_CONFIG[currentGoggle];
 	if (toggle) then
 
-		local goggles = SPLINTERCELL_NVG_GOGGLES;
-		goggles[currentConfig.Hud](SPLINTERCELL_NVG_GOGGLES);
+		-- Begin animations.
+		SPLINTERCELL_NVG_GOGGLES:TransitionIn();
 
 		-- Play the toggle sound specific to the goggles.
 		if (!SPLINTERCELL_NVG_GOGGLES.Toggled) then
+			SPLINTERCELL_NVG_GOGGLES.NextTransition = CurTime() + __TransitionDelay;
 			SPLINTERCELL_NVG_GOGGLES.Toggled = true;
 			surface.PlaySound(currentConfig.Sounds.Activate);
 		end
@@ -111,12 +143,23 @@ hook.Add("HUDPaint", "SPLINTERCELL_NVG_SHADER", function()
 			surface.PlaySound("splinter_cell/goggles/standard/goggles_mode.wav");
 		end
 
+		-- Render screen space effects of selected goggle.
+		if (CurTime() > SPLINTERCELL_NVG_GOGGLES.NextTransition) then
+			local goggles = SPLINTERCELL_NVG_GOGGLES;
+			goggles[currentConfig.Hud](SPLINTERCELL_NVG_GOGGLES);
+		end
+
 		-- Handle material overrides for the goggle being used.
 		if (currentConfig.Filter != nil) then
 			SPLINTERCELL_NVG_GOGGLES:HandleMaterialOverrides(currentConfig);
 		end
 	else
+		SPLINTERCELL_NVG_GOGGLES:TransitionOut();
 		SPLINTERCELL_NVG_GOGGLES.Toggled = false;
 		SPLINTERCELL_NVG_GOGGLES:CleanupMaterials();
 	end
+
+	-- We always render the overlay, transition out will make sure its not visible
+	-- when not using the goggles and will not interfere with other addons.
+	SPLINTERCELL_NVG_GOGGLES:DrawOverlay();
 end);
