@@ -14,7 +14,8 @@ SPLINTERCELL_NVG_CONFIG[1] = {
 	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
 	Sounds = {
 		ToggleOn = "splinter_cell/goggles/standard/goggles_toggle.wav",
-		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav"
+		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav",
+		Activate = "splinter_cell/goggles/standard/goggles_activate.wav"
 	}
 };
 
@@ -30,7 +31,8 @@ SPLINTERCELL_NVG_CONFIG[2] = {
 	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
 	Sounds = {
 		ToggleOn = "splinter_cell/goggles/standard/goggles_toggle.wav",
-		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav"
+		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav",
+		Activate = "splinter_cell/goggles/standard/goggles_activate.wav"
 	}
 };
 
@@ -46,7 +48,8 @@ SPLINTERCELL_NVG_CONFIG[3] = {
 	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
 	Sounds = {
 		ToggleOn = "splinter_cell/goggles/standard/goggles_toggle.wav",
-		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav"
+		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav",
+		Activate = "splinter_cell/goggles/standard/goggles_activate.wav"
 	}
 };
 
@@ -62,7 +65,8 @@ SPLINTERCELL_NVG_CONFIG[4] = {
 	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
 	Sounds = {
 		ToggleOn = "splinter_cell/goggles/standard/goggles_toggle.wav",
-		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav"
+		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav",
+		Activate = "splinter_cell/goggles/standard/goggles_activate.wav"
 	}
 };
 
@@ -78,7 +82,8 @@ SPLINTERCELL_NVG_CONFIG[5] = {
 	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
 	Sounds = {
 		ToggleOn = "splinter_cell/goggles/standard/goggles_toggle.wav",
-		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav"
+		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav",
+		Activate = "splinter_cell/goggles/standard/goggles_activate.wav"
 	}
 };
 
@@ -94,7 +99,8 @@ SPLINTERCELL_NVG_CONFIG[6] = {
 	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
 	Sounds = {
 		ToggleOn = "splinter_cell/goggles/standard/goggles_toggle.wav",
-		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav"
+		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav",
+		Activate = "splinter_cell/goggles/standard/goggles_activate.wav"
 	}
 };
 
@@ -110,7 +116,8 @@ SPLINTERCELL_NVG_CONFIG[7] = {
 	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
 	Sounds = {
 		ToggleOn = "splinter_cell/goggles/standard/goggles_toggle.wav",
-		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav"
+		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav",
+		Activate = "splinter_cell/goggles/standard/goggles_activate.wav"
 	}
 };
 
@@ -126,6 +133,7 @@ SPLINTERCELL_NVG_CONFIG[8] = {
 	MaterialOverride = "effects/splinter_cell/orgsen_overlay",
 	Sounds = {
 		ToggleOn = "splinter_cell/goggles/sonar/sonar_goggles_toggle.wav",
-		ToggleOff = "splinter_cell/goggles/sonar/sonar_goggles_toggle_off.wav"
+		ToggleOff = "splinter_cell/goggles/sonar/sonar_goggles_toggle_off.wav",
+		Activate = "splinter_cell/goggles/standard/goggles_activate.wav"
 	}
 };

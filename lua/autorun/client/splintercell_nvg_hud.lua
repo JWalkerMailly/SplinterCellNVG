@@ -1,6 +1,7 @@
 
 -- This acts like a static class.
 SPLINTERCELL_NVG_GOGGLES = {};
+SPLINTERCELL_NVG_GOGGLES.Toggled = nil;
 SPLINTERCELL_NVG_GOGGLES.CurrentGoggles = nil;
 SPLINTERCELL_NVG_GOGGLES.ShouldCleanupMaterials = false;
 
@@ -80,13 +81,15 @@ hook.Add("HUDPaint", "SPLINTERCELL_NVG_SHADER", function()
 	-- This is the autoload logic for the network var. Network vars will be handled serverside.
 	local currentGoggle = LocalPlayer():GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", 0);
 	local lastGoggle = LocalPlayer():GetNWInt("SPLINTERCELL_NVG_LAST_GOGGLE", 0);
+	local toggle = GetConVar("SPLINTERCELL_NVG_TOGGLE"):GetBool();
 
 	-- Do nothing if no goggle is currently toggled.
 	if (currentGoggle == 0 || lastGoggle == 0) then return; end
 
 	-- This is only used clientside to handle animations and sounds. It has nothing to
 	-- do with the network var found on the client entity.
-	if (SPLINTERCELL_NVG_GOGGLES.CurrentGoggles == nil) then
+	if (SPLINTERCELL_NVG_GOGGLES.Toggled == nil) then
+		SPLINTERCELL_NVG_GOGGLES.Toggled = toggle;
 		SPLINTERCELL_NVG_GOGGLES.CurrentGoggles = currentGoggle;
 	end
 
@@ -94,14 +97,15 @@ hook.Add("HUDPaint", "SPLINTERCELL_NVG_SHADER", function()
 	--local lastConfig = SPLINTERCELL_NVG_CONFIG[lastGoggle];
 
 	-- Delegate call to the configuration file for which goggle to render.
-	if (GetConVar("SPLINTERCELL_NVG_TOGGLE"):GetBool()) then
+	if (toggle) then
 
 		local goggles = SPLINTERCELL_NVG_GOGGLES;
 		goggles[currentConfig.Hud](SPLINTERCELL_NVG_GOGGLES);
 
-		-- Handle material overrides for the goggle being used.
-		if (currentConfig.Filter != nil) then
-			SPLINTERCELL_NVG_GOGGLES:HandleMaterialOverrides(currentConfig);
+		-- Play the toggle sound specific to the goggles.
+		if (!SPLINTERCELL_NVG_GOGGLES.Toggled) then
+			SPLINTERCELL_NVG_GOGGLES.Toggled = true;
+			surface.PlaySound(currentConfig.Sounds.Activate);
 		end
 
 		-- Play goggle mode switch sound only clientside.
@@ -109,7 +113,13 @@ hook.Add("HUDPaint", "SPLINTERCELL_NVG_SHADER", function()
 			SPLINTERCELL_NVG_GOGGLES.CurrentGoggles = currentGoggle;
 			surface.PlaySound("splinter_cell/goggles/standard/goggles_mode.wav");
 		end
+
+		-- Handle material overrides for the goggle being used.
+		if (currentConfig.Filter != nil) then
+			SPLINTERCELL_NVG_GOGGLES:HandleMaterialOverrides(currentConfig);
+		end
 	else
+		SPLINTERCELL_NVG_GOGGLES.Toggled = false;
 		SPLINTERCELL_NVG_GOGGLES:CleanupMaterials();
 	end
 end);
