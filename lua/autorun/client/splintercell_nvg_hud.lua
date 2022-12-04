@@ -186,16 +186,16 @@ function SPLINTERCELL_NVG_GOGGLES:Render(config)
 	render.UpdateScreenEffectTexture();
 
 		local colorCorrect = config.ColorCorrection;
-		__RenderTarget:SetTexture("$fbtexture", render.GetScreenEffectTexture());
-		__RenderTarget:SetFloat("$pp_colour_addr", colorCorrect.ColorAdd.r);
-		__RenderTarget:SetFloat("$pp_colour_addg", colorCorrect.ColorAdd.g);
-		__RenderTarget:SetFloat("$pp_colour_addb", colorCorrect.ColorAdd.b);
-		__RenderTarget:SetFloat("$pp_colour_mulr", colorCorrect.ColorMul.r);
-		__RenderTarget:SetFloat("$pp_colour_mulg", colorCorrect.ColorMul.g);
-		__RenderTarget:SetFloat("$pp_colour_mulb", colorCorrect.ColorMul.b);
+		__RenderTarget:SetTexture("$fbtexture",          render.GetScreenEffectTexture());
+		__RenderTarget:SetFloat("$pp_colour_addr",       colorCorrect.ColorAdd.r);
+		__RenderTarget:SetFloat("$pp_colour_addg",       colorCorrect.ColorAdd.g);
+		__RenderTarget:SetFloat("$pp_colour_addb",       colorCorrect.ColorAdd.b);
+		__RenderTarget:SetFloat("$pp_colour_mulr",       colorCorrect.ColorMul.r);
+		__RenderTarget:SetFloat("$pp_colour_mulg",       colorCorrect.ColorMul.g);
+		__RenderTarget:SetFloat("$pp_colour_mulb",       colorCorrect.ColorMul.b);
 		__RenderTarget:SetFloat("$pp_colour_brightness", colorCorrect.Brightness);
-		__RenderTarget:SetFloat("$pp_colour_contrast", colorCorrect.Contrast);
-		__RenderTarget:SetFloat("$pp_colour_colour", colorCorrect.ColorMod);
+		__RenderTarget:SetFloat("$pp_colour_contrast",   colorCorrect.Contrast);
+		__RenderTarget:SetFloat("$pp_colour_colour",     colorCorrect.ColorMod);
 
 	render.SetMaterial(__RenderTarget);
 	render.DrawScreenQuad();
