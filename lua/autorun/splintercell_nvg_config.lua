@@ -48,7 +48,7 @@ SPLINTERCELL_NVG_CONFIG[1] = {
 
 	PostProcess = function()
 	DrawBloom(0.65, 3.1, 1.75, 0.45, 2, 1, 155 / 255, 155 / 255, 155 / 255);
-	DrawBloom(0.65, 3.1, 1.75, 0.45, 2, 1, 155 / 255, 155 / 255, 155 / 255);
+	DrawBloom(0.1, 2, 0.5, 0.25, 1, 0.6, 130 / 255, 135 / 255, 35 / 255);
 	end
 };
 
@@ -272,9 +272,9 @@ SPLINTERCELL_NVG_CONFIG[5] = {
 
 	Sounds = {
 		Loop      = "splinter_cell/goggles/tracking/motion_tracking_lp.wav",
-		ToggleOn  = "splinter_cell/goggles/standard/goggles_toggle.wav",
-		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav",
-		Activate  = "splinter_cell/goggles/standard/goggles_activate.wav"
+		ToggleOn  = "splinter_cell/goggles/tracking/toggle_off.wav",
+		ToggleOff = "splinter_cell/goggles/tracking/toggle_off.wav",
+		Activate  = "splinter_cell/goggles/tracking/toggle_on.wav"
 	},
 
 	Lighting = {
@@ -331,10 +331,10 @@ SPLINTERCELL_NVG_CONFIG[6] = {
 	end,
 
 	Sounds = {
-		Loop      = nil,
-		ToggleOn  = "splinter_cell/goggles/standard/goggles_toggle.wav",
-		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav",
-		Activate  = "splinter_cell/goggles/standard/goggles_activate.wav"
+		Loop      = "splinter_cell/goggles/tracking/emp_tracking_lp.wav",
+		ToggleOn  = "splinter_cell/goggles/tracking/toggle_off.wav",
+		ToggleOff = "splinter_cell/goggles/tracking/toggle_off.wav",
+		Activate  = "splinter_cell/goggles/tracking/toggle_on.wav"
 	},
 
 	Lighting = {
