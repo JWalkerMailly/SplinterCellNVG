@@ -171,7 +171,7 @@ end
 
 function SPLINTERCELL_NVG_GOGGLES:PlayLoopingSound(config, fadeIn)
 
-	if (config.SoundsCache["Loop"] != nil) then
+	if (config.SoundsCache != nil && config.SoundsCache["Loop"] != nil) then
 		config.SoundsCache["Loop"]:Play();
 		config.SoundsCache["Loop"]:ChangeVolume(0);
 		config.SoundsCache["Loop"]:ChangeVolume(1, fadeIn);
@@ -180,7 +180,7 @@ end
 
 function SPLINTERCELL_NVG_GOGGLES:StopLoopingSound(config, fadeOut)
 
-	if (config.SoundsCache["Loop"] != nil) then
+	if (config.SoundsCache != nil && config.SoundsCache["Loop"] != nil) then
 		config.SoundsCache["Loop"]:FadeOut(fadeOut)
 	end
 end
