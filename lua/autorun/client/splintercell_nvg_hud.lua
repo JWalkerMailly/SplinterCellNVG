@@ -286,8 +286,9 @@ hook.Add("PreDrawHUD", "SPLINTERCELL_NVG_HUD", function()
 			-- Goggles don't match with the cache, use must've switched goggles.
 			if (currentGoggle != SPLINTERCELL_NVG_GOGGLES.CurrentGoggles) then
 
-				-- Stop looping sound of previous goggles.
+				-- Stop looping sound of previous goggles and cleanup materials.
 				local previousConfig = SPLINTERCELL_NVG_CONFIG[SPLINTERCELL_NVG_GOGGLES.CurrentGoggles];
+				SPLINTERCELL_NVG_GOGGLES:CleanupMaterials();
 				SPLINTERCELL_NVG_GOGGLES:StopLoopingSound(previousConfig, 0.5);
 
 				-- Play goggle mode switch sound only clientside and start looping sound.
