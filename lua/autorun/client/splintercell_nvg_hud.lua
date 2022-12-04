@@ -169,6 +169,22 @@ function SPLINTERCELL_NVG_GOGGLES:SetupLoopingSounds()
 	self.SoundsCacheReady = true;
 end
 
+function SPLINTERCELL_NVG_GOGGLES:PlayLoopingSound(config, fadeIn)
+
+	if (config.SoundsCache["Loop"] != nil) then
+		config.SoundsCache["Loop"]:Play();
+		config.SoundsCache["Loop"]:ChangeVolume(0);
+		config.SoundsCache["Loop"]:ChangeVolume(1, fadeIn);
+	end
+end
+
+function SPLINTERCELL_NVG_GOGGLES:StopLoopingSound(config, fadeOut)
+
+	if (config.SoundsCache["Loop"] != nil) then
+		config.SoundsCache["Loop"]:FadeOut(fadeOut)
+	end
+end
+
 --!
 --! @brief      Sets up rendering space quad on top of the screen for the current goggle.
 --!             This will copy the postprocessing color texture for upcoming render operations.
@@ -267,9 +283,16 @@ hook.Add("PreDrawHUD", "SPLINTERCELL_NVG_HUD", function()
 				SPLINTERCELL_NVG_GOGGLES.Toggled = true;
 			end
 
-			-- Play goggle mode switch sound only clientside.
+			-- Goggles don't match with the cache, use must've switched goggles.
 			if (currentGoggle != SPLINTERCELL_NVG_GOGGLES.CurrentGoggles) then
+
+				-- Stop looping sound of previous goggles.
+				local previousConfig = SPLINTERCELL_NVG_CONFIG[SPLINTERCELL_NVG_GOGGLES.CurrentGoggles];
+				SPLINTERCELL_NVG_GOGGLES:StopLoopingSound(previousConfig, 0.5);
+
+				-- Play goggle mode switch sound only clientside and start looping sound.
 				SPLINTERCELL_NVG_GOGGLES.CurrentGoggles = currentGoggle;
+				SPLINTERCELL_NVG_GOGGLES:PlayLoopingSound(currentConfig, 1.5);
 				surface.PlaySound("splinter_cell/goggles/standard/goggles_mode.wav");
 			end
 
@@ -288,9 +311,10 @@ hook.Add("PreDrawHUD", "SPLINTERCELL_NVG_HUD", function()
 					SPLINTERCELL_NVG_GOGGLES:HandleMaterialOverrides(currentConfig);
 				end
 
-				-- Play activate sound on client only after delay expired.
+				-- Play activate sound on client only after delay expired and start looping sound.
 				if (!SPLINTERCELL_NVG_GOGGLES.ToggledSound) then
 					SPLINTERCELL_NVG_GOGGLES.ToggledSound = true;
+					SPLINTERCELL_NVG_GOGGLES:PlayLoopingSound(currentConfig, 1.5);
 					surface.PlaySound(currentConfig.Sounds.Activate);
 				end
 			end
@@ -306,6 +330,7 @@ hook.Add("PreDrawHUD", "SPLINTERCELL_NVG_HUD", function()
 
 			-- Restore default materials on entities.
 			SPLINTERCELL_NVG_GOGGLES:CleanupMaterials();
+			SPLINTERCELL_NVG_GOGGLES:StopLoopingSound(currentConfig, 0);
 		end
 
 		-- This is always called but will not interfere with other addons.

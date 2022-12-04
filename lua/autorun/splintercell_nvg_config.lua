@@ -239,7 +239,7 @@ SPLINTERCELL_NVG_CONFIG[5] = {
 	end,
 
 	Sounds = {
-		Loop      = nil,
+		Loop      = "splinter_cell/goggles/tracking/motion_tracking_lp.wav",
 		ToggleOn  = "splinter_cell/goggles/standard/goggles_toggle.wav",
 		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav",
 		Activate  = "splinter_cell/goggles/standard/goggles_activate.wav"

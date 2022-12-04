@@ -81,3 +81,10 @@ hook.Add("PlayerButtonDown", "SPLINTERCELL_NVG_INPUT", function(player, button)
 		player:SetNWFloat("SPLINTERCELL_NVG_NEXT_SWITCH", CurTime() + __SwitchDelay);
 	end
 end);
+
+--! 
+--! Simple hook to remove goggle on death.
+--!
+hook.Add("PlayerDeath", "SPLINTERCELL_NVG_DEATH", function(victim, inflictor, attacker)
+	victim:ConCommand("SPLINTERCELL_NVG_TOGGLE 0");
+end);
