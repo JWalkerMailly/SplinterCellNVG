@@ -8,6 +8,8 @@ if (SERVER) then
 	AddCSLuaFile("goggles/splintercell_nvg_enhanced.lua");
 	AddCSLuaFile("goggles/splintercell_nvg_electrotracker.lua");
 	AddCSLuaFile("goggles/splintercell_nvg_electro.lua");
+	AddCSLuaFile("goggles/splintercell_nvg_scda_night.lua");
+	AddCSLuaFile("goggles/splintercell_nvg_scda_thermal.lua");
 end
 
 -- This acts like a static class.
@@ -37,6 +39,8 @@ include("goggles/splintercell_nvg_motion.lua");
 include("goggles/splintercell_nvg_enhanced.lua");
 include("goggles/splintercell_nvg_electrotracker.lua");
 include("goggles/splintercell_nvg_electro.lua");
+include("goggles/splintercell_nvg_scda_night.lua");
+include("goggles/splintercell_nvg_scda_thermal.lua");
 
 local __RenderTarget = Material("pp/colour");
 local __TransitionRate = 5;
