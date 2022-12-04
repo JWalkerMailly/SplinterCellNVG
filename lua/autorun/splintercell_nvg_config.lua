@@ -1,17 +1,4 @@
 
--- A note on postprocessing:
--- Postprocessing order matters, here is the reverse engineered stack for Gmod:
--- RenderToyTown
--- RenderBokeh
--- RenderMotionBlur
--- RenderBloom
--- RenderSobel
--- RenderColorModify
--- RenderMaterialOverlay
--- RenderSharpen
--- RenderSunbeams
--- RenderTexturize
-
 -- This acts like a static class.
 SPLINTERCELL_NVG_CONFIG = {};
 
@@ -65,6 +52,7 @@ SPLINTERCELL_NVG_CONFIG[1] = {
 -- Thermal vision
 ----------------------------------------------------------------
 SPLINTERCELL_NVG_CONFIG[2] = {
+
 	Name = "Thermal",
 	Hud = "DrawThermalVision",
 
@@ -72,7 +60,7 @@ SPLINTERCELL_NVG_CONFIG[2] = {
 	MaterialInterlace = Material("vgui/splinter_cell/interlace_overlay"),
 	InterlaceColor    = Color(155, 155, 155, 128),
 
-	MaterialOverride  = "effects/splinter_cell/orgscan_overlay",
+	MaterialOverride  = "effects/splinter_cell/thermal_radius",
 	Filter = function(ent)
 		return ent:IsPlayer() || ent:IsNPC() || ent:IsNextBot();
 	end,
@@ -104,10 +92,11 @@ SPLINTERCELL_NVG_CONFIG[2] = {
 
 	PostProcess = function()
 
-		-- This order matters, refer to the note at the top of this file.
-		DrawMotionBlur(0.5, 1.0, 0);
-		DrawBloom(0.25, 3.35, 1.75, 0.5, 2, 7, 0 / 255, 0 / 255, 0 / 255);
+		-- Sobel must be applied first to avoid darkening the result.
 		DrawSobel(0.6);
+
+		-- Color modify now before any other rendering operations. This way
+		-- the texturizer will be compounded on top.
 		DrawColorModify({
 			["$pp_colour_addr"]       = 0   * 0.02, -- * 0.02 is important.
 			["$pp_colour_addg"]       = 0   * 0.02, -- * 0.02 is important.
@@ -120,8 +109,13 @@ SPLINTERCELL_NVG_CONFIG[2] = {
 			["$pp_colour_colour"]     = 0.0
 		});
 
-		-- This must be applied last.
+		-- Render first bloom pass and apply texurizer to achieve thermal effect.
+		DrawBloom(0.65, 3.1, 1.75, 0.45, 2, -7, 155 / 255, 155 / 255, 155 / 255);
 		DrawTexturize(1, Material("effects/splinter_cell/thermal.png"));
+
+		-- Final bloom pass with motion blur to give a glowing ghosting effect.
+		DrawBloom(0.65, 3.1, 1.75, 0.45, 2, 1, 155 / 255, 155 / 255, 155 / 255);
+		DrawMotionBlur(0.3, 1.0, 0);
 	end
 };
 
@@ -129,6 +123,7 @@ SPLINTERCELL_NVG_CONFIG[2] = {
 -- Electromagnetic vision
 ----------------------------------------------------------------
 SPLINTERCELL_NVG_CONFIG[3] = {
+
 	Name = "Electromagnetic",
 	Hud = "DrawElectromagneticVision",
 
@@ -174,6 +169,7 @@ SPLINTERCELL_NVG_CONFIG[3] = {
 -- Enhanced Night vision
 ----------------------------------------------------------------
 SPLINTERCELL_NVG_CONFIG[4] = {
+
 	Name = "Enhanced Night",
 	Hud = "DrawEnhancedVision",
 
@@ -219,6 +215,7 @@ SPLINTERCELL_NVG_CONFIG[4] = {
 -- Motion Tracking vision
 ----------------------------------------------------------------
 SPLINTERCELL_NVG_CONFIG[5] = {
+
 	Name = "Motion Tracking",
 	Hud = "DrawMotionTrackerVision",
 
@@ -264,6 +261,7 @@ SPLINTERCELL_NVG_CONFIG[5] = {
 -- Electromagnetic Tracking vision
 ----------------------------------------------------------------
 SPLINTERCELL_NVG_CONFIG[6] = {
+
 	Name = "Electromagnetic Tracking",
 	Hud = "DrawElectroTrackerVision",
 
@@ -309,6 +307,7 @@ SPLINTERCELL_NVG_CONFIG[6] = {
 -- Sonar vision
 ----------------------------------------------------------------
 SPLINTERCELL_NVG_CONFIG[7] = {
+
 	Name = "Sonar",
 	Hud = "DrawSonarVision",
 
