@@ -20,7 +20,7 @@ local __SwitchDelay = 0.5;
 local function __SetupDefaults(player)
 
 	if (player:GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", 0) == 0) then
-		player:SetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", 3);
+		player:SetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", 1);
 	end
 
 	if (player:GetNWInt("SPLINTERCELL_NVG_LAST_GOGGLE", 0) == 0) then
@@ -80,4 +80,11 @@ hook.Add("PlayerButtonDown", "SPLINTERCELL_NVG_INPUT", function(player, button)
 		player:SetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", current);
 		player:SetNWFloat("SPLINTERCELL_NVG_NEXT_SWITCH", CurTime() + __SwitchDelay);
 	end
+end);
+
+--! 
+--! Simple hook to remove goggle on death.
+--!
+hook.Add("PlayerDeath", "SPLINTERCELL_NVG_DEATH", function(victim, inflictor, attacker)
+	victim:ConCommand("SPLINTERCELL_NVG_TOGGLE 0");
 end);

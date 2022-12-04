@@ -1,5 +1,4 @@
 
--- Rendering logic for the motion goggles. This will be called in the HUDPaint hook.
+-- Rendering logic for the motion goggles.
 function SPLINTERCELL_NVG_GOGGLES:DrawMotionTrackerVision()
-	print("DrawMotionTrackerVision")
 end
