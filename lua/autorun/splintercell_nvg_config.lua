@@ -8,7 +8,6 @@ SPLINTERCELL_NVG_CONFIG = {};
 SPLINTERCELL_NVG_CONFIG[1] = {
 
 	Name = "Night",
-	Hud = "DrawNightVision",
 
 	MaterialOverlay   = Material("vgui/splinter_cell/nvg_anim"),
 	OverlayFirst      = false,
@@ -59,7 +58,6 @@ SPLINTERCELL_NVG_CONFIG[1] = {
 SPLINTERCELL_NVG_CONFIG[2] = {
 
 	Name = "Thermal",
-	Hud = "DrawThermalVision",
 
 	MaterialOverlay   = Material("vgui/splinter_cell/nvg_anim"),
 	OverlayFirst      = false,
@@ -132,7 +130,6 @@ SPLINTERCELL_NVG_CONFIG[2] = {
 SPLINTERCELL_NVG_CONFIG[3] = {
 
 	Name = "Electromagnetic",
-	Hud = "DrawElectromagneticVision",
 
 	MaterialOverlay   = Material("vgui/splinter_cell/nvg_anim"),
 	OverlayFirst      = true,
@@ -212,7 +209,6 @@ SPLINTERCELL_NVG_CONFIG[3] = {
 SPLINTERCELL_NVG_CONFIG[4] = {
 
 	Name = "Enhanced Night",
-	Hud = "DrawEnhancedVision",
 
 	MaterialOverlay   = Material("vgui/splinter_cell/overlay_interlace"),
 	OverlayFirst      = false,
@@ -262,7 +258,6 @@ SPLINTERCELL_NVG_CONFIG[4] = {
 SPLINTERCELL_NVG_CONFIG[5] = {
 
 	Name = "Motion Tracking",
-	Hud = "DrawMotionTrackerVision",
 
 	MaterialOverlay   = Material("vgui/splinter_cell/overlay_honeycomb"),
 	OverlayFirst      = true,
@@ -317,7 +312,6 @@ SPLINTERCELL_NVG_CONFIG[5] = {
 SPLINTERCELL_NVG_CONFIG[6] = {
 
 	Name = "Electromagnetic Tracking",
-	Hud = "DrawElectroTrackerVision",
 
 	MaterialOverlay   = Material("vgui/splinter_cell/overlay_honeycomb"),
 	OverlayFirst      = true,
@@ -378,7 +372,6 @@ SPLINTERCELL_NVG_CONFIG[6] = {
 SPLINTERCELL_NVG_CONFIG[7] = {
 
 	Name = "Sonar",
-	Hud = "DrawSonarVision",
 
 	MaterialOverlay   = Material("vgui/splinter_cell/nvg_filter2"),
 	OverlayFirst      = false,
@@ -432,7 +425,6 @@ SPLINTERCELL_NVG_CONFIG[7] = {
 SPLINTERCELL_NVG_CONFIG[8] = {
 
 	Name = "Epsilon Thermal",
-	Hud = "DrawThermalSCDAVision",
 
 	MaterialOverlay   = Material("vgui/splinter_cell/nvg_anim"),
 	OverlayFirst      = false,
@@ -505,7 +497,6 @@ SPLINTERCELL_NVG_CONFIG[8] = {
 SPLINTERCELL_NVG_CONFIG[9] = {
 
 	Name = "Epsilon Night",
-	Hud = "DrawNightVisionSCDA",
 
 	MaterialOverlay   = Material("vgui/splinter_cell/overlay_goggles"),
 	OverlayFirst      = false,

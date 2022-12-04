@@ -1,17 +1,4 @@
 
--- Send custom rendering files to clients.
-if (SERVER) then
-	AddCSLuaFile("goggles/splintercell_nvg_thermal.lua");
-	AddCSLuaFile("goggles/splintercell_nvg_sonar.lua");
-	AddCSLuaFile("goggles/splintercell_nvg_night.lua");
-	AddCSLuaFile("goggles/splintercell_nvg_motion.lua");
-	AddCSLuaFile("goggles/splintercell_nvg_enhanced.lua");
-	AddCSLuaFile("goggles/splintercell_nvg_electrotracker.lua");
-	AddCSLuaFile("goggles/splintercell_nvg_electro.lua");
-	AddCSLuaFile("goggles/splintercell_nvg_scda_night.lua");
-	AddCSLuaFile("goggles/splintercell_nvg_scda_thermal.lua");
-end
-
 -- This acts like a static class.
 SPLINTERCELL_NVG_GOGGLES = {};
 SPLINTERCELL_NVG_GOGGLES.SoundsCacheReady = false;
@@ -29,18 +16,6 @@ SPLINTERCELL_NVG_GOGGLES.ShouldCleanupMaterials = false;
 SPLINTERCELL_NVG_GOGGLES.Transition = 0;
 SPLINTERCELL_NVG_GOGGLES.NextTransition = 0;
 SPLINTERCELL_NVG_GOGGLES.ScreenspaceReady = false;
-
--- Include files. This needs to be called after setting up the static
--- table inorder to work properly. Each file will add its own functions to the table.
-include("goggles/splintercell_nvg_thermal.lua");
-include("goggles/splintercell_nvg_sonar.lua");
-include("goggles/splintercell_nvg_night.lua");
-include("goggles/splintercell_nvg_motion.lua");
-include("goggles/splintercell_nvg_enhanced.lua");
-include("goggles/splintercell_nvg_electrotracker.lua");
-include("goggles/splintercell_nvg_electro.lua");
-include("goggles/splintercell_nvg_scda_night.lua");
-include("goggles/splintercell_nvg_scda_thermal.lua");
 
 local __RenderTarget = Material("pp/colour");
 local __TransitionRate = 5;
@@ -306,10 +281,6 @@ hook.Add("PreDrawHUD", "SPLINTERCELL_NVG_HUD", function()
 				-- Render screen space effects of current config.
 				SPLINTERCELL_NVG_GOGGLES.ScreenspaceReady = true;
 				SPLINTERCELL_NVG_GOGGLES:Render(currentConfig);
-
-				-- Begin custom draw call to goggle.
-				local goggles = SPLINTERCELL_NVG_GOGGLES;
-				goggles[currentConfig.Hud](SPLINTERCELL_NVG_GOGGLES);
 
 				-- Handle material overrides for the goggle being used.
 				if (currentConfig.Filter != nil) then
