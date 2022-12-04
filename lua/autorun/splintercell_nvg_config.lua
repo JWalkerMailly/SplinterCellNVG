@@ -3,7 +3,6 @@
 -- Postprocessing order matters, here is the reverse engineered stack for Gmod:
 -- RenderToyTown
 -- RenderBokeh
--- RenderTexturize
 -- RenderMotionBlur
 -- RenderBloom
 -- RenderSobel
@@ -11,6 +10,7 @@
 -- RenderMaterialOverlay
 -- RenderSharpen
 -- RenderSunbeams
+-- RenderTexturize
 
 -- This acts like a static class.
 SPLINTERCELL_NVG_CONFIG = {};
@@ -105,7 +105,6 @@ SPLINTERCELL_NVG_CONFIG[2] = {
 	PostProcess = function()
 
 		-- This order matters, refer to the note at the top of this file.
-		DrawTexturize(1, Material("effects/splinter_cell/thermal.png"));
 		DrawMotionBlur(0.5, 1.0, 0);
 		DrawBloom(0.25, 3.35, 1.75, 0.5, 2, 7, 0 / 255, 0 / 255, 0 / 255);
 		DrawSobel(0.6);
@@ -120,6 +119,9 @@ SPLINTERCELL_NVG_CONFIG[2] = {
 			["$pp_colour_contrast"]   = 0.15,
 			["$pp_colour_colour"]     = 0.0
 		});
+
+		-- This must be applied last.
+		DrawTexturize(1, Material("effects/splinter_cell/thermal.png"));
 	end
 };
 
