@@ -47,7 +47,7 @@ hook.Add("PlayerButtonDown", "SPLINTERCELL_NVG_INPUT", function(player, button)
 
 	-- Stop current goggle reference as the last one used.
 	--local toggle = GetConVar("SPLINTERCELL_NVG_TOGGLE"):GetBool();
-	local toggle = player:GetInfoNum("SPLINTERCELL_NVG_TOGGLE");
+	local toggle = player:GetInfoNum("SPLINTERCELL_NVG_TOGGLE", 0);
 	if (toggle == 1) then toggle = true; else toggle = false; end
 	local current = player:GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE");
 
@@ -59,7 +59,7 @@ hook.Add("PlayerButtonDown", "SPLINTERCELL_NVG_INPUT", function(player, button)
 	local goggle = SPLINTERCELL_NVG_CONFIG[current];
 
 	-- Toggle on and off.
-	if (button == player:GetInfoNum("SPLINTERCELL_NVG_INPUT") && CurTime() > nextToggle) then
+	if (button == player:GetInfoNum("SPLINTERCELL_NVG_INPUT", 24) && CurTime() > nextToggle) then
 
 		-- Emit sound on toggle on/off based on the goggle's config.
 		if (!toggle) then
@@ -74,7 +74,7 @@ hook.Add("PlayerButtonDown", "SPLINTERCELL_NVG_INPUT", function(player, button)
 	end
 
 	-- Cycle between different goggle modes.
-	if (toggle && button == player:GetInfoNum("SPLINTERCELL_NVG_CYCLE") && CurTime() > nextSwitch) then
+	if (toggle && button == player:GetInfoNum("SPLINTERCELL_NVG_CYCLE", 23) && CurTime() > nextSwitch) then
 
 		player:SetNWInt("SPLINTERCELL_NVG_LAST_GOGGLE", current);
 
