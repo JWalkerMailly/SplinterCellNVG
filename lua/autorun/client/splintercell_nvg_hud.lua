@@ -1,6 +1,6 @@
 
+-- Send custom rendering files to clients.
 if (SERVER) then
-	AddCSLuaFile("goggles/splintercell_nvg_test.lua");
 	AddCSLuaFile("goggles/splintercell_nvg_thermal.lua");
 	AddCSLuaFile("goggles/splintercell_nvg_sonar.lua");
 	AddCSLuaFile("goggles/splintercell_nvg_night.lua");
@@ -26,10 +26,10 @@ SPLINTERCELL_NVG_GOGGLES.ShouldCleanupMaterials = false;
 -- is only used to delay the screenspace effects and overlays.
 SPLINTERCELL_NVG_GOGGLES.Transition = 0;
 SPLINTERCELL_NVG_GOGGLES.NextTransition = 0;
+SPLINTERCELL_NVG_GOGGLES.ScreenspaceReady = false;
 
 -- Include files. This needs to be called after setting up the static
 -- table inorder to work properly. Each file will add its own functions to the table.
-include("goggles/splintercell_nvg_test.lua");
 include("goggles/splintercell_nvg_thermal.lua");
 include("goggles/splintercell_nvg_sonar.lua");
 include("goggles/splintercell_nvg_night.lua");
@@ -38,7 +38,7 @@ include("goggles/splintercell_nvg_enhanced.lua");
 include("goggles/splintercell_nvg_electrotracker.lua");
 include("goggles/splintercell_nvg_electro.lua");
 
--- Constants.
+local __RenderTarget = Material("pp/colour");
 local __TransitionRate = 5;
 local __TransitionDelay = 0.225;
 
@@ -160,11 +160,75 @@ function SPLINTERCELL_NVG_GOGGLES:SetupLoopingSounds()
 	self.SoundsCacheReady = true;
 end
 
+--!
+--! @brief      Sets up rendering space quad on top of the screen for the current goggle.
+--!             This will copy the postprocessing color texture for upcoming render operations.
+--!
+--! @param      config  The current goggle configuration.
+--!
+function SPLINTERCELL_NVG_GOGGLES:Render(config)
+
+	-- Setup lighting from configuration.
+	local lighting    = config.Lighting;
+	local dlight      = DynamicLight(LocalPlayer():EntIndex());
+	dlight.r          = lighting.Color.r;
+	dlight.g          = lighting.Color.g;
+	dlight.b          = lighting.Color.b;
+	dlight.minlight   = lighting.Min;
+	dlight.style      = lighting.Style;
+	dlight.Brightness = lighting.Brightness;
+	dlight.Pos        = EyePos();
+	dlight.Size       = lighting.Size;
+	dlight.Decay      = lighting.Decay;
+	dlight.DieTime    = CurTime() + lighting.DieTime;
+
+	-- Offload to rendertarget.
+	render.UpdateScreenEffectTexture();
+
+		local colorCorrect = config.ColorCorrection;
+		__RenderTarget:SetTexture("$fbtexture", render.GetScreenEffectTexture());
+		__RenderTarget:SetFloat("$pp_colour_addr", colorCorrect.ColorAdd.r);
+		__RenderTarget:SetFloat("$pp_colour_addg", colorCorrect.ColorAdd.g);
+		__RenderTarget:SetFloat("$pp_colour_addb", colorCorrect.ColorAdd.b);
+		__RenderTarget:SetFloat("$pp_colour_mulr", colorCorrect.ColorMul.r);
+		__RenderTarget:SetFloat("$pp_colour_mulg", colorCorrect.ColorMul.g);
+		__RenderTarget:SetFloat("$pp_colour_mulb", colorCorrect.ColorMul.b);
+		__RenderTarget:SetFloat("$pp_colour_brightness", colorCorrect.Brightness);
+		__RenderTarget:SetFloat("$pp_colour_contrast", colorCorrect.Contrast);
+		__RenderTarget:SetFloat("$pp_colour_colour", colorCorrect.ColorMod);
+
+	render.SetMaterial(__RenderTarget);
+	render.DrawScreenQuad();
+
+	-- Render interlace material over screen, if provided.
+	if (config.MaterialInterlace != nil) then
+		local interlaceColor = config.InterlaceColor;
+		surface.SetMaterial(config.MaterialInterlace);
+		surface.SetDrawColor(interlaceColor.r, interlaceColor.g, interlaceColor.b, interlaceColor.a);
+		surface.DrawTexturedRect(0 + math.Rand(-1,1), 0 + math.Rand(-1,1), ScrW(), ScrH());
+	end
+end
+
+--! 
+--! Goggle screenspace rendering hook.
+--!
+hook.Add("RenderScreenspaceEffects", "SPLINTERCELL_NVG_SHADER", function()
+
+	-- This is the autoload logic for the network var. Network vars will be handled serverside.
+	local currentGoggle = LocalPlayer():GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", 0);
+	if (currentGoggle == 0) then return; end
+
+	-- Render post processing effects for current goggles.
+	if (SPLINTERCELL_NVG_GOGGLES.ScreenspaceReady) then
+		SPLINTERCELL_NVG_CONFIG[currentGoggle].PostProcess();
+	end
+end);
+
 --! 
 --! Draw hook entry point for all goggles. This will use the network var currently set on the player
 --! to determine which goggle to use.
 --!
-hook.Add("PreDrawHUD", "SPLINTERCELL_NVG_SHADER", function()
+hook.Add("PreDrawHUD", "SPLINTERCELL_NVG_HUD", function()
 
 	-- Initializes the looping sound cache.
 	SPLINTERCELL_NVG_GOGGLES:SetupLoopingSounds();
@@ -202,7 +266,11 @@ hook.Add("PreDrawHUD", "SPLINTERCELL_NVG_SHADER", function()
 
 			if (CurTime() > SPLINTERCELL_NVG_GOGGLES.NextTransition) then
 
-				-- Begin rendering screen space effects of the current goggles.
+				-- Render screen space effects of current config.
+				SPLINTERCELL_NVG_GOGGLES.ScreenspaceReady = true;
+				SPLINTERCELL_NVG_GOGGLES:Render(currentConfig);
+
+				-- Begin custom draw call to goggle.
 				local goggles = SPLINTERCELL_NVG_GOGGLES;
 				goggles[currentConfig.Hud](SPLINTERCELL_NVG_GOGGLES);
 
@@ -225,6 +293,9 @@ hook.Add("PreDrawHUD", "SPLINTERCELL_NVG_SHADER", function()
 			-- Reset defaults for next toggle.
 			SPLINTERCELL_NVG_GOGGLES.Toggled = false;
 			SPLINTERCELL_NVG_GOGGLES.ToggledSound = false;
+			SPLINTERCELL_NVG_GOGGLES.ScreenspaceReady = false;
+
+			-- Restore default materials on entities.
 			SPLINTERCELL_NVG_GOGGLES:CleanupMaterials();
 		end
 
