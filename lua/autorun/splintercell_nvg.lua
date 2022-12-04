@@ -41,6 +41,8 @@ end
 --!
 hook.Add("PlayerButtonDown", "SPLINTERCELL_NVG_INPUT", function(player, button)
 
+	if (!SERVER) then return; end
+
 	__SetupDefaults(player);
 
 	-- Stop current goggle reference as the last one used.
