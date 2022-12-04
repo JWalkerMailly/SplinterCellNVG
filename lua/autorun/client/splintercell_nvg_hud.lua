@@ -127,19 +127,28 @@ end
 --!
 --! @brief      Renders the overlay effect for vignette and animated lens.
 --!
-function SPLINTERCELL_NVG_GOGGLES:DrawOverlay(overlay)
+function SPLINTERCELL_NVG_GOGGLES:DrawOverlay(overlay, swap)
 
 	local transition = math.Clamp(self.Transition - 1, 0, 1);
 
 	-- Vignetting effect.
-	surface.SetMaterial(nvgVignette);
-	surface.SetDrawColor(255, 255, 255, transition * 255);
-	surface.DrawTexturedRect(0, 0, ScrW(), ScrH());
+	if (!swap) then
+		surface.SetMaterial(nvgVignette);
+		surface.SetDrawColor(255, 255, 255, transition * 255);
+		surface.DrawTexturedRect(0, 0, ScrW(), ScrH());
+	end
 
 	-- Animated overlay texture.
 	surface.SetMaterial(overlay);
 	surface.SetDrawColor(255, 255, 255, transition * 255);
 	surface.DrawTexturedRect(0, 0, ScrW(), ScrH());
+
+	-- Vignetting effect.
+	if (swap) then
+		surface.SetMaterial(nvgVignette);
+		surface.SetDrawColor(255, 255, 255, transition * 255);
+		surface.DrawTexturedRect(0, 0, ScrW(), ScrH());
+	end
 end
 
 --!
@@ -300,6 +309,6 @@ hook.Add("PreDrawHUD", "SPLINTERCELL_NVG_HUD", function()
 		end
 
 		-- This is always called but will not interfere with other addons.
-		SPLINTERCELL_NVG_GOGGLES:DrawOverlay(currentConfig.MaterialOverlay);
+		SPLINTERCELL_NVG_GOGGLES:DrawOverlay(currentConfig.MaterialOverlay, currentConfig.OverlayFirst);
 	cam.End2D();
 end);

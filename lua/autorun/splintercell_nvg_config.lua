@@ -11,6 +11,8 @@ SPLINTERCELL_NVG_CONFIG[1] = {
 	Hud = "DrawNightVision",
 
 	MaterialOverlay   = Material("vgui/splinter_cell/nvg_anim"),
+	OverlayFirst      = false,
+
 	MaterialInterlace = Material("vgui/splinter_cell/interlace_overlay"),
 	InterlaceColor    = Color(155, 155, 155, 128),
 
@@ -57,6 +59,8 @@ SPLINTERCELL_NVG_CONFIG[2] = {
 	Hud = "DrawThermalVision",
 
 	MaterialOverlay   = Material("vgui/splinter_cell/nvg_anim"),
+	OverlayFirst      = false,
+
 	MaterialInterlace = Material("vgui/splinter_cell/interlace_overlay"),
 	InterlaceColor    = Color(155, 155, 155, 128),
 
@@ -128,6 +132,8 @@ SPLINTERCELL_NVG_CONFIG[3] = {
 	Hud = "DrawElectromagneticVision",
 
 	MaterialOverlay   = Material("vgui/splinter_cell/nvg_anim"),
+	OverlayFirst      = false,
+
 	MaterialInterlace = Material("vgui/splinter_cell/interlace_overlay"),
 	InterlaceColor    = Color(155, 155, 155, 128),
 
@@ -174,6 +180,8 @@ SPLINTERCELL_NVG_CONFIG[4] = {
 	Hud = "DrawEnhancedVision",
 
 	MaterialOverlay   = Material("vgui/splinter_cell/nvg_anim"),
+	OverlayFirst      = false,
+
 	MaterialInterlace = Material("vgui/splinter_cell/interlace_overlay"),
 	InterlaceColor    = Color(155, 155, 155, 128),
 
@@ -219,7 +227,9 @@ SPLINTERCELL_NVG_CONFIG[5] = {
 	Name = "Motion Tracking",
 	Hud = "DrawMotionTrackerVision",
 
-	MaterialOverlay   = Material("vgui/splinter_cell/nvg_anim"),
+	MaterialOverlay   = Material("vgui/splinter_cell/overlay_honeycomb"),
+	OverlayFirst      = true,
+
 	MaterialInterlace = Material("vgui/splinter_cell/interlace_overlay"),
 	InterlaceColor    = Color(155, 155, 155, 128),
 
@@ -266,6 +276,8 @@ SPLINTERCELL_NVG_CONFIG[6] = {
 	Hud = "DrawElectroTrackerVision",
 
 	MaterialOverlay   = Material("vgui/splinter_cell/nvg_anim"),
+	OverlayFirst      = false,
+
 	MaterialInterlace = Material("vgui/splinter_cell/interlace_overlay"),
 	InterlaceColor    = Color(155, 155, 155, 128),
 
@@ -312,6 +324,8 @@ SPLINTERCELL_NVG_CONFIG[7] = {
 	Hud = "DrawSonarVision",
 
 	MaterialOverlay   = Material("vgui/splinter_cell/nvg_anim"),
+	OverlayFirst      = false,
+
 	MaterialInterlace = Material("vgui/splinter_cell/interlace_overlay"),
 	InterlaceColor    = Color(155, 155, 155, 128),
 
