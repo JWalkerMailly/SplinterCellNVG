@@ -1,4 +1,8 @@
 
+if (SERVER) then
+	CreateConVar("SPLINTERCELL_NVG_WHITELIST", "1", FCVAR_ARCHIVE);
+end
+
 -- Setup convars to determine which key to use for the goggles. By default:
 -- * KEY_N (24): Toggle goggle.
 -- * KEY_M (23): Cycle goggle.
