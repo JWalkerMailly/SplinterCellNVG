@@ -8,12 +8,24 @@ SPLINTERCELL_NVG_CONFIG = {};
 SPLINTERCELL_NVG_CONFIG[1] = {
 
 	Name = "Night",
+	WhiteList = {
+		"models/splinter_cell_3/player/sam_a.mdl",
+		"models/splinter_cell_3/player/sam_b.mdl",
+		"models/splinter_cell_3/player/sam_c.mdl",
+		"models/splinter_cell_3/player/sam_d.mdl",
+
+		"models/splinter_cell_4/player/sam_a.mdl",
+		"models/splinter_cell_4/player/sam_b.mdl",
+		"models/splinter_cell_4/player/sam_c.mdl",
+
+		"models/splinter_cell_3/player/coop_agent_one.mdl",
+		"models/splinter_cell_3/player/coop_agent_two.mdl"
+	},
 
 	MaterialOverlay   = Material("vgui/splinter_cell/nvg_anim"),
 	OverlayFirst      = false,
 
 	MaterialInterlace = Material("vgui/splinter_cell/noise"),
-	-- MaterialInterlace = nil,
 	InterlaceColor    = Color(155, 155, 155, 64),
 
 	MaterialOverride  = nil,
@@ -47,8 +59,8 @@ SPLINTERCELL_NVG_CONFIG[1] = {
 	},
 
 	PostProcess = function()
-	DrawBloom(0.65, 3.1, 1.75, 0.45, 2, 1, 155 / 255, 155 / 255, 155 / 255);
-	DrawBloom(0.1, 2, 0.5, 0.25, 1, 0.6, 130 / 255, 135 / 255, 35 / 255);
+		DrawBloom(0.65, 3.1, 1.75, 0.45, 2, 1, 155 / 255, 155 / 255, 155 / 255);
+		DrawBloom(0.1, 2, 0.5, 0.25, 1, 0.6, 130 / 255, 135 / 255, 35 / 255);
 	end
 };
 
@@ -58,6 +70,19 @@ SPLINTERCELL_NVG_CONFIG[1] = {
 SPLINTERCELL_NVG_CONFIG[2] = {
 
 	Name = "Thermal",
+	WhiteList = {
+		"models/splinter_cell_3/player/sam_a.mdl",
+		"models/splinter_cell_3/player/sam_b.mdl",
+		"models/splinter_cell_3/player/sam_c.mdl",
+		"models/splinter_cell_3/player/sam_d.mdl",
+
+		"models/splinter_cell_4/player/sam_a.mdl",
+		"models/splinter_cell_4/player/sam_b.mdl",
+		"models/splinter_cell_4/player/sam_c.mdl",
+
+		"models/splinter_cell_3/player/coop_agent_one.mdl",
+		"models/splinter_cell_3/player/coop_agent_two.mdl"
+	},
 
 	MaterialOverlay   = Material("vgui/splinter_cell/nvg_anim"),
 	OverlayFirst      = false,
@@ -130,6 +155,22 @@ SPLINTERCELL_NVG_CONFIG[2] = {
 SPLINTERCELL_NVG_CONFIG[3] = {
 
 	Name = "Electromagnetic",
+	WhiteList = {
+		"models/splinter_cell_3/player/sam_a.mdl",
+		"models/splinter_cell_3/player/sam_b.mdl",
+		"models/splinter_cell_3/player/sam_c.mdl",
+		"models/splinter_cell_3/player/sam_d.mdl",
+
+		"models/splinter_cell_4/player/sam_a.mdl",
+		"models/splinter_cell_4/player/sam_b.mdl",
+		"models/splinter_cell_4/player/sam_c.mdl",
+		"models/splinter_cell_4/player/sam_d.mdl",
+		"models/splinter_cell_4/player/sam_e.mdl",
+		"models/splinter_cell_4/player/sam_f.mdl",
+
+		"models/splinter_cell_3/player/coop_agent_one.mdl",
+		"models/splinter_cell_3/player/coop_agent_two.mdl"
+	},
 
 	MaterialOverlay   = Material("vgui/splinter_cell/nvg_anim"),
 	OverlayFirst      = true,
@@ -209,6 +250,30 @@ SPLINTERCELL_NVG_CONFIG[3] = {
 SPLINTERCELL_NVG_CONFIG[4] = {
 
 	Name = "Enhanced Night",
+	WhiteList = {
+		"models/splinter_cell_1/player/sam_a.mdl",
+		"models/splinter_cell_1/player/sam_b.mdl",
+		"models/splinter_cell_1/player/sam_c.mdl",
+
+		"models/splinter_cell_3/player/spec_ops_b.mdl",
+
+		"models/splinter_cell_3/player/nka_special_forces.mdl",
+		"models/splinter_cell_3/player/nka_special_forces_b.mdl",
+
+		"models/splinter_cell_1/player/georgian_elite.mdl",
+		"models/splinter_cell_1/player/georgian_elite_b.mdl",
+
+		"models/splinter_cell_1/player/spetsnaz.mdl",
+		"models/splinter_cell_1/player/spetsnaz_b.mdl",
+
+		"models/splinter_cell_1/player/terrorist.mdl",
+		"models/splinter_cell_1/player/terrorist_b.mdl",
+
+		"models/splinter_cell_3/player/mercenary_pro.mdl",
+		"models/splinter_cell_3/player/mercenary_pro_b.mdl",
+
+		"models/splinter_cell_svm/player/spynet_spy.mdl"
+	},
 
 	MaterialOverlay   = Material("vgui/splinter_cell/overlay_interlace"),
 	OverlayFirst      = false,
@@ -247,8 +312,8 @@ SPLINTERCELL_NVG_CONFIG[4] = {
 	},
 
 	PostProcess = function()
-	DrawBloom(0.1, 2, 0.5, 0.25, 1, 0.6, 130 / 255, 135 / 255, 35 / 255);
-	DrawBloom(0.1, 2, 0.5, 0.25, 1, 0.6, 130 / 255, 135 / 255, 35 / 255);
+		DrawBloom(0.1, 2, 0.5, 0.25, 1, 0.6, 130 / 255, 135 / 255, 35 / 255);
+		DrawBloom(0.1, 2, 0.5, 0.25, 1, 0.6, 130 / 255, 135 / 255, 35 / 255);
 	end
 };
 
@@ -258,6 +323,15 @@ SPLINTERCELL_NVG_CONFIG[4] = {
 SPLINTERCELL_NVG_CONFIG[5] = {
 
 	Name = "Motion Tracking",
+	WhiteList = {
+		"models/splinter_cell_svm/player/argus_merc.mdl", 
+		"models/splinter_cell_svm/player/argus_merc_b.mdl",
+
+		"models/splinter_cell_3/player/ronin_troop.mdl",
+		"models/splinter_cell_3/player/ronin_troop_b.mdl",
+
+		"models/splinter_cell_1/player/merc_custom.mdl"
+	},
 
 	MaterialOverlay   = Material("vgui/splinter_cell/overlay_honeycomb"),
 	OverlayFirst      = true,
@@ -296,7 +370,8 @@ SPLINTERCELL_NVG_CONFIG[5] = {
 	},
 
 	PostProcess = function()
-	-- Render first bloom pass and apply texurizer to achieve thermal effect.
+
+		-- Render first bloom pass and apply texurizer to achieve thermal effect.
 		DrawBloom(0.07, 0.1, 1.75, 0.5, 2, -99.00, 155 / 255, 155 / 255, 155 / 255);
 		DrawTexturize(1, Material("effects/splinter_cell/motiontracking.png"));
 
@@ -312,6 +387,15 @@ SPLINTERCELL_NVG_CONFIG[5] = {
 SPLINTERCELL_NVG_CONFIG[6] = {
 
 	Name = "Electromagnetic Tracking",
+	WhiteList = {
+		"models/splinter_cell_svm/player/argus_merc.mdl", 
+		"models/splinter_cell_svm/player/argus_merc_b.mdl",
+
+		"models/splinter_cell_3/player/ronin_troop.mdl",
+		"models/splinter_cell_3/player/ronin_troop_b.mdl",
+
+		"models/splinter_cell_1/player/merc_custom.mdl"
+	},
 
 	MaterialOverlay   = Material("vgui/splinter_cell/overlay_honeycomb"),
 	OverlayFirst      = true,
@@ -356,7 +440,8 @@ SPLINTERCELL_NVG_CONFIG[6] = {
 	},
 
 	PostProcess = function()
-	-- Render first bloom pass and apply texurizer to achieve thermal effect.
+
+		-- Render first bloom pass and apply texurizer to achieve thermal effect.
 		DrawBloom(1, 9000, 1.75, 0.5, 0, 5000, 155 / 255, 155 / 255, 155 / 255);
 		DrawTexturize(1, Material("effects/splinter_cell/emptracking.png"));
 
@@ -372,6 +457,9 @@ SPLINTERCELL_NVG_CONFIG[6] = {
 SPLINTERCELL_NVG_CONFIG[7] = {
 
 	Name = "Sonar",
+	WhiteList = {
+		"models/splinter_cell_1/player/spy_custom.mdl"
+	},
 
 	MaterialOverlay   = Material("vgui/splinter_cell/nvg_filter2"),
 	OverlayFirst      = false,
@@ -410,9 +498,11 @@ SPLINTERCELL_NVG_CONFIG[7] = {
 	},
 
 	PostProcess = function()
+
 		DrawBloom(2, 3.10, 1.75, 0.5, 2, -99.00, 155 / 255, 155 / 255, 155 / 255);
 		DrawTexturize(1, Material("effects/splinter_cell/sonar.png"));
 		DrawSharpen(10, 0.25)
+
 		-- Final bloom pass with motion blur to give a glowing ghosting effect.
 		DrawBloom(2, 3.10, 1.75, 0.5, 2, -99.00, 155 / 255, 155 / 255, 155 / 255);
 		DrawMotionBlur(0.55, 0.8, 0);
@@ -425,6 +515,10 @@ SPLINTERCELL_NVG_CONFIG[7] = {
 SPLINTERCELL_NVG_CONFIG[8] = {
 
 	Name = "Epsilon Thermal",
+	WhiteList = {
+		"models/splinter_cell_4/player/pawnspy_one.mdl",
+		"models/splinter_cell_4/player/pawnspy_zero.mdl"
+	},
 
 	MaterialOverlay   = Material("vgui/splinter_cell/nvg_anim"),
 	OverlayFirst      = false,
@@ -497,6 +591,10 @@ SPLINTERCELL_NVG_CONFIG[8] = {
 SPLINTERCELL_NVG_CONFIG[9] = {
 
 	Name = "Epsilon Night",
+	WhiteList = {
+		"models/splinter_cell_4/player/pawnspy_one.mdl",
+		"models/splinter_cell_4/player/pawnspy_zero.mdl"
+	},
 
 	MaterialOverlay   = Material("vgui/splinter_cell/overlay_goggles"),
 	OverlayFirst      = false,
@@ -535,7 +633,7 @@ SPLINTERCELL_NVG_CONFIG[9] = {
 	},
 
 	PostProcess = function()
-	DrawBloom(0.1, 2, 0.5, 0.25, 1, 0.6, 130 / 255, 135 / 255, 35 / 255);
-	DrawBloom(0.1, 2, 0.5, 0.25, 1, 0.6, 130 / 255, 135 / 255, 35 / 255);
+		DrawBloom(0.1, 2, 0.5, 0.25, 1, 0.6, 130 / 255, 135 / 255, 35 / 255);
+		DrawBloom(0.1, 2, 0.5, 0.25, 1, 0.6, 130 / 255, 135 / 255, 35 / 255);
 	end
 };

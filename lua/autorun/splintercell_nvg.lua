@@ -1,4 +1,8 @@
 
+if (SERVER) then
+	CreateConVar("SPLINTERCELL_NVG_WHITELIST", "1", FCVAR_ARCHIVE);
+end
+
 -- Setup convars to determine which key to use for the goggles. By default:
 -- * KEY_N (24): Toggle goggle.
 -- * KEY_M (23): Cycle goggle.
@@ -9,7 +13,7 @@ CreateClientConVar("SPLINTERCELL_NVG_CYCLE", "23", true, true, "Which key to cyc
 CreateClientConVar("SPLINTERCELL_NVG_TOGGLE", "0", false, true);
 
 -- Constants used to delay player input using the goggles to avoid epilepsy.
-local __ToggleDelay = 1.5;
+local __ToggleDelay = 0.5;
 local __SwitchDelay = 0.5;
 
 --!
@@ -52,8 +56,8 @@ hook.Add("PlayerButtonDown", "SPLINTERCELL_NVG_INPUT", function(player, button)
 	local current = player:GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE");
 
 	-- Timing data.
-	local nextToggle = player:GetNWInt("SPLINTERCELL_NVG_NEXT_TOGGLE");
-	local nextSwitch = player:GetNWInt("SPLINTERCELL_NVG_NEXT_SWITCH");
+	local nextToggle = player:GetNWFloat("SPLINTERCELL_NVG_NEXT_TOGGLE");
+	local nextSwitch = player:GetNWFloat("SPLINTERCELL_NVG_NEXT_SWITCH");
 
 	-- Current configuration.
 	local goggle = SPLINTERCELL_NVG_CONFIG[current];
@@ -83,6 +87,26 @@ hook.Add("PlayerButtonDown", "SPLINTERCELL_NVG_INPUT", function(player, button)
 		if (current > #SPLINTERCELL_NVG_CONFIG) then current = 1; end
 		player:SetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", current);
 		player:SetNWFloat("SPLINTERCELL_NVG_NEXT_SWITCH", CurTime() + __SwitchDelay);
+	end
+end);
+
+--! 
+--! Simple hook to handle goggle third person animations when toggling on/off.
+--!
+hook.Add("CalcMainActivity", "SPLINTERCELL_NVG_ANIMATIONS", function(player, velocity)
+
+	local toggle = player:GetInfoNum("SPLINTERCELL_NVG_TOGGLE", 0);
+	if (toggle == 1) then toggle = true; else toggle = false; end
+	local nextToggle = player:GetNWFloat("SPLINTERCELL_NVG_NEXT_TOGGLE", CurTime());
+
+	-- Goggles down animation.
+	if (toggle && CurTime() < nextToggle) then
+		return ACT_ARM, -1;
+	end
+
+	-- Goggles up animation.
+	if (!toggle && CurTime() < nextToggle) then
+		return ACT_DISARM, -1;
 	end
 end);
 
