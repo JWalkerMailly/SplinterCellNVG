@@ -68,8 +68,12 @@ hook.Add("PlayerButtonDown", "SPLINTERCELL_NVG_INPUT", function(player, button)
 		-- Emit sound on toggle on/off based on the goggle's config.
 		if (!toggle) then
 			player:EmitSound(goggle.Sounds.ToggleOn, 75, 100, 1, CHAN_ITEM);
+			player:SetBodygroup(1, 0);
+			player:SetAnimation(ACT_ARM);
 		else
 			player:EmitSound(goggle.Sounds.ToggleOff, 75, 100, 1, CHAN_ITEM);
+			player:SetBodygroup(1, 1);
+			player:SetAnimation(ACT_DISARM);
 		end
 
 		-- Send out command to toggle the goggles.
