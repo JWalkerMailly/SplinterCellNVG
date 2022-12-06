@@ -8,7 +8,7 @@ SPLINTERCELL_NVG_CONFIG = {};
 SPLINTERCELL_NVG_CONFIG[1] = {
 
 	Name = "Night",
-	WhiteList = {
+	Whitelist = {
 		"models/splinter_cell_3/player/sam_a.mdl",
 		"models/splinter_cell_3/player/sam_b.mdl",
 		"models/splinter_cell_3/player/sam_c.mdl",
@@ -70,7 +70,7 @@ SPLINTERCELL_NVG_CONFIG[1] = {
 SPLINTERCELL_NVG_CONFIG[2] = {
 
 	Name = "Thermal",
-	WhiteList = {
+	Whitelist = {
 		"models/splinter_cell_3/player/sam_a.mdl",
 		"models/splinter_cell_3/player/sam_b.mdl",
 		"models/splinter_cell_3/player/sam_c.mdl",
@@ -155,7 +155,7 @@ SPLINTERCELL_NVG_CONFIG[2] = {
 SPLINTERCELL_NVG_CONFIG[3] = {
 
 	Name = "Electromagnetic",
-	WhiteList = {
+	Whitelist = {
 		"models/splinter_cell_3/player/sam_a.mdl",
 		"models/splinter_cell_3/player/sam_b.mdl",
 		"models/splinter_cell_3/player/sam_c.mdl",
@@ -250,7 +250,7 @@ SPLINTERCELL_NVG_CONFIG[3] = {
 SPLINTERCELL_NVG_CONFIG[4] = {
 
 	Name = "Enhanced Night",
-	WhiteList = {
+	Whitelist = {
 		"models/splinter_cell_1/player/sam_a.mdl",
 		"models/splinter_cell_1/player/sam_b.mdl",
 		"models/splinter_cell_1/player/sam_c.mdl",
@@ -323,7 +323,7 @@ SPLINTERCELL_NVG_CONFIG[4] = {
 SPLINTERCELL_NVG_CONFIG[5] = {
 
 	Name = "Motion Tracking",
-	WhiteList = {
+	Whitelist = {
 		"models/splinter_cell_svm/player/argus_merc.mdl", 
 		"models/splinter_cell_svm/player/argus_merc_b.mdl",
 
@@ -387,7 +387,7 @@ SPLINTERCELL_NVG_CONFIG[5] = {
 SPLINTERCELL_NVG_CONFIG[6] = {
 
 	Name = "Electromagnetic Tracking",
-	WhiteList = {
+	Whitelist = {
 		"models/splinter_cell_svm/player/argus_merc.mdl", 
 		"models/splinter_cell_svm/player/argus_merc_b.mdl",
 
@@ -457,7 +457,7 @@ SPLINTERCELL_NVG_CONFIG[6] = {
 SPLINTERCELL_NVG_CONFIG[7] = {
 
 	Name = "Sonar",
-	WhiteList = {
+	Whitelist = {
 		"models/splinter_cell_1/player/spy_custom.mdl"
 	},
 
@@ -515,7 +515,7 @@ SPLINTERCELL_NVG_CONFIG[7] = {
 SPLINTERCELL_NVG_CONFIG[8] = {
 
 	Name = "Epsilon Thermal",
-	WhiteList = {
+	Whitelist = {
 		"models/splinter_cell_4/player/pawnspy_one.mdl",
 		"models/splinter_cell_4/player/pawnspy_zero.mdl"
 	},
@@ -591,7 +591,7 @@ SPLINTERCELL_NVG_CONFIG[8] = {
 SPLINTERCELL_NVG_CONFIG[9] = {
 
 	Name = "Epsilon Night",
-	WhiteList = {
+	Whitelist = {
 		"models/splinter_cell_4/player/pawnspy_one.mdl",
 		"models/splinter_cell_4/player/pawnspy_zero.mdl"
 	},
