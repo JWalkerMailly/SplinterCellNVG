@@ -44,9 +44,9 @@ SPLINTERCELL_NVG_CONFIG[1] = {
 		Color      = Color(25, 25, 25),
 		Min        = 0,
 		Style      = 0,
-		Brightness = 1.5,
-		Size       = 16000,
-		Decay      = 16000,
+		Brightness = 1,
+		Size       = 200,
+		Decay      = 200,
 		DieTime    = 0.05
 	},
 
