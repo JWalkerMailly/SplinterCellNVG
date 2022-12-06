@@ -412,7 +412,7 @@ SPLINTERCELL_NVG_CONFIG[6] = {
 		ent:GetClass() == "item_suitcharger" || ent:GetClass() == "item_healthcharger" || ent:GetClass() == "point_spotlight" || ent:GetClass() == "grenade_helicopter" ||
 		ent:GetClass() == "weapon_striderbuster" || ent:GetClass() == "item_battery" || ent:GetClass() == "npc_combine_s" || ent:GetClass() == "npc_strider" || 
 		ent:GetClass() == "npc_combinegunship" || ent:GetClass() == "npc_helicopter" || ent:GetClass() == "npc_combinedropship" || ent:GetClass() == "npc_dog" || ent:GetClass() == "hl2_npc_turret_ground" ||
-		ent:IsPlayer() && ent:SCNVG_IsGoggleActive();
+		(ent:IsPlayer() && ent:SCNVG_IsGoggleActive());
 	end,
 
 	Sounds = {
