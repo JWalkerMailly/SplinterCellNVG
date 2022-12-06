@@ -161,6 +161,7 @@ function player:SCNVG_SwitchToNextGoggle()
 				if (y == model) then
 					self:SetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", k);
 					self:SetNWFloat("SPLINTERCELL_NVG_NEXT_SWITCH", CurTime() + __SwitchDelay);
+					return;
 				end
 			end
 		end
