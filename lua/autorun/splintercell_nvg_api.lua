@@ -18,7 +18,7 @@ CreateClientConVar("SPLINTERCELL_NVG_TOGGLE", "0", false, true);
 --!
 --! @return     True if it is, False otherwise.
 --!
-function GAMEMODE:SCNVG_IsWhitelistOn()
+function _G:SCNVG_IsWhitelistOn()
 	return GetConVar("SPLINTERCELL_NVG_WHITELIST"):GetBool();
 end
 
@@ -101,7 +101,7 @@ function player:SCNVG_ToggleGoggle(silent, force)
 	-- Failsafe if the goggle has changed to one that we don't have access to. A good example
 	-- of this would be a gamemode where player model whitelisting is on and the player has
 	-- switched teams mid game. The new model or team might not have access to the last goggle he used.
-	if (GAMEMODE:SCNVG_IsWhitelistOn() && !toggled && !self:SCNVG_IsWhitelisted(self:GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE"))) then
+	if (_G:SCNVG_IsWhitelistOn() && !toggled && !self:SCNVG_IsWhitelisted(self:GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE"))) then
 		self:SCNVG_SwitchToNextGoggle();
 	end
 
@@ -130,7 +130,7 @@ function player:SCNVG_SwitchToNextGoggle()
 	local current = self:GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE");
 	self:SetNWInt("SPLINTERCELL_NVG_LAST_GOGGLE", current);
 
-	if (!GAMEMODE:SCNVG_IsWhitelistOn()) then
+	if (!_G:SCNVG_IsWhitelistOn()) then
 
 		-- Whitelist mode is not on, cycle through all the goggles normally.
 		current = current + 1;

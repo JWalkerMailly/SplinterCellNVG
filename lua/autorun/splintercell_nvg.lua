@@ -9,7 +9,7 @@ hook.Add("PlayerButtonDown", "SPLINTERCELL_NVG_INPUT", function(player, button)
 	-- goggles active while his allowed goggles list changed, in that case, we allow to run
 	-- to prevent him getting stuck in his active goggles.
 	if (!SERVER) then return; end
-	if (GAMEMODE:SCNVG_IsWhitelistOn() && !player:SCNVG_IsWhitelisted() && !player:SCNVG_IsGoggleActive()) then return; end
+	if (_G:SCNVG_IsWhitelistOn() && !player:SCNVG_IsWhitelisted() && !player:SCNVG_IsGoggleActive()) then return; end
 
 	-- If not already done, prepare networking data on the player.
 	player:SCNVG_SetupNetworking();
