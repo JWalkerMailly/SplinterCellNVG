@@ -8,10 +8,11 @@ end
 net.Receive("SPLINTERCELL_NVG_TOGGLE_ANIM", function()
 
 	local player = net.ReadEntity();
+	local gogglesActive = net.ReadBool();
 	local anim = net.ReadInt(14);
 
 	if (IsValid(player)) then
-		player:SetBodygroup(1, 0);
+		player:SetBodygroup(1, !gogglesActive && 0 || 1);
 		player:AnimRestartGesture(GESTURE_SLOT_CUSTOM, anim, true);
 	end
 end);
