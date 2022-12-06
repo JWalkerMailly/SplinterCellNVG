@@ -1,4 +1,20 @@
 
+if (SERVER) then
+	util.AddNetworkString("SPLINTERCELL_NVG_TOGGLE_ANIM");
+end
+
+--! 
+--! Used to handle animations clientside since the input handler will only be serverside.
+--!
+net.Receive("SPLINTERCELL_NVG_TOGGLE_ANIM", function()
+
+	local player = net.ReadEntity();
+	local gogglesActive = net.ReadBool();
+	local anim = net.ReadInt(14);
+
+	player:SCNVG_AnimGoggle(gogglesActive, anim);
+end);
+
 --! 
 --! Main input entry point for the goggles. Will process the toggle and cycle key.
 --!

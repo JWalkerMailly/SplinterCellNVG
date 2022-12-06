@@ -2,16 +2,7 @@
 -- Server side whitelist convar.
 if (SERVER) then
 	CreateConVar("SPLINTERCELL_NVG_WHITELIST", "1");
-	util.AddNetworkString("SPLINTERCELL_NVG_TOGGLE_ANIM");
 end
-
-net.Receive("SPLINTERCELL_NVG_TOGGLE_ANIM", function()
-
-	local player = net.ReadEntity();
-	local gogglesActive = net.ReadBool();
-	local anim = net.ReadInt(14);
-	player:SCNVG_AnimGoggle(gogglesActive, anim);
-end);
 
 -- Setup convars to determine which key to use for the goggles. By default:
 -- * KEY_N (24): Toggle goggle.
