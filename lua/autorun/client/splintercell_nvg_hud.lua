@@ -181,7 +181,7 @@ function SPLINTERCELL_NVG_GOGGLES:Render(config)
 	dlight.minlight   = lighting.Min;
 	dlight.style      = lighting.Style;
 	dlight.Brightness = lighting.Brightness;
-	dlight.Pos        = EyePos();
+	dlight.Pos        = EyePos() + Vector(0, 0, 100);
 	dlight.Size       = lighting.Size;
 	dlight.Decay      = lighting.Decay;
 	dlight.DieTime    = CurTime() + lighting.DieTime;
