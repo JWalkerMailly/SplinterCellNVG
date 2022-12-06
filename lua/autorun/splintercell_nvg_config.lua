@@ -44,7 +44,7 @@ SPLINTERCELL_NVG_CONFIG[1] = {
 		Color      = Color(25, 25, 25),
 		Min        = 0,
 		Style      = 0,
-		Brightness = 5,
+		Brightness = 3,
 		Size       = 16000,
 		Decay      = 16000,
 		DieTime    = 0.05
@@ -297,7 +297,7 @@ SPLINTERCELL_NVG_CONFIG[4] = {
 		Color      = Color(45, 60, 15),
 		Min        = 0,
 		Style      = 0,
-		Brightness = 0.8,
+		Brightness = 4,
 		Size       = 64000,
 		Decay      = 16000,
 		DieTime    = 0.05
@@ -411,7 +411,8 @@ SPLINTERCELL_NVG_CONFIG[6] = {
 		ent:GetClass() == "npc_turret_floor" || ent:GetClass() == "npc_combine_camera" || ent:GetClass() == "npc_turret_ceiling" || ent:GetClass() == "hl2_npc_turret_ground" ||
 		ent:GetClass() == "item_suitcharger" || ent:GetClass() == "item_healthcharger" || ent:GetClass() == "point_spotlight" || ent:GetClass() == "grenade_helicopter" ||
 		ent:GetClass() == "weapon_striderbuster" || ent:GetClass() == "item_battery" || ent:GetClass() == "npc_combine_s" || ent:GetClass() == "npc_strider" || 
-		ent:GetClass() == "npc_combinegunship" || ent:GetClass() == "npc_helicopter" || ent:GetClass() == "npc_combinedropship" || ent:GetClass() == "npc_dog" || ent:GetClass() == "hl2_npc_turret_ground";
+		ent:GetClass() == "npc_combinegunship" || ent:GetClass() == "npc_helicopter" || ent:GetClass() == "npc_combinedropship" || ent:GetClass() == "npc_dog" || ent:GetClass() == "hl2_npc_turret_ground" ||
+		ent:IsPlayer() && ent:SCNVG_IsGoggleActive();
 	end,
 
 	Sounds = {
