@@ -157,6 +157,9 @@ function player:SCNVG_SwitchToNextGoggle()
 		current = current + 1;
 		while (current != self:GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE")) do
 
+			-- Need to run the looping check now to avoid nil reference exception if testing from last goggle.
+			if (current > #SPLINTERCELL_NVG_CONFIG) then current = 1; end
+			
 			-- Fetch the next goggle according to the whitelist.
 			if (self:SCNVG_IsWhitelisted(current)) then
 				self:SetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", current);
@@ -166,7 +169,6 @@ function player:SCNVG_SwitchToNextGoggle()
 
 			-- Loop back around if we have gone past the last goggle.
 			current = current + 1;
-			if (current > #SPLINTERCELL_NVG_CONFIG) then current = 1; end
 		end
 	end
 end
