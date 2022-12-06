@@ -10,11 +10,7 @@ net.Receive("SPLINTERCELL_NVG_TOGGLE_ANIM", function()
 	local player = net.ReadEntity();
 	local gogglesActive = net.ReadBool();
 	local anim = net.ReadInt(14);
-
-	if (IsValid(player)) then
-		player:SetBodygroup(1, !gogglesActive && 0 || 1);
-		player:AnimRestartGesture(GESTURE_SLOT_CUSTOM, anim, true);
-	end
+	player:SCNVG_AnimGoggle(gogglesActive, anim);
 end);
 
 -- Setup convars to determine which key to use for the goggles. By default:
@@ -61,6 +57,20 @@ function player:SCNVG_SetupNetworking()
 
 	if (self:GetNWFloat("SPLINTERCELL_NVG_NEXT_SWITCH", 0) == 0) then
 		self:SetNWFloat("SPLINTERCELL_NVG_NEXT_SWITCH", CurTime());
+	end
+end
+
+--!
+--! @brief      Utility function for animating and bodygroup.
+--!
+--! @param      gogglesActive  Flag
+--! @param      anim           The animation to play
+--!
+function player:SCNVG_AnimGoggle(gogglesActive, anim)
+
+	if (IsValid(self)) then
+		self:SetBodygroup(2, !gogglesActive && 1 || 0);
+		self:AnimRestartGesture(GESTURE_SLOT_CUSTOM, anim, true);
 	end
 end
 

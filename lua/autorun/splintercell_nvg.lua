@@ -30,8 +30,7 @@ hook.Add("PlayerButtonDown", "SPLINTERCELL_NVG_INPUT", function(player, button)
 			if (!gogglesActive) then anim = ACT_ARM; end
 
 			-- Will only play server side.
-			player:SetBodygroup(1, !gogglesActive && 0 || 1);
-			player:AnimRestartGesture(GESTURE_SLOT_CUSTOM, anim, true);
+			player:SCNVG_AnimGoggle(gogglesActive, anim);
 
 			-- Send out net message to play animation on client.
 			net.Start("SPLINTERCELL_NVG_TOGGLE_ANIM");
