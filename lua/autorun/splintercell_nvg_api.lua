@@ -152,18 +152,23 @@ function player:SCNVG_SwitchToNextGoggle()
 		self:SetNWFloat("SPLINTERCELL_NVG_NEXT_SWITCH", CurTime() + __SwitchDelay);
 	else
 
+		-- Find next valid goggle.
 		local model = self:GetModel();
-		for k,v in ipairs(SPLINTERCELL_NVG_CONFIG) do
+		current = current + 1;
+		while (current != self:GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE")) do
 
-			-- Skip the goggle we are using and find the next according to the whitelists.
-			if (k == current) then continue; end
-			for x,y in pairs(v.Whitelist) do
-				if (y == model) then
-					self:SetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", k);
+			-- Fetch the next goggle according to the whitelist.
+			for k,v in pairs(SPLINTERCELL_NVG_CONFIG[current].Whitelist) do
+				if (v == model) then
+					self:SetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", current);
 					self:SetNWFloat("SPLINTERCELL_NVG_NEXT_SWITCH", CurTime() + __SwitchDelay);
 					return;
 				end
 			end
+
+			-- Loop back around if we have gone past the last goggle.
+			current = current + 1;
+			if (current > #SPLINTERCELL_NVG_CONFIG) then current = 1; end
 		end
 	end
 end
