@@ -2,7 +2,19 @@
 -- Server side whitelist convar.
 if (SERVER) then
 	CreateConVar("SPLINTERCELL_NVG_WHITELIST", "1");
+	util.AddNetworkString("SPLINTERCELL_NVG_TOGGLE_ANIM");
 end
+
+net.Receive("SPLINTERCELL_NVG_TOGGLE_ANIM", function()
+
+	local player = net.ReadEntity();
+	local anim = net.ReadInt(14);
+
+	if (IsValid(player)) then
+		player:SetBodygroup(1, 0);
+		player:AnimRestartGesture(GESTURE_SLOT_CUSTOM, anim, true);
+	end
+end);
 
 -- Setup convars to determine which key to use for the goggles. By default:
 -- * KEY_N (24): Toggle goggle.
@@ -78,7 +90,7 @@ end
 --!             this value, simply check that CurTime() is greater for "can switch".
 --!
 function player:SCNVG_GetNextSwitchTime()
-	return self:GetNWFloat("SPLINTERCELL_NVG_NEXT_TOGGLE", CurTime());
+	return self:GetNWFloat("SPLINTERCELL_NVG_NEXT_SWITCH", CurTime());
 end
 
 --!

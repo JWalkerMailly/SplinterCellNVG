@@ -7,12 +7,15 @@ hook.Add("PlayerButtonDown", "SPLINTERCELL_NVG_INPUT", function(player, button)
 	-- Server only code.
 	if (!SERVER) then return; end
 
+	local whitelist = _G:SCNVG_IsWhitelistOn();
+	local playerWhitelisted = player:SCNVG_IsWhitelisted();
+	local gogglesActive = player:SCNVG_IsGoggleActive();
+
 	-- If whitelist system is on, make sure the player is whitelisted before.
 	-- The only way to bypass the whitelist if it is on, is if the player already has his
 	-- goggles active while his allowed goggles list changed, in that case, we allow to run
 	-- to prevent him getting stuck in his active goggles.
-	local whitelist = _G:SCNVG_IsWhitelistOn();
-	if (whitelist && !player:SCNVG_IsWhitelisted() && !player:SCNVG_IsGoggleActive()) then return; end
+	if (whitelist && !playerWhitelisted && !gogglesActive) then return; end
 
 	-- If not already done, prepare networking data on the player.
 	player:SCNVG_SetupNetworking();
@@ -20,9 +23,20 @@ hook.Add("PlayerButtonDown", "SPLINTERCELL_NVG_INPUT", function(player, button)
 	-- Toggle goggle on/off.
 	if (player:SCNVG_CanToggleGoggle(button)) then
 
-		if (whitelist) then
+		if (playerWhitelisted) then
+
+			local anim = ACT_DISARM;
+			if (!gogglesActive) then anim = ACT_ARM; end
+
+			-- Will only play server side.
 			player:SetBodygroup(1, 0);
-			player:AnimRestartGesture(GESTURE_SLOT_CUSTOM, ACT_ARM, true);
+			player:AnimRestartGesture(GESTURE_SLOT_CUSTOM, anim, true);
+
+			-- Send out net message to play animation on client.
+			net.Start("SPLINTERCELL_NVG_TOGGLE_ANIM");
+				net.WriteEntity(player);
+				net.WriteInt(anim, 14);
+			net.Broadcast();
 		end
 
 		player:SCNVG_ToggleGoggle();
