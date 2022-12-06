@@ -1,92 +1,27 @@
 
-if (SERVER) then
-	CreateConVar("SPLINTERCELL_NVG_WHITELIST", "1", FCVAR_ARCHIVE);
-end
-
--- Setup convars to determine which key to use for the goggles. By default:
--- * KEY_N (24): Toggle goggle.
--- * KEY_M (23): Cycle goggle.
-CreateClientConVar("SPLINTERCELL_NVG_INPUT", "24", true, true, "Which key to toggle goggle. Must be a number, refer to: https://wiki.facepunch.com/gmod/Enums/KEY.", 1, 159);
-CreateClientConVar("SPLINTERCELL_NVG_CYCLE", "23", true, true, "Which key to cycle goggle. Must be a number, refer to: https://wiki.facepunch.com/gmod/Enums/KEY.", 1, 159);
-
--- Setup toggle and cycle commands for goggles.
-CreateClientConVar("SPLINTERCELL_NVG_TOGGLE", "0", false, true);
-
--- Constants used to delay player input using the goggles to avoid epilepsy.
-local __ToggleDelay = 0.5;
-local __SwitchDelay = 0.5;
-
---!
---! @brief      Internal function. Creates the necessary network integers on the client.
---!
---! @param      player  The player to setup netowrking on.
---!
-local function __SetupDefaults(player)
-
-	if (player:GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", 0) == 0) then
-		player:SetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", 1);
-	end
-
-	if (player:GetNWInt("SPLINTERCELL_NVG_LAST_GOGGLE", 0) == 0) then
-		player:SetNWInt("SPLINTERCELL_NVG_LAST_GOGGLE", 1);
-	end
-
-	if (player:GetNWFloat("SPLINTERCELL_NVG_NEXT_TOGGLE", 0) == 0) then
-		player:SetNWFloat("SPLINTERCELL_NVG_NEXT_TOGGLE", CurTime());
-	end
-
-	if (player:GetNWFloat("SPLINTERCELL_NVG_NEXT_SWITCH", 0) == 0) then
-		player:SetNWFloat("SPLINTERCELL_NVG_NEXT_SWITCH", CurTime());
-	end
-end
-
 --! 
 --! Main input entry point for the goggles. Will process the toggle and cycle key.
 --!
 hook.Add("PlayerButtonDown", "SPLINTERCELL_NVG_INPUT", function(player, button)
 
+	-- Server only code. If whitelist system is on, make sure the player is whitelisted before.
+	-- The only way to bypass the whitelist if it is on, is if the player already has his
+	-- goggles active while his allowed goggles list changed, in that case, we allow to run
+	-- to prevent him getting stuck in his active goggles.
 	if (!SERVER) then return; end
+	if (GAMEMODE:SCNVG_IsWhitelistOn() && !player:SCNVG_IsWhitelisted() && !player:SCNVG_IsGoggleActive()) then return; end
 
-	__SetupDefaults(player);
+	-- If not already done, prepare networking data on the player.
+	player:SCNVG_SetupNetworking();
 
-	-- Stop current goggle reference as the last one used.
-	--local toggle = GetConVar("SPLINTERCELL_NVG_TOGGLE"):GetBool();
-	local toggle = player:GetInfoNum("SPLINTERCELL_NVG_TOGGLE", 0);
-	if (toggle == 1) then toggle = true; else toggle = false; end
-	local current = player:GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE");
-
-	-- Timing data.
-	local nextToggle = player:GetNWFloat("SPLINTERCELL_NVG_NEXT_TOGGLE");
-	local nextSwitch = player:GetNWFloat("SPLINTERCELL_NVG_NEXT_SWITCH");
-
-	-- Current configuration.
-	local goggle = SPLINTERCELL_NVG_CONFIG[current];
-
-	-- Toggle on and off.
-	if (button == player:GetInfoNum("SPLINTERCELL_NVG_INPUT", 24) && CurTime() > nextToggle) then
-
-		-- Emit sound on toggle on/off based on the goggle's config.
-		if (!toggle) then
-			player:EmitSound(goggle.Sounds.ToggleOn, 75, 100, 1, CHAN_ITEM);
-		else
-			player:EmitSound(goggle.Sounds.ToggleOff, 75, 100, 1, CHAN_ITEM);
-		end
-
-		-- Send out command to toggle the goggles.
-		player:ConCommand("SPLINTERCELL_NVG_TOGGLE " .. (!toggle && 1 || 0));
-		player:SetNWFloat("SPLINTERCELL_NVG_NEXT_TOGGLE", CurTime() + __ToggleDelay);
+	-- Toggle goggle on/off.
+	if (player:SCNVG_CanToggleGoggle(button)) then
+		player:SCNVG_ToggleGoggle();
 	end
 
 	-- Cycle between different goggle modes.
-	if (toggle && button == player:GetInfoNum("SPLINTERCELL_NVG_CYCLE", 23) && CurTime() > nextSwitch) then
-
-		player:SetNWInt("SPLINTERCELL_NVG_LAST_GOGGLE", current);
-
-		-- Loop around the modes if we have gone past the last config.
-		current = current + 1;
-		if (current > #SPLINTERCELL_NVG_CONFIG) then current = 1; end
-		player:SetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", current);
-		player:SetNWFloat("SPLINTERCELL_NVG_NEXT_SWITCH", CurTime() + __SwitchDelay);
+	if (player:SCNVG_CanSwitchGoggle(button)) then
+		player:SCNVG_SwitchToNextGoggle();
 	end
 end);
 
@@ -95,17 +30,18 @@ end);
 --!
 hook.Add("CalcMainActivity", "SPLINTERCELL_NVG_ANIMATIONS", function(player, velocity)
 
-	local toggle = player:GetInfoNum("SPLINTERCELL_NVG_TOGGLE", 0);
-	if (toggle == 1) then toggle = true; else toggle = false; end
-	local nextToggle = player:GetNWFloat("SPLINTERCELL_NVG_NEXT_TOGGLE", CurTime());
+	-- This hook only belongs to Splinter Cell player models.
+	if (!player:SCNVG_IsWhitelisted()) then return; end
+
+	local toggled = player:SCNVG_IsGoggleActive();
 
 	-- Goggles down animation.
-	if (toggle && CurTime() < nextToggle) then
+	if (toggled && !player:SCNVG_CanToggleGoggle()) then
 		return ACT_ARM, -1;
 	end
 
 	-- Goggles up animation.
-	if (!toggle && CurTime() < nextToggle) then
+	if (!toggled && !player:SCNVG_CanToggleGoggle()) then
 		return ACT_DISARM, -1;
 	end
 end);
@@ -114,5 +50,5 @@ end);
 --! Simple hook to remove goggle on death.
 --!
 hook.Add("PlayerDeath", "SPLINTERCELL_NVG_DEATH", function(victim, inflictor, attacker)
-	victim:ConCommand("SPLINTERCELL_NVG_TOGGLE 0");
+	victim:SCNVG_ToggleGoggle(true, 0);
 end);
