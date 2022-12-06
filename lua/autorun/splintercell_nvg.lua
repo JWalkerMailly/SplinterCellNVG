@@ -37,11 +37,13 @@ hook.Add("CalcMainActivity", "SPLINTERCELL_NVG_ANIMATIONS", function(player, vel
 
 	-- Goggles down animation.
 	if (toggled && !player:SCNVG_CanToggleGoggle()) then
+		player:SetBodygroup(1, 0);
 		return ACT_ARM, -1;
 	end
 
 	-- Goggles up animation.
 	if (!toggled && !player:SCNVG_CanToggleGoggle()) then
+		player:SetBodygroup(1, 1);
 		return ACT_DISARM, -1;
 	end
 end);
