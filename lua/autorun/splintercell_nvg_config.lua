@@ -44,11 +44,20 @@ SPLINTERCELL_NVG_CONFIG[1] = {
 		Color      = Color(25, 25, 25),
 		Min        = 0,
 		Style      = 0,
-		Brightness = 5,
+		Brightness = 1.5,
 		Size       = 16000,
 		Decay      = 16000,
 		DieTime    = 0.05
 	},
+
+	ProjectedTexture = {
+		FOV        = 140,
+		VFOV       = 100, -- Vertical FOV
+		Brightness = 2,
+		Distance   = 2500
+	},
+
+	PhotoSensitive = 0.9,
 
 	ColorCorrection = {
 		ColorAdd   = Color(0.2, 0.4, 0.05),

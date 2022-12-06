@@ -16,6 +16,8 @@ SPLINTERCELL_NVG_GOGGLES.ShouldCleanupMaterials = false;
 SPLINTERCELL_NVG_GOGGLES.Transition = 0;
 SPLINTERCELL_NVG_GOGGLES.NextTransition = 0;
 SPLINTERCELL_NVG_GOGGLES.ScreenspaceReady = false;
+SPLINTERCELL_NVG_GOGGLES.ProjectedTexture = nil;
+SPLINTERCELL_NVG_GOGGLES.PhotoSensitivity = 0;
 
 local __RenderTarget = Material("pp/colour");
 local __TransitionRate = 5;
@@ -181,15 +183,36 @@ function SPLINTERCELL_NVG_GOGGLES:Render(config)
 	dlight.minlight   = lighting.Min;
 	dlight.style      = lighting.Style;
 	dlight.Brightness = lighting.Brightness;
-	dlight.Pos        = EyePos() + Vector(0, 0, 100);
+	dlight.Pos        = EyePos();
 	dlight.Size       = lighting.Size;
 	dlight.Decay      = lighting.Decay;
 	dlight.DieTime    = CurTime() + lighting.DieTime;
 
+	-- Update projected texture's position and angles to illuminate the world.
+	if (IsValid(SPLINTERCELL_NVG_GOGGLES.ProjectedTexture)) then
+		SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:SetPos(EyePos());
+		SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:SetAngles(EyeAngles());
+		SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:Update();
+	end
+
+	local colorCorrect = config.ColorCorrection;
+	local finalBrightness = colorCorrect.Brightness;
+
+	-- Apply photo sensitivity.
+	if (config.PhotoSensitive != nil) then
+
+		-- Compute light intensity at player's eye position.
+		local light = render.GetLightColor(EyePos());
+		local lightIntensity = light.r / 3 + light.g / 3 + light.b / 3;
+
+		-- Lerp the photosensitivy factor in order to avoid sudden changes in light intensity.
+		SPLINTERCELL_NVG_GOGGLES.PhotoSensitivity = Lerp(FrameTime() * 2, SPLINTERCELL_NVG_GOGGLES.PhotoSensitivity, lightIntensity);
+		finalBrightness = finalBrightness + SPLINTERCELL_NVG_GOGGLES.PhotoSensitivity;
+	end
+
 	-- Offload to rendertarget.
 	render.UpdateScreenEffectTexture();
 
-		local colorCorrect = config.ColorCorrection;
 		__RenderTarget:SetTexture("$fbtexture",          render.GetScreenEffectTexture());
 		__RenderTarget:SetFloat("$pp_colour_addr",       colorCorrect.ColorAdd.r);
 		__RenderTarget:SetFloat("$pp_colour_addg",       colorCorrect.ColorAdd.g);
@@ -197,7 +220,7 @@ function SPLINTERCELL_NVG_GOGGLES:Render(config)
 		__RenderTarget:SetFloat("$pp_colour_mulr",       colorCorrect.ColorMul.r);
 		__RenderTarget:SetFloat("$pp_colour_mulg",       colorCorrect.ColorMul.g);
 		__RenderTarget:SetFloat("$pp_colour_mulb",       colorCorrect.ColorMul.b);
-		__RenderTarget:SetFloat("$pp_colour_brightness", colorCorrect.Brightness);
+		__RenderTarget:SetFloat("$pp_colour_brightness", finalBrightness);
 		__RenderTarget:SetFloat("$pp_colour_contrast",   colorCorrect.Contrast);
 		__RenderTarget:SetFloat("$pp_colour_colour",     colorCorrect.ColorMod);
 
@@ -293,6 +316,24 @@ hook.Add("PreDrawHUD", "SPLINTERCELL_NVG_HUD", function()
 					SPLINTERCELL_NVG_GOGGLES:PlayLoopingSound(currentConfig, 1.5);
 					surface.PlaySound(currentConfig.Sounds.Activate);
 				end
+
+				-- Current config does not use projected texture feature, remove it if it exists.
+				if (currentConfig.ProjectedTexture == nil && IsValid(SPLINTERCELL_NVG_GOGGLES.ProjectedTexture)) then
+					SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:Remove();
+					SPLINTERCELL_NVG_GOGGLES.ProjectedTexture = nil;
+				end
+
+				-- Current config uses a projected texture for lighting, create it if not already done.
+				if (currentConfig.ProjectedTexture != nil && !IsValid(SPLINTERCELL_NVG_GOGGLES.ProjectedTexture)) then
+					SPLINTERCELL_NVG_GOGGLES.ProjectedTexture = ProjectedTexture();
+					SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:SetTexture("effects/flashlight/soft");
+					SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:SetFOV(currentConfig.ProjectedTexture.FOV);
+					SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:SetVerticalFOV(currentConfig.ProjectedTexture.VFOV);
+					SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:SetBrightness(currentConfig.ProjectedTexture.Brightness);
+					SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:SetFarZ(currentConfig.ProjectedTexture.Distance);
+					SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:SetEnableShadows(false);
+					SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:Update();
+				end
 			end
 		else
 
@@ -307,6 +348,12 @@ hook.Add("PreDrawHUD", "SPLINTERCELL_NVG_HUD", function()
 			-- Restore default materials on entities.
 			SPLINTERCELL_NVG_GOGGLES:CleanupMaterials();
 			SPLINTERCELL_NVG_GOGGLES:StopLoopingSound(currentConfig, 0);
+
+			-- Remove projected texture.
+			if (IsValid(SPLINTERCELL_NVG_GOGGLES.ProjectedTexture)) then
+				SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:Remove();
+				SPLINTERCELL_NVG_GOGGLES.ProjectedTexture = nil;
+			end
 		end
 
 		-- This is always called but will not interfere with other addons.
