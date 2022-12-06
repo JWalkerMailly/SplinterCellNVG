@@ -98,20 +98,19 @@ function player:SCNVG_ToggleGoggle(silent, force)
 
 	local toggled = self:SCNVG_IsGoggleActive();
 
+	-- Failsafe if the goggle has changed to one that we don't have access to. A good example
+	-- of this would be a gamemode where player model whitelisting is on and the player has
+	-- switched teams mid game. The new model or team might not have access to the last goggle he used.
+	if (GAMEMODE:SCNVG_IsWhitelistOn() && !toggled && !self:SCNVG_IsWhitelisted(self:GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE"))) then
+		self:SCNVG_SwitchToNextGoggle();
+	end
+
 	if (force != nil) then
 		self:ConCommand("SPLINTERCELL_NVG_TOGGLE " .. force);
 		self:SetNWFloat("SPLINTERCELL_NVG_NEXT_TOGGLE", CurTime() + __ToggleDelay);
 	else
 		self:ConCommand("SPLINTERCELL_NVG_TOGGLE " .. (!toggled && 1 || 0));
 		self:SetNWFloat("SPLINTERCELL_NVG_NEXT_TOGGLE", CurTime() + __ToggleDelay);
-	end
-
-	-- Failsafe if the goggle has changed to one that we don't have access to. A good example
-	-- of this would be a gamemode where player model whitelisting is on and the player has
-	-- switched teams mid game. The new model or team might not have access to the last goggle he used.
-	local result = self:SCNVG_IsGoggleActive();
-	if (GAMEMODE:SCNVG_IsWhitelistOn() && result && !self:SCNVG_IsWhitelisted(self:GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE"))) then
-		self:SCNVG_SwitchToNextGoggle();
 	end
 
 	if (!silent) then
