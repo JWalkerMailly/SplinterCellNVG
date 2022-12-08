@@ -236,7 +236,7 @@ end
 hook.Add("RenderScreenspaceEffects", "NVGBASE_SHADER", function()
 
 	-- This is the autoload logic for the network var. Network vars will be handled serverside.
-	local currentGoggle = LocalPlayer():GetNWInt("NVGBASE_CURRENT_GOGGLE", 0);
+	local currentGoggle = LocalPlayer():GetNWInt("NVGBASE_CURRENT_GOGGLE", 1);
 	if (currentGoggle == 0) then return; end
 
 	-- Render post processing effects for current goggles.
@@ -254,7 +254,7 @@ end);
 hook.Add("PreDrawHUD", "NVGBASE_HUD", function()
 
 	-- This is the autoload logic for the network var. Network vars will be handled serverside.
-	local currentGoggle = LocalPlayer():GetNWInt("NVGBASE_CURRENT_GOGGLE", 0);
+	local currentGoggle = LocalPlayer():GetNWInt("NVGBASE_CURRENT_GOGGLE", 1);
 	if (currentGoggle == 0) then return; end
 
 	-- Initializes the looping sound cache.

@@ -76,7 +76,7 @@ end
 --! @return     The name (key) of the current loadout.
 --!
 function player:NVGBASE_GetLoadout()
-	local loadout = self:GetNWString("NVGBASE_LOADOUT", "");
+	local loadout = self:GetNWString("NVGBASE_LOADOUT", "Splinter Cell");
 	if (loadout == "") then return nil; end
 	return NVGBASE_LOADOUTS[loadout];
 end
