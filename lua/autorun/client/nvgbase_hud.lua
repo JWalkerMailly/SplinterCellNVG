@@ -1,38 +1,31 @@
 
 -- This acts like a static class.
-SPLINTERCELL_NVG_GOGGLES = {};
-SPLINTERCELL_NVG_GOGGLES.SoundsCacheReady = false;
+NVGBASE_GOGGLES = {};
+NVGBASE_GOGGLES.SoundsCacheReady = false;
 
 -- Toggle flags use to switch animation states.
-SPLINTERCELL_NVG_GOGGLES.Toggled = nil;
-SPLINTERCELL_NVG_GOGGLES.ToggledSound = false;
+NVGBASE_GOGGLES.Toggled = nil;
+NVGBASE_GOGGLES.ToggledSound = false;
 
 -- State vars for rendering and cleanup.
-SPLINTERCELL_NVG_GOGGLES.CurrentGoggles = nil;
-SPLINTERCELL_NVG_GOGGLES.ShouldCleanupMaterials = false;
+NVGBASE_GOGGLES.CurrentGoggles = nil;
+NVGBASE_GOGGLES.ShouldCleanupMaterials = false;
 
 -- Used to handle transition and blending. NextTransition
 -- is only used to delay the screenspace effects and overlays.
-SPLINTERCELL_NVG_GOGGLES.Transition = 0;
-SPLINTERCELL_NVG_GOGGLES.NextTransition = 0;
-SPLINTERCELL_NVG_GOGGLES.ScreenspaceReady = false;
-SPLINTERCELL_NVG_GOGGLES.ProjectedTexture = nil;
-SPLINTERCELL_NVG_GOGGLES.PhotoSensitivity = 0;
-
-local __RenderTarget = Material("pp/colour");
-local __TransitionRate = 5;
-local __TransitionDelay = 0.225;
-
-local nvgVignette = Material("vgui/splinter_cell/overlay_vignette");
-local nvgOverlayAnim = Material("vgui/splinter_cell/nvg_turnon_static");
+NVGBASE_GOGGLES.Transition = 0;
+NVGBASE_GOGGLES.NextTransition = 0;
+NVGBASE_GOGGLES.ScreenspaceReady = false;
+NVGBASE_GOGGLES.ProjectedTexture = nil;
+NVGBASE_GOGGLES.PhotoSensitivity = 0;
 
 --!
 --! @brief      Utility function to cleanup goggle model material overrides.
 --!             If you are modifying the material of a model in your goggle draw hook,
---!             you must raise the flag SPLINTERCELL_NVG_MATERIALOVERRIDE on it for
+--!             you must raise the flag NVGBASE_MATERIALOVERRIDE on it for
 --!             it to be processed in this hook since we don't want to break other addons.
 --!
-function SPLINTERCELL_NVG_GOGGLES:CleanupMaterials()
+function NVGBASE_GOGGLES:CleanupMaterials()
 
 	-- Do nothing if no cleanup is required.
 	if (!self.ShouldCleanupMaterials) then return; end
@@ -40,10 +33,10 @@ function SPLINTERCELL_NVG_GOGGLES:CleanupMaterials()
 	-- Reset entity material.
 	for k,v in pairs(ents.GetAll()) do
 
-		if (!v.SPLINTERCELL_NVG_MATERIALOVERRIDE) then continue; end
+		if (!v.NVGBASE_MATERIALOVERRIDE) then continue; end
 
 		v:SetMaterial(v:GetMaterial());
-		v.SPLINTERCELL_NVG_MATERIALOVERRIDE = false;
+		v.NVGBASE_MATERIALOVERRIDE = false;
 	end
 
 	-- Cleanup finished, reset flag to avoid using unnecessary CPU time.
@@ -58,7 +51,7 @@ end
 --!
 --! @param      goggle  The goggle config being processed.
 --!
-function SPLINTERCELL_NVG_GOGGLES:HandleMaterialOverrides(goggle)
+function NVGBASE_GOGGLES:HandleMaterialOverrides(goggle)
 
 	for k,v in pairs(ents.GetAll()) do
 
@@ -66,24 +59,24 @@ function SPLINTERCELL_NVG_GOGGLES:HandleMaterialOverrides(goggle)
 		if (!goggle.Filter(v)) then continue; end
 
 		v:SetMaterial(goggle.MaterialOverride);
-		v.SPLINTERCELL_NVG_MATERIALOVERRIDE = true;
+		v.NVGBASE_MATERIALOVERRIDE = true;
 	end
 
 	-- Raise the cleanup flag for later use.
-	SPLINTERCELL_NVG_GOGGLES.ShouldCleanupMaterials = true;
+	NVGBASE_GOGGLES.ShouldCleanupMaterials = true;
 end
 
 --!
 --! @brief      Used to render the lens transitioning in view.
 --!
-function SPLINTERCELL_NVG_GOGGLES:TransitionIn()
+function NVGBASE_GOGGLES:TransitionIn(rate, overlay)
 
 	-- Render lens coming in.
-	self.Transition = Lerp(FrameTime() * __TransitionRate, self.Transition, 2);
+	self.Transition = Lerp(FrameTime() * rate, self.Transition, 2);
 
 	local transition = math.Clamp(self.Transition, 0, 1);
 	if (transition < 0.9) then
-		surface.SetMaterial(nvgOverlayAnim);
+		surface.SetMaterial(overlay);
 		surface.SetDrawColor(255, 255, 255, transition * 255);
 		surface.DrawTexturedRect(0, -ScrH() + (ScrH() * 1.3 * transition), ScrW(), ScrH());
 	end
@@ -92,14 +85,14 @@ end
 --!
 --! @brief      Used to render the lens transitioning out of view.
 --!
-function SPLINTERCELL_NVG_GOGGLES:TransitionOut()
+function NVGBASE_GOGGLES:TransitionOut(rate, overlay)
 
 	-- Render lens going out.
-	self.Transition = Lerp(FrameTime() * __TransitionRate, self.Transition, 0);
+	self.Transition = Lerp(FrameTime() * rate, self.Transition, 0);
 
 	local transition = math.Clamp(self.Transition - 1, 0, 1);
 	if (transition > 0.1) then
-		surface.SetMaterial(nvgOverlayAnim);
+		surface.SetMaterial(overlay);
 		surface.SetDrawColor(255, 255, 255, transition * 255);
 		surface.DrawTexturedRect(0, -ScrH() + (ScrH() * 1.3 * transition), ScrW(), ScrH());
 	end
@@ -108,13 +101,13 @@ end
 --!
 --! @brief      Renders the overlay effect for vignette and animated lens.
 --!
-function SPLINTERCELL_NVG_GOGGLES:DrawOverlay(overlay, swap)
+function NVGBASE_GOGGLES:DrawOverlay(overlay, swap, secondOverlay)
 
 	local transition = math.Clamp(self.Transition - 1, 0, 1);
 
 	-- Vignetting effect.
 	if (!swap) then
-		surface.SetMaterial(nvgVignette);
+		surface.SetMaterial(secondOverlay);
 		surface.SetDrawColor(255, 255, 255, transition * 255);
 		surface.DrawTexturedRect(0, 0, ScrW(), ScrH());
 	end
@@ -126,7 +119,7 @@ function SPLINTERCELL_NVG_GOGGLES:DrawOverlay(overlay, swap)
 
 	-- Vignetting effect.
 	if (swap) then
-		surface.SetMaterial(nvgVignette);
+		surface.SetMaterial(secondOverlay);
 		surface.SetDrawColor(255, 255, 255, transition * 255);
 		surface.DrawTexturedRect(0, 0, ScrW(), ScrH());
 	end
@@ -136,33 +129,33 @@ end
 --! @brief      Creates a sound cache client side to handle looping sounds for
 --!             all goggle types. Each sound will be a CSoundPatch. 
 --!
-function SPLINTERCELL_NVG_GOGGLES:SetupLoopingSounds()
+function NVGBASE_GOGGLES:SetupLoopingSounds(loadout)
 
-	if (self.SoundsCacheReady) then return; end
+	if (loadout.SoundsCacheReady) then return; end
 
 	-- Initialize looping sound cache, this 
-	for k,v in pairs(SPLINTERCELL_NVG_CONFIG) do
-		if (v.SoundsCache == nil) then v.SoundsCache = {}; end
-		if (v.Sounds.Loop == nil) then continue; end
-		v.SoundsCache["Loop"] = CreateSound(LocalPlayer(), Sound(v.Sounds.Loop));
+	for k,goggle in pairs(loadout) do
+		if (goggle.SoundsCache == nil) then goggle.SoundsCache = {}; end
+		if (goggle.Sounds.Loop == nil) then continue; end
+		goggle.SoundsCache["Loop"] = CreateSound(LocalPlayer(), Sound(goggle.Sounds.Loop));
 	end
 
-	self.SoundsCacheReady = true;
+	loadout.SoundsCacheReady = true;
 end
 
-function SPLINTERCELL_NVG_GOGGLES:PlayLoopingSound(config, fadeIn)
+function NVGBASE_GOGGLES:PlayLoopingSound(goggle, fadeIn)
 
-	if (config.SoundsCache != nil && config.SoundsCache["Loop"] != nil) then
-		config.SoundsCache["Loop"]:Play();
-		config.SoundsCache["Loop"]:ChangeVolume(0);
-		config.SoundsCache["Loop"]:ChangeVolume(1, fadeIn);
+	if (goggle.SoundsCache != nil && goggle.SoundsCache["Loop"] != nil) then
+		goggle.SoundsCache["Loop"]:Play();
+		goggle.SoundsCache["Loop"]:ChangeVolume(0);
+		goggle.SoundsCache["Loop"]:ChangeVolume(1, fadeIn);
 	end
 end
 
-function SPLINTERCELL_NVG_GOGGLES:StopLoopingSound(config, fadeOut)
+function NVGBASE_GOGGLES:StopLoopingSound(goggle, fadeOut)
 
-	if (config.SoundsCache != nil && config.SoundsCache["Loop"] != nil) then
-		config.SoundsCache["Loop"]:FadeOut(fadeOut)
+	if (goggle.SoundsCache != nil && goggle.SoundsCache["Loop"] != nil) then
+		goggle.SoundsCache["Loop"]:FadeOut(fadeOut)
 	end
 end
 
@@ -170,12 +163,13 @@ end
 --! @brief      Sets up rendering space quad on top of the screen for the current goggle.
 --!             This will copy the postprocessing color texture for upcoming render operations.
 --!
---! @param      config  The current goggle configuration.
+--! @param      goggle  The current goggle configuration.
 --!
-function SPLINTERCELL_NVG_GOGGLES:Render(config)
+local __RenderTarget = Material("pp/colour");
+function NVGBASE_GOGGLES:Render(goggle)
 
 	-- Setup lighting from configuration.
-	local lighting    = config.Lighting;
+	local lighting    = goggle.Lighting;
 	local dlight      = DynamicLight(LocalPlayer():EntIndex());
 	dlight.r          = lighting.Color.r;
 	dlight.g          = lighting.Color.g;
@@ -189,25 +183,25 @@ function SPLINTERCELL_NVG_GOGGLES:Render(config)
 	dlight.DieTime    = CurTime() + lighting.DieTime;
 
 	-- Update projected texture's position and angles to illuminate the world.
-	if (IsValid(SPLINTERCELL_NVG_GOGGLES.ProjectedTexture)) then
-		SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:SetPos(EyePos());
-		SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:SetAngles(EyeAngles());
-		SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:Update();
+	if (IsValid(NVGBASE_GOGGLES.ProjectedTexture)) then
+		NVGBASE_GOGGLES.ProjectedTexture:SetPos(EyePos());
+		NVGBASE_GOGGLES.ProjectedTexture:SetAngles(EyeAngles());
+		NVGBASE_GOGGLES.ProjectedTexture:Update();
 	end
 
-	local colorCorrect = config.ColorCorrection;
+	local colorCorrect = goggle.ColorCorrection;
 	local finalBrightness = colorCorrect.Brightness;
 
 	-- Apply photo sensitivity.
-	if (config.PhotoSensitive != nil) then
+	if (goggle.PhotoSensitive != nil) then
 
 		-- Compute light intensity at player's eye position.
 		local light = render.GetLightColor(EyePos());
 		local lightIntensity = light.r / 3 + light.g / 3 + light.b / 3;
 
 		-- Lerp the photosensitivy factor in order to avoid sudden changes in light intensity.
-		SPLINTERCELL_NVG_GOGGLES.PhotoSensitivity = Lerp(FrameTime() * 2, SPLINTERCELL_NVG_GOGGLES.PhotoSensitivity, lightIntensity);
-		finalBrightness = finalBrightness + SPLINTERCELL_NVG_GOGGLES.PhotoSensitivity;
+		NVGBASE_GOGGLES.PhotoSensitivity = Lerp(FrameTime() * 2, NVGBASE_GOGGLES.PhotoSensitivity, lightIntensity);
+		finalBrightness = finalBrightness + NVGBASE_GOGGLES.PhotoSensitivity;
 	end
 
 	-- Offload to rendertarget.
@@ -228,9 +222,9 @@ function SPLINTERCELL_NVG_GOGGLES:Render(config)
 	render.DrawScreenQuad();
 
 	-- Render interlace material over screen, if provided.
-	if (config.MaterialInterlace != nil) then
-		local interlaceColor = config.InterlaceColor;
-		surface.SetMaterial(config.MaterialInterlace);
+	if (goggle.MaterialInterlace != nil) then
+		local interlaceColor = goggle.InterlaceColor;
+		surface.SetMaterial(goggle.MaterialInterlace);
 		surface.SetDrawColor(interlaceColor.r, interlaceColor.g, interlaceColor.b, interlaceColor.a);
 		surface.DrawTexturedRect(0 + math.Rand(-1,1), 0 + math.Rand(-1,1), ScrW(), ScrH());
 	end
@@ -239,15 +233,17 @@ end
 --! 
 --! Goggle screenspace rendering hook.
 --!
-hook.Add("RenderScreenspaceEffects", "SPLINTERCELL_NVG_SHADER", function()
+hook.Add("RenderScreenspaceEffects", "NVGBASE_SHADER", function()
 
 	-- This is the autoload logic for the network var. Network vars will be handled serverside.
-	local currentGoggle = LocalPlayer():GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", 0);
+	local currentGoggle = LocalPlayer():GetNWInt("NVGBASE_CURRENT_GOGGLE", 1);
 	if (currentGoggle == 0) then return; end
 
 	-- Render post processing effects for current goggles.
-	if (SPLINTERCELL_NVG_GOGGLES.ScreenspaceReady) then
-		SPLINTERCELL_NVG_CONFIG[currentGoggle].PostProcess();
+	local loadout = LocalPlayer():NVGBASE_GetLoadout();
+	if (loadout == nil) then return; end
+	if (NVGBASE_GOGGLES.ScreenspaceReady) then
+		loadout.Goggles[currentGoggle].PostProcess();
 	end
 end);
 
@@ -255,108 +251,110 @@ end);
 --! Draw hook entry point for all goggles. This will use the network var currently set on the player
 --! to determine which goggle to use.
 --!
-hook.Add("PreDrawHUD", "SPLINTERCELL_NVG_HUD", function()
-
-	-- Initializes the looping sound cache.
-	SPLINTERCELL_NVG_GOGGLES:SetupLoopingSounds();
+hook.Add("PreDrawHUD", "NVGBASE_HUD", function()
 
 	-- This is the autoload logic for the network var. Network vars will be handled serverside.
-	local currentGoggle = LocalPlayer():GetNWInt("SPLINTERCELL_NVG_CURRENT_GOGGLE", 0);
+	local currentGoggle = LocalPlayer():GetNWInt("NVGBASE_CURRENT_GOGGLE", 1);
 	if (currentGoggle == 0) then return; end
 
+	-- Initializes the looping sound cache.
+	local loadout = LocalPlayer():NVGBASE_GetLoadout();
+	if (loadout == nil) then return; end
+	NVGBASE_GOGGLES:SetupLoopingSounds(loadout.Goggles);
+
 	-- This is gets clientside to handle animations and sounds.
-	local toggle = GetConVar("SPLINTERCELL_NVG_TOGGLE"):GetBool();
-	if (SPLINTERCELL_NVG_GOGGLES.Toggled == nil) then
-		SPLINTERCELL_NVG_GOGGLES.Toggled = toggle;
-		SPLINTERCELL_NVG_GOGGLES.CurrentGoggles = currentGoggle;
+	local toggle = GetConVar("NVGBASE_TOGGLE"):GetBool();
+	if (NVGBASE_GOGGLES.Toggled == nil) then
+		NVGBASE_GOGGLES.Toggled = toggle;
+		NVGBASE_GOGGLES.CurrentGoggles = currentGoggle;
 	end
 
 	cam.Start2D();
 
 		-- Delegate call to the configuration file for which goggle to render.
-		local currentConfig = SPLINTERCELL_NVG_CONFIG[currentGoggle];
+		local currentConfig = loadout.Goggles[currentGoggle];
 		if (toggle) then
 
-			SPLINTERCELL_NVG_GOGGLES:TransitionIn(nvgOverlayAnim);
+			NVGBASE_GOGGLES:TransitionIn(loadout.Settings.Transition.Rate, loadout.Settings.Overlays.Second);
 
 			-- Play the toggle sound specific to the goggles.
-			if (!SPLINTERCELL_NVG_GOGGLES.Toggled) then
-				SPLINTERCELL_NVG_GOGGLES.NextTransition = CurTime() + __TransitionDelay;
-				SPLINTERCELL_NVG_GOGGLES.Toggled = true;
+			if (!NVGBASE_GOGGLES.Toggled) then
+				NVGBASE_GOGGLES.NextTransition = CurTime() + loadout.Settings.Transition.Delay;
+				NVGBASE_GOGGLES.Toggled = true;
 			end
 
 			-- Goggles don't match with the cache, use must've switched goggles.
-			if (currentGoggle != SPLINTERCELL_NVG_GOGGLES.CurrentGoggles) then
+			if (currentGoggle != NVGBASE_GOGGLES.CurrentGoggles) then
 
 				-- Stop looping sound of previous goggles and cleanup materials.
-				local previousConfig = SPLINTERCELL_NVG_CONFIG[SPLINTERCELL_NVG_GOGGLES.CurrentGoggles];
-				SPLINTERCELL_NVG_GOGGLES:CleanupMaterials();
-				SPLINTERCELL_NVG_GOGGLES:StopLoopingSound(previousConfig, 0.5);
+				local previousConfig = loadout.Goggles[NVGBASE_GOGGLES.CurrentGoggles];
+				NVGBASE_GOGGLES:CleanupMaterials();
+				NVGBASE_GOGGLES:StopLoopingSound(previousConfig, 0.5);
 
 				-- Play goggle mode switch sound only clientside and start looping sound.
-				SPLINTERCELL_NVG_GOGGLES.CurrentGoggles = currentGoggle;
-				SPLINTERCELL_NVG_GOGGLES:PlayLoopingSound(currentConfig, 1.5);
+				NVGBASE_GOGGLES.CurrentGoggles = currentGoggle;
+				NVGBASE_GOGGLES:PlayLoopingSound(currentConfig, 1.5);
 				surface.PlaySound("splinter_cell/goggles/standard/goggles_mode.wav");
 			end
 
-			if (CurTime() > SPLINTERCELL_NVG_GOGGLES.NextTransition) then
+			if (CurTime() > NVGBASE_GOGGLES.NextTransition) then
 
 				-- Render screen space effects of current config.
-				SPLINTERCELL_NVG_GOGGLES.ScreenspaceReady = true;
-				SPLINTERCELL_NVG_GOGGLES:Render(currentConfig);
+				NVGBASE_GOGGLES.ScreenspaceReady = true;
+				NVGBASE_GOGGLES:Render(currentConfig);
 
 				-- Handle material overrides for the goggle being used.
 				if (currentConfig.Filter != nil) then
-					SPLINTERCELL_NVG_GOGGLES:HandleMaterialOverrides(currentConfig);
+					NVGBASE_GOGGLES:HandleMaterialOverrides(currentConfig);
 				end
 
 				-- Play activate sound on client only after delay expired and start looping sound.
-				if (!SPLINTERCELL_NVG_GOGGLES.ToggledSound) then
-					SPLINTERCELL_NVG_GOGGLES.ToggledSound = true;
-					SPLINTERCELL_NVG_GOGGLES:PlayLoopingSound(currentConfig, 1.5);
+				if (!NVGBASE_GOGGLES.ToggledSound) then
+					NVGBASE_GOGGLES.ToggledSound = true;
+					NVGBASE_GOGGLES:PlayLoopingSound(currentConfig, 1.5);
 					surface.PlaySound(currentConfig.Sounds.Activate);
 				end
 
 				-- Current config does not use projected texture feature, remove it if it exists.
-				if (currentConfig.ProjectedTexture == nil && IsValid(SPLINTERCELL_NVG_GOGGLES.ProjectedTexture)) then
-					SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:Remove();
-					SPLINTERCELL_NVG_GOGGLES.ProjectedTexture = nil;
+				if (currentConfig.ProjectedTexture == nil && IsValid(NVGBASE_GOGGLES.ProjectedTexture)) then
+					NVGBASE_GOGGLES.ProjectedTexture:Remove();
+					NVGBASE_GOGGLES.ProjectedTexture = nil;
 				end
 
 				-- Current config uses a projected texture for lighting, create it if not already done.
-				if (currentConfig.ProjectedTexture != nil && !IsValid(SPLINTERCELL_NVG_GOGGLES.ProjectedTexture)) then
-					SPLINTERCELL_NVG_GOGGLES.ProjectedTexture = ProjectedTexture();
-					SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:SetTexture("effects/flashlight/soft");
-					SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:SetFOV(currentConfig.ProjectedTexture.FOV);
-					SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:SetVerticalFOV(currentConfig.ProjectedTexture.VFOV);
-					SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:SetBrightness(currentConfig.ProjectedTexture.Brightness);
-					SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:SetFarZ(currentConfig.ProjectedTexture.Distance);
-					SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:SetEnableShadows(false);
-					SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:Update();
+				if (currentConfig.ProjectedTexture != nil && !IsValid(NVGBASE_GOGGLES.ProjectedTexture)) then
+					NVGBASE_GOGGLES.ProjectedTexture = ProjectedTexture();
+					NVGBASE_GOGGLES.ProjectedTexture:SetTexture("effects/flashlight/soft");
+					NVGBASE_GOGGLES.ProjectedTexture:SetFOV(currentConfig.ProjectedTexture.FOV);
+					NVGBASE_GOGGLES.ProjectedTexture:SetVerticalFOV(currentConfig.ProjectedTexture.VFOV);
+					NVGBASE_GOGGLES.ProjectedTexture:SetBrightness(currentConfig.ProjectedTexture.Brightness);
+					NVGBASE_GOGGLES.ProjectedTexture:SetFarZ(currentConfig.ProjectedTexture.Distance);
+					NVGBASE_GOGGLES.ProjectedTexture:SetEnableShadows(false);
+					NVGBASE_GOGGLES.ProjectedTexture:Update();
 				end
 			end
 		else
 
 			-- Transition lens out.
-			SPLINTERCELL_NVG_GOGGLES:TransitionOut(nvgOverlayAnim);
+			NVGBASE_GOGGLES:TransitionOut(loadout.Settings.Transition.Rate, loadout.Settings.Overlays.Second);
 
 			-- Reset defaults for next toggle.
-			SPLINTERCELL_NVG_GOGGLES.Toggled = false;
-			SPLINTERCELL_NVG_GOGGLES.ToggledSound = false;
-			SPLINTERCELL_NVG_GOGGLES.ScreenspaceReady = false;
+			NVGBASE_GOGGLES.Toggled = false;
+			NVGBASE_GOGGLES.ToggledSound = false;
+			NVGBASE_GOGGLES.ScreenspaceReady = false;
 
 			-- Restore default materials on entities.
-			SPLINTERCELL_NVG_GOGGLES:CleanupMaterials();
-			SPLINTERCELL_NVG_GOGGLES:StopLoopingSound(currentConfig, 0);
+			NVGBASE_GOGGLES:CleanupMaterials();
+			NVGBASE_GOGGLES:StopLoopingSound(currentConfig, 0);
 
 			-- Remove projected texture.
-			if (IsValid(SPLINTERCELL_NVG_GOGGLES.ProjectedTexture)) then
-				SPLINTERCELL_NVG_GOGGLES.ProjectedTexture:Remove();
-				SPLINTERCELL_NVG_GOGGLES.ProjectedTexture = nil;
+			if (IsValid(NVGBASE_GOGGLES.ProjectedTexture)) then
+				NVGBASE_GOGGLES.ProjectedTexture:Remove();
+				NVGBASE_GOGGLES.ProjectedTexture = nil;
 			end
 		end
 
 		-- This is always called but will not interfere with other addons.
-		SPLINTERCELL_NVG_GOGGLES:DrawOverlay(currentConfig.MaterialOverlay, currentConfig.OverlayFirst);
+		NVGBASE_GOGGLES:DrawOverlay(currentConfig.MaterialOverlay, currentConfig.OverlayFirst, loadout.Settings.Overlays.First);
 	cam.End2D();
 end);
