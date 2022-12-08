@@ -141,10 +141,8 @@ function player:NVGBASE_SwitchToNextGoggle(loadout)
 
 		-- Find next valid goggle.
 		current = current + 1;
+		if (current > #loadout.Goggles) then current = 1; end
 		while (current != self:GetNWInt("NVGBASE_CURRENT_GOGGLE", 1)) do
-
-			-- Need to run the looping check now to avoid nil reference exception if testing from last goggle.
-			if (current > #loadout.Goggles) then current = 1; end
 
 			-- Fetch the next goggle according to the whitelist.
 			if (self:NVGBASE_IsWhitelisted(loadout, current)) then
@@ -155,6 +153,7 @@ function player:NVGBASE_SwitchToNextGoggle(loadout)
 
 			-- Loop back around if we have gone past the last goggle.
 			current = current + 1;
+			if (current > #loadout.Goggles) then current = 1; end
 		end
 	end
 end
