@@ -72,7 +72,7 @@ end);
 hook.Add("PlayerDeath", "NVGBASE_DEATH", function(victim, inflictor, attacker)
 
 	-- Do nothing if the player is not using a loadout at the moment.
-	local loadout = player:NVGBASE_GetLoadout();
+	local loadout = victim:NVGBASE_GetLoadout();
 	if (loadout == nil) then return; end
 	victim:NVGBASE_ToggleGoggle(loadout, true, 0);
 end);
