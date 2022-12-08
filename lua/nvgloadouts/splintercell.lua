@@ -1,11 +1,32 @@
 
--- This acts like a static class.
-SPLINTERCELL_NVG_CONFIG = {};
+local SPLINTERCELL_NVG = {};
+SPLINTERCELL_NVG.Goggles = {};
+
+-- Base settings.
+SPLINTERCELL_NVG.Settings = {
+
+	Gestures = {
+		On = ACT_ARM,
+		Off = ACT_DISARM
+	},
+
+	Overlays = {
+		First = Material("vgui/splinter_cell/overlay_vignette"),
+		Second = Material("vgui/splinter_cell/nvg_turnon_static")
+	},
+
+	Transition = {
+		Rate = 5,
+		Delay = 0.225,
+		Switch = 0.5,
+		Sound = "splinter_cell/goggles/standard/goggles_mode.wav"
+	}
+};
 
 ----------------------------------------------------------------
 -- Night vision
 ----------------------------------------------------------------
-SPLINTERCELL_NVG_CONFIG[1] = {
+SPLINTERCELL_NVG.Goggles[1] = {
 
 	Name = "Night",
 	Whitelist = {
@@ -76,7 +97,7 @@ SPLINTERCELL_NVG_CONFIG[1] = {
 ----------------------------------------------------------------
 -- Thermal vision
 ----------------------------------------------------------------
-SPLINTERCELL_NVG_CONFIG[2] = {
+SPLINTERCELL_NVG.Goggles[2] = {
 
 	Name = "Thermal",
 	Whitelist = {
@@ -161,7 +182,7 @@ SPLINTERCELL_NVG_CONFIG[2] = {
 ----------------------------------------------------------------
 -- Electromagnetic vision
 ----------------------------------------------------------------
-SPLINTERCELL_NVG_CONFIG[3] = {
+SPLINTERCELL_NVG.Goggles[3] = {
 
 	Name = "Electromagnetic",
 	Whitelist = {
@@ -224,13 +245,12 @@ SPLINTERCELL_NVG_CONFIG[3] = {
 	},
 
 	PostProcess = function()
-	
+
 		-- Sobel must be applied first to avoid darkening the result.
 		DrawSobel(0.6);
 
 		-- Color modify now before any other rendering operations. This way
 		-- the texturizer will be compounded on top.
-		
 		-- DrawColorModify({
 			-- ["$pp_colour_addr"]       = 0   * 0.02, -- * 0.02 is important.
 			-- ["$pp_colour_addg"]       = 0   * 0.02, -- * 0.02 is important.
@@ -256,7 +276,7 @@ SPLINTERCELL_NVG_CONFIG[3] = {
 ----------------------------------------------------------------
 -- Enhanced Night vision
 ----------------------------------------------------------------
-SPLINTERCELL_NVG_CONFIG[4] = {
+SPLINTERCELL_NVG.Goggles[4] = {
 
 	Name = "Enhanced Night",
 	Whitelist = {
@@ -329,7 +349,7 @@ SPLINTERCELL_NVG_CONFIG[4] = {
 ----------------------------------------------------------------
 -- Motion Tracking vision
 ----------------------------------------------------------------
-SPLINTERCELL_NVG_CONFIG[5] = {
+SPLINTERCELL_NVG.Goggles[5] = {
 
 	Name = "Motion Tracking",
 	Whitelist = {
@@ -393,7 +413,7 @@ SPLINTERCELL_NVG_CONFIG[5] = {
 ----------------------------------------------------------------
 -- Electromagnetic Tracking vision
 ----------------------------------------------------------------
-SPLINTERCELL_NVG_CONFIG[6] = {
+SPLINTERCELL_NVG.Goggles[6] = {
 
 	Name = "Electromagnetic Tracking",
 	Whitelist = {
@@ -421,7 +441,7 @@ SPLINTERCELL_NVG_CONFIG[6] = {
 		ent:GetClass() == "item_suitcharger" || ent:GetClass() == "item_healthcharger" || ent:GetClass() == "point_spotlight" || ent:GetClass() == "grenade_helicopter" ||
 		ent:GetClass() == "weapon_striderbuster" || ent:GetClass() == "item_battery" || ent:GetClass() == "npc_combine_s" || ent:GetClass() == "npc_strider" || 
 		ent:GetClass() == "npc_combinegunship" || ent:GetClass() == "npc_helicopter" || ent:GetClass() == "npc_combinedropship" || ent:GetClass() == "npc_dog" || ent:GetClass() == "hl2_npc_turret_ground" ||
-		(ent:IsPlayer() && ent:SCNVG_IsGoggleActive());
+		(ent:IsPlayer() && ent:NVGBASE_IsGoggleActive());
 	end,
 
 	Sounds = {
@@ -464,7 +484,7 @@ SPLINTERCELL_NVG_CONFIG[6] = {
 ----------------------------------------------------------------
 -- Sonar vision
 ----------------------------------------------------------------
-SPLINTERCELL_NVG_CONFIG[7] = {
+SPLINTERCELL_NVG.Goggles[7] = {
 
 	Name = "Sonar",
 	Whitelist = {
@@ -522,7 +542,7 @@ SPLINTERCELL_NVG_CONFIG[7] = {
 ----------------------------------------------------------------
 -- Thermal vision (Splinter Cell Double Agent)
 ----------------------------------------------------------------
-SPLINTERCELL_NVG_CONFIG[8] = {
+SPLINTERCELL_NVG.Goggles[8] = {
 
 	Name = "Epsilon Thermal",
 	Whitelist = {
@@ -598,7 +618,7 @@ SPLINTERCELL_NVG_CONFIG[8] = {
 ----------------------------------------------------------------
 -- Night vision (Splinter Cell Double Agent MP)
 ----------------------------------------------------------------
-SPLINTERCELL_NVG_CONFIG[9] = {
+SPLINTERCELL_NVG.Goggles[9] = {
 
 	Name = "Epsilon Night",
 	Whitelist = {
@@ -647,3 +667,6 @@ SPLINTERCELL_NVG_CONFIG[9] = {
 		DrawBloom(0.1, 2, 0.5, 0.25, 1, 0.6, 130 / 255, 135 / 255, 35 / 255);
 	end
 };
+
+-- Register the splinter cell NVG into the NVGBASE Goggless.
+NVGBASE_LOADOUTS.Register("Splinter Cell", SPLINTERCELL_NVG);
