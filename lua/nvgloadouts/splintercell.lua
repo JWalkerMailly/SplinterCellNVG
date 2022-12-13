@@ -13,8 +13,8 @@ SPLINTERCELL_NVG.Settings = {
 	BodyGroups = {
 		Group = 1,
 		Values = {
-			On = 0,
-			Off = 1
+			On = 1,
+			Off = 0
 		}
 	},
 
