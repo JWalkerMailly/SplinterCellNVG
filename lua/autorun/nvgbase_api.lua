@@ -33,9 +33,6 @@ local player = FindMetaTable("Player");
 function player:NVGBASE_AnimGoggle(gogglesActive, anim, bodygroup, on, off)
 
 	if (IsValid(self)) then
-
-		print(!gogglesActive && on || off)
-
 		self:SetBodygroup(bodygroup, !gogglesActive && on || off);
 		self:AnimRestartGesture(GESTURE_SLOT_CUSTOM, anim, true);
 	end
