@@ -159,13 +159,28 @@ function NVGBASE_GOGGLES:StopLoopingSound(goggle, fadeOut)
 	end
 end
 
+local __OffScreenRenderingTarget = nil;
+local __OffScreenRenderingTexture = nil;
+function NVGBASE_GOGGLES:PrepareOffScreenRendering()
+
+	if (__OffScreenRenderingTarget != nil && ScrW() == __OffScreenRenderingTexture:Width() && ScrH() == __OffScreenRenderingTexture:Height()) then
+		return;
+	end
+
+	local offScreenRenderingID = ScrW() .. "x" .. ScrH();
+	__OffScreenRenderingTarget = GetRenderTarget("NVGBASE_OffScreen_" .. offScreenRenderingID, ScrW(), ScrH());
+	__OffScreenRenderingTexture = CreateMaterial("NVGBASE_OffScreenTexture_" .. offScreenRenderingID, "UnlitGeneric", {
+		["$basetexture"] = __OffScreenRenderingTarget:GetName();
+	});
+end
+
 --!
 --! @brief      Sets up rendering space quad on top of the screen for the current goggle.
 --!             This will copy the postprocessing color texture for upcoming render operations.
 --!
 --! @param      goggle  The current goggle configuration.
 --!
-local __RenderTarget = Material("pp/colour");
+local __PostProcessRenderTarget = Material("pp/colour");
 function NVGBASE_GOGGLES:Render(goggle)
 
 	-- Setup lighting from configuration.
@@ -207,18 +222,18 @@ function NVGBASE_GOGGLES:Render(goggle)
 	-- Offload to rendertarget.
 	render.UpdateScreenEffectTexture();
 
-		__RenderTarget:SetTexture("$fbtexture",          render.GetScreenEffectTexture());
-		__RenderTarget:SetFloat("$pp_colour_addr",       colorCorrect.ColorAdd.r);
-		__RenderTarget:SetFloat("$pp_colour_addg",       colorCorrect.ColorAdd.g);
-		__RenderTarget:SetFloat("$pp_colour_addb",       colorCorrect.ColorAdd.b);
-		__RenderTarget:SetFloat("$pp_colour_mulr",       colorCorrect.ColorMul.r);
-		__RenderTarget:SetFloat("$pp_colour_mulg",       colorCorrect.ColorMul.g);
-		__RenderTarget:SetFloat("$pp_colour_mulb",       colorCorrect.ColorMul.b);
-		__RenderTarget:SetFloat("$pp_colour_brightness", finalBrightness);
-		__RenderTarget:SetFloat("$pp_colour_contrast",   colorCorrect.Contrast);
-		__RenderTarget:SetFloat("$pp_colour_colour",     colorCorrect.ColorMod);
+		__PostProcessRenderTarget:SetTexture("$fbtexture",          render.GetScreenEffectTexture());
+		__PostProcessRenderTarget:SetFloat("$pp_colour_addr",       colorCorrect.ColorAdd.r);
+		__PostProcessRenderTarget:SetFloat("$pp_colour_addg",       colorCorrect.ColorAdd.g);
+		__PostProcessRenderTarget:SetFloat("$pp_colour_addb",       colorCorrect.ColorAdd.b);
+		__PostProcessRenderTarget:SetFloat("$pp_colour_mulr",       colorCorrect.ColorMul.r);
+		__PostProcessRenderTarget:SetFloat("$pp_colour_mulg",       colorCorrect.ColorMul.g);
+		__PostProcessRenderTarget:SetFloat("$pp_colour_mulb",       colorCorrect.ColorMul.b);
+		__PostProcessRenderTarget:SetFloat("$pp_colour_brightness", finalBrightness);
+		__PostProcessRenderTarget:SetFloat("$pp_colour_contrast",   colorCorrect.Contrast);
+		__PostProcessRenderTarget:SetFloat("$pp_colour_colour",     colorCorrect.ColorMod);
 
-	render.SetMaterial(__RenderTarget);
+	render.SetMaterial(__PostProcessRenderTarget);
 	render.DrawScreenQuad();
 
 	-- Render interlace material over screen, if provided.
@@ -294,7 +309,7 @@ hook.Add("PreDrawHUD", "NVGBASE_HUD", function()
 				-- Play goggle mode switch sound only clientside and start looping sound.
 				NVGBASE_GOGGLES.CurrentGoggles = currentGoggle;
 				NVGBASE_GOGGLES:PlayLoopingSound(currentConfig, 1.5);
-				surface.PlaySound("splinter_cell/goggles/standard/goggles_mode.wav");
+				surface.PlaySound(loadout.Settings.Transition.Sound);
 			end
 
 			if (CurTime() > NVGBASE_GOGGLES.NextTransition) then

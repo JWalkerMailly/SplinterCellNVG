@@ -30,10 +30,13 @@ local player = FindMetaTable("Player");
 --! @param      gogglesActive  Flag
 --! @param      anim           The animation to play
 --!
-function player:NVGBASE_AnimGoggle(gogglesActive, anim)
+function player:NVGBASE_AnimGoggle(gogglesActive, anim, bodygroup, on, off)
 
 	if (IsValid(self)) then
-		self:SetBodygroup(2, !gogglesActive && 1 || 0);
+
+		print(!gogglesActive && on || off)
+
+		self:SetBodygroup(bodygroup, !gogglesActive && on || off);
 		self:AnimRestartGesture(GESTURE_SLOT_CUSTOM, anim, true);
 	end
 end

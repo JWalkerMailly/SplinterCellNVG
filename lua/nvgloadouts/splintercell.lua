@@ -10,6 +10,14 @@ SPLINTERCELL_NVG.Settings = {
 		Off = ACT_DISARM
 	},
 
+	BodyGroups = {
+		Group = 1,
+		Values = {
+			On = 0,
+			Off = 1
+		}
+	},
+
 	Overlays = {
 		First = Material("vgui/splinter_cell/overlay_vignette"),
 		Second = Material("vgui/splinter_cell/nvg_turnon_static")
