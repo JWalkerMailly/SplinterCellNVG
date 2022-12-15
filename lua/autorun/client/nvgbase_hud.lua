@@ -282,7 +282,7 @@ hook.Add("HUDPaintBackground", "NVGBASE_HUD", function()
 					angles = eyeAngles,
 					x = 0, y = 0,
 					w = ScrW(), h = ScrH(),
-					drawviewmodel = false,
+					drawviewmodel = true,
 					dopostprocess = false
 				});
 			render.PopRenderTarget();
@@ -310,7 +310,7 @@ hook.Add("HUDPaintBackground", "NVGBASE_HUD", function()
 			if (CurTime() > NVGBASE_GOGGLES.NextTransition) then
 
 				-- Render screen space effects of current config.
-				loadout.Goggles[currentGoggle].PostProcess();
+				loadout.Goggles[currentGoggle].PostProcess(currentConfig);
 				NVGBASE_GOGGLES:Render(currentConfig);
 
 				-- Handle material overrides for the goggle being used.
@@ -335,11 +335,15 @@ hook.Add("HUDPaintBackground", "NVGBASE_HUD", function()
 				if (currentConfig.ProjectedTexture != nil && !IsValid(NVGBASE_GOGGLES.ProjectedTexture)) then
 					NVGBASE_GOGGLES.ProjectedTexture = ProjectedTexture();
 					NVGBASE_GOGGLES.ProjectedTexture:SetTexture("effects/flashlight/soft");
+					NVGBASE_GOGGLES.ProjectedTexture:SetEnableShadows(false);
+				end
+
+				-- Update projected texture with current config data.
+				if (currentConfig.ProjectedTexture != nil) then
 					NVGBASE_GOGGLES.ProjectedTexture:SetFOV(currentConfig.ProjectedTexture.FOV);
 					NVGBASE_GOGGLES.ProjectedTexture:SetVerticalFOV(currentConfig.ProjectedTexture.VFOV);
 					NVGBASE_GOGGLES.ProjectedTexture:SetBrightness(currentConfig.ProjectedTexture.Brightness);
 					NVGBASE_GOGGLES.ProjectedTexture:SetFarZ(currentConfig.ProjectedTexture.Distance);
-					NVGBASE_GOGGLES.ProjectedTexture:SetEnableShadows(false);
 					NVGBASE_GOGGLES.ProjectedTexture:Update();
 				end
 

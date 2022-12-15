@@ -96,7 +96,7 @@ SPLINTERCELL_NVG.Goggles[1] = {
 		Brightness = 0.05
 	},
 
-	PostProcess = function()
+	PostProcess = function(self)
 		DrawBloom(0.65, 3.1, 1.75, 0.45, 2, 1, 155 / 255, 155 / 255, 155 / 255);
 		DrawBloom(0.1, 2, 0.5, 0.25, 1, 0.6, 130 / 255, 135 / 255, 35 / 255);
 	end
@@ -158,7 +158,7 @@ SPLINTERCELL_NVG.Goggles[2] = {
 		Brightness = 0.01
 	},
 
-	PostProcess = function()
+	PostProcess = function(self)
 
 		-- Sobel must be applied first to avoid darkening the result.
 		DrawSobel(0.6);
@@ -252,24 +252,10 @@ SPLINTERCELL_NVG.Goggles[3] = {
 		Brightness = 0.01
 	},
 
-	PostProcess = function()
+	PostProcess = function(self)
 
 		-- Sobel must be applied first to avoid darkening the result.
 		DrawSobel(0.6);
-
-		-- Color modify now before any other rendering operations. This way
-		-- the texturizer will be compounded on top.
-		-- DrawColorModify({
-			-- ["$pp_colour_addr"]       = 0   * 0.02, -- * 0.02 is important.
-			-- ["$pp_colour_addg"]       = 0   * 0.02, -- * 0.02 is important.
-			-- ["$pp_colour_addb"]       = 0   * 0.02, -- * 0.02 is important.
-			-- ["$pp_colour_mulr"]       = 155 * 0.1, -- * 0.1 is important.
-			-- ["$pp_colour_mulg"]       = 110 * 0.1, -- * 0.1 is important.
-			-- ["$pp_colour_mulb"]       = 45  * 0.1, -- * 0.1 is important.
-			-- ["$pp_colour_brightness"] = 0.04,
-			-- ["$pp_colour_contrast"]   = 0.15,
-			-- ["$pp_colour_colour"]     = 0.0
-		-- });
 
 		-- Render first bloom pass and apply texurizer to achieve thermal effect.
 		DrawBloom(0.65, 3.1, 1.75, 0.45, 2, -7, 155 / 255, 155 / 255, 155 / 255);
@@ -348,7 +334,7 @@ SPLINTERCELL_NVG.Goggles[4] = {
 		Brightness = 0.15
 	},
 
-	PostProcess = function()
+	PostProcess = function(self)
 		DrawBloom(0.1, 2, 0.5, 0.25, 1, 0.6, 130 / 255, 135 / 255, 35 / 255);
 		DrawBloom(0.1, 2, 0.5, 0.25, 1, 0.6, 130 / 255, 135 / 255, 35 / 255);
 	end
@@ -406,7 +392,7 @@ SPLINTERCELL_NVG.Goggles[5] = {
 		Brightness = 0
 	},
 
-	PostProcess = function()
+	PostProcess = function(self)
 
 		-- Render first bloom pass and apply texurizer to achieve thermal effect.
 		DrawBloom(0.07, 0.1, 1.75, 0.5, 2, -99.00, 155 / 255, 155 / 255, 155 / 255);
@@ -422,7 +408,7 @@ SPLINTERCELL_NVG.Goggles[5] = {
 		local right = LocalPlayer():EyeAngles():Right();
 		for k,v in pairs(ents.GetAll()) do
 
-			if (!self.Filter(v) || v == LocalPlayer()) then continue; end
+			if (!LocalPlayer():IsBoundingBoxVisible(v, 2048, self.Filter)) then continue; end
 
 			local pos = v:GetPos();
 			local lowerPos = pos + right * 16;
@@ -501,7 +487,7 @@ SPLINTERCELL_NVG.Goggles[6] = {
 		Brightness = -0.05
 	},
 
-	PostProcess = function()
+	PostProcess = function(self)
 
 		-- Render first bloom pass and apply texurizer to achieve thermal effect.
 		DrawBloom(1, 9000, 1.75, 0.5, 0, 5000, 155 / 255, 155 / 255, 155 / 255);
@@ -559,7 +545,7 @@ SPLINTERCELL_NVG.Goggles[7] = {
 		Brightness = 0.01
 	},
 
-	PostProcess = function()
+	PostProcess = function(self)
 
 		DrawBloom(2, 3.10, 1.75, 0.5, 2, -99.00, 155 / 255, 155 / 255, 155 / 255);
 		DrawTexturize(1, Material("effects/splinter_cell/sonar.png"));
@@ -618,7 +604,7 @@ SPLINTERCELL_NVG.Goggles[8] = {
 		Brightness = 0.01
 	},
 
-	PostProcess = function()
+	PostProcess = function(self)
 
 		-- Sobel must be applied first to avoid darkening the result.
 		DrawSobel(0.6);
@@ -694,8 +680,301 @@ SPLINTERCELL_NVG.Goggles[9] = {
 		Brightness = -0.1
 	},
 
-	PostProcess = function()
+	PostProcess = function(self)
 		DrawBloom(0.1, 2, 0.5, 0.25, 1, 0.6, 130 / 255, 135 / 255, 35 / 255);
+		DrawBloom(0.1, 2, 0.5, 0.25, 1, 0.6, 130 / 255, 135 / 255, 35 / 255);
+	end
+};
+
+----------------------------------------------------------------
+-- High-Frequency Night
+----------------------------------------------------------------
+
+SPLINTERCELL_NVG.Goggles[10] = {
+
+	Name = "High-Frequency Night",
+	Whitelist = {
+		"models/splinter_cell_4/player/john_hodge.mdl",
+		"models/splinter_cell_4/player/sam_d.mdl",
+		"models/splinter_cell_4/player/sam_f.mdl"
+	},
+
+	MaterialOverlay   = Material("vgui/splinter_cell/nvg_anim"),
+	OverlayFirst      = false,
+
+	MaterialInterlace = Material("vgui/splinter_cell/interlace_overlay"),
+	InterlaceColor    = Color(155, 155, 155, 64),
+
+	MaterialOverride  = nil,
+	Filter = function(ent)
+		return ent:IsPlayer() || ent:IsNPC() || ent:IsNextBot();
+	end,
+
+	Sounds = {
+		Loop      = nil,
+		ToggleOn  = "splinter_cell/goggles/standard/goggles_toggle.wav",
+		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav",
+		Activate  = "splinter_cell/goggles/standard/goggles_activate.wav"
+	},
+
+	Lighting = {
+		Color      = Color(25, 25, 25),
+		Min        = 0,
+		Style      = 0,
+		Brightness = 1,
+		Size       = 200,
+		Decay      = 200,
+		DieTime    = 0.05
+	},
+
+	ProjectedTexture = {
+		FOV        = 140,
+		VFOV       = 100, -- Vertical FOV
+		Brightness = 2,
+		Distance   = 2500
+	},
+
+	PhotoSensitive = 0.9,
+
+	ColorCorrection = {
+		ColorAdd   = Color(0, 0.7, 0),
+		ColorMul   = Color(0, 0, 0),
+		ColorMod   = 0.2,
+		Contrast   = 1,
+		Brightness = 0.05
+	},
+
+	PostProcess = function(self)
+		DrawBloom(0.1, 2, 0.5, 0.25, 1, 0.6, 130 / 255, 135 / 255, 35 / 255);
+		DrawBloom(0.1, 2, 0.5, 0.25, 1, 0.6, 130 / 255, 135 / 255, 35 / 255);
+	end
+};
+
+----------------------------------------------------------------
+-- High-Frequency Thermal
+----------------------------------------------------------------
+
+SPLINTERCELL_NVG.Goggles[11] = {
+
+	Name = "High-Frequency Thermal",
+	Whitelist = {
+		"models/splinter_cell_4/player/john_hodge.mdl",
+		"models/splinter_cell_4/player/sam_d.mdl",
+		"models/splinter_cell_4/player/sam_f.mdl"
+	},
+
+	MaterialOverlay   = Material("vgui/splinter_cell/nvg_anim"),
+	OverlayFirst      = false,
+
+	MaterialInterlace = Material("vgui/splinter_cell/interlace_overlay"),
+	InterlaceColor    = Color(155, 155, 155, 128),
+
+	MaterialOverride  = "effects/splinter_cell/thermal_radius",
+	Filter = function(ent)
+		return ent:IsPlayer() || ent:IsNPC() || ent:IsNextBot();
+	end,
+
+	Sounds = {
+		Loop      = nil,
+		ToggleOn  = "splinter_cell/goggles/standard/goggles_toggle.wav",
+		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav",
+		Activate  = "splinter_cell/goggles/standard/goggles_activate.wav"
+	},
+
+	Lighting = {
+		Color      = Color(25, 25, 25),
+		Min        = 0,
+		Style      = 0,
+		Brightness = 0.1,
+		Size       = 8192,
+		Decay      = 16000,
+		DieTime    = 0.05
+	},
+
+	ColorCorrection = {
+		ColorAdd   = Color(0, 0, 0),
+		ColorMul   = Color(0, 0, 0),
+		ColorMod   = 1,
+		Contrast   = 2,
+		Brightness = 0.01
+	},
+
+	PostProcess = function(self)
+
+		-- Sobel must be applied first to avoid darkening the result.
+		DrawSobel(0.6);
+
+		-- Color modify now before any other rendering operations. This way
+		-- the texturizer will be compounded on top.
+		DrawColorModify({
+			["$pp_colour_addr"]       = 0   * 0.02, -- * 0.02 is important.
+			["$pp_colour_addg"]       = 0   * 0.02, -- * 0.02 is important.
+			["$pp_colour_addb"]       = 0   * 0.02, -- * 0.02 is important.
+			["$pp_colour_mulr"]       = 155 * 0.1, -- * 0.1 is important.
+			["$pp_colour_mulg"]       = 110 * 0.1, -- * 0.1 is important.
+			["$pp_colour_mulb"]       = 45  * 0.1, -- * 0.1 is important.
+			["$pp_colour_brightness"] = 0.04,
+			["$pp_colour_contrast"]   = 0.15,
+			["$pp_colour_colour"]     = 0.0
+		});
+
+		-- Render first bloom pass and apply texurizer to achieve thermal effect.
+		DrawBloom(0.65, 3.1, 1.75, 0.45, 2, -7, 155 / 255, 155 / 255, 155 / 255);
+		DrawTexturize(1, Material("effects/splinter_cell/gradient.png"));
+
+		-- Final bloom pass with motion blur to give a glowing ghosting effect.
+		DrawBloom(0.65, 3.1, 1.75, 0.45, 2, 1, 155 / 255, 155 / 255, 155 / 255);
+		DrawMotionBlur(0.3, 1.0, 0);
+	end
+};
+
+----------------------------------------------------------------
+-- Thermal Goggles RSV2
+----------------------------------------------------------------
+
+SPLINTERCELL_NVG.Goggles[12] = {
+
+	Name = "Thermal Goggles",
+	Whitelist = {
+		"models/rainbow_six_vegas_2/player/bishop_male_1.mdl",
+		"models/rainbow_six_vegas_2/player/bishop_male_2.mdl",
+		"models/rainbow_six_vegas_2/player/bishop_female_1.mdl",
+		"models/rainbow_six_vegas_2/player/bishop_female_2.mdl"
+	},
+
+	MaterialOverlay   = Material("vgui/r6v2/scope_mask"),
+	OverlayFirst      = false,
+
+	MaterialInterlace = Material("vgui/r6v2/NvComb"),
+	InterlaceColor    = Color(125, 55, 155, 2),
+
+	MaterialOverride  = "effects/r6v2/motion_radius",
+	Filter = function(ent)
+		return ent:IsPlayer() || ent:IsNPC() || ent:IsNextBot();
+	end,
+
+	Sounds = {
+		Loop      = "r6v2/goggles/r6_nvg_loop.wav",
+		ToggleOn  = "r6v2/goggles/r6_nvg_on.wav",
+		ToggleOff = "r6v2/goggles/r6_nvg_off.wav",
+		Activate  = "r6v2/goggles/activate.wav"
+	},
+
+	Lighting = {
+		Color      = Color(25, 25, 25),
+		Min        = 0,
+		Style      = 0,
+		Brightness = 0.1,
+		Size       = 8192,
+		Decay      = 16000,
+		DieTime    = 0.05
+	},
+
+	ColorCorrection = {
+		ColorAdd   = Color(0, 0, 0),
+		ColorMul   = Color(0, 0, 0),
+		ColorMod   = 1,
+		Contrast   = 2,
+		Brightness = 0.01
+	},
+
+	ProjectedTexture = {
+		FOV        = 140,
+		VFOV       = 100, -- Vertical FOV
+		Brightness = 20,
+		Distance   = 1024
+	},
+
+	PostProcess = function(self)
+
+		-- Sobel must be applied first to avoid darkening the result.
+		DrawSobel(0.6);
+
+		-- Color modify now before any other rendering operations. This way
+		-- the texturizer will be compounded on top.
+		DrawColorModify({
+			["$pp_colour_addr"]       = 0   * 0.02, -- * 0.02 is important.
+			["$pp_colour_addg"]       = 0   * 0.02, -- * 0.02 is important.
+			["$pp_colour_addb"]       = 0   * 0.02, -- * 0.02 is important.
+			["$pp_colour_mulr"]       = 155 * 0.1, -- * 0.1 is important.
+			["$pp_colour_mulg"]       = 110 * 0.1, -- * 0.1 is important.
+			["$pp_colour_mulb"]       = 45  * 0.1, -- * 0.1 is important.
+			["$pp_colour_brightness"] = 0.04,
+			["$pp_colour_contrast"]   = 0.15,
+			["$pp_colour_colour"]     = 0.0
+		});
+
+		-- Render first bloom pass and apply texurizer to achieve thermal effect.
+		DrawBloom(0.65, 3.1, 1.75, 0.45, 2, -7, 155 / 255, 155 / 255, 155 / 255);
+		DrawTexturize(1, Material("effects/r6v2/HvMapping.png"));
+
+		-- Final bloom pass with motion blur to give a glowing ghosting effect.
+		DrawBloom(0.65, 3.1, 1.75, 0.45, 2, 1, 155 / 255, 155 / 255, 155 / 255);
+		-- DrawMotionBlur(0.3, 1.0, 0);
+	end
+};
+
+----------------------------------------------------------------
+-- Night Goggles RSV2
+----------------------------------------------------------------
+
+SPLINTERCELL_NVG.Goggles[13] = {
+
+	Name = "Night",
+	Whitelist = {
+		"models/rainbow_six_vegas_2/player/bishop_male_1.mdl",
+		"models/rainbow_six_vegas_2/player/bishop_male_2.mdl",
+		"models/rainbow_six_vegas_2/player/bishop_female_1.mdl",
+		"models/rainbow_six_vegas_2/player/bishop_female_2.mdl"
+	},
+
+	MaterialOverlay   = Material("vgui/r6v2/scope_mask"),
+	OverlayFirst      = false,
+
+	MaterialInterlace = Material("vgui/r6v2/NvComb"),
+	InterlaceColor    = Color(155, 155, 155, 160),
+
+	MaterialOverride  = nil,
+	Filter = function(ent)
+		return;
+	end,
+
+	Sounds = {
+		Loop      = "r6v2/goggles/r6_nvg_loop.wav",
+		ToggleOn  = "r6v2/goggles/r6_nvg_on.wav",
+		ToggleOff = "r6v2/goggles/r6_nvg_off.wav",
+		Activate  = "r6v2/goggles/activate.wav"
+	},
+
+	Lighting = {
+		Color      = Color(25, 25, 25),
+		Min        = 0,
+		Style      = 0,
+		Brightness = 1,
+		Size       = 200,
+		Decay      = 200,
+		DieTime    = 0.05
+	},
+
+	ProjectedTexture = {
+		FOV        = 140,
+		VFOV       = 100, -- Vertical FOV
+		Brightness = 2,
+		Distance   = 2500
+	},
+
+	PhotoSensitive = 0.9,
+
+	ColorCorrection = {
+		ColorAdd   = Color(0.1, 0.35, 0.05),
+		ColorMul   = Color(0, 0, 0),
+		ColorMod   = 0.25,
+		Contrast   = 1,
+		Brightness = 0.05
+	},
+
+	PostProcess = function(self)
+		DrawBloom(0.65, 3.1, 1.75, 0.45, 2, 1, 155 / 255, 155 / 255, 155 / 255);
 		DrawBloom(0.1, 2, 0.5, 0.25, 1, 0.6, 130 / 255, 135 / 255, 35 / 255);
 	end
 };
