@@ -408,7 +408,7 @@ SPLINTERCELL_NVG.Goggles[5] = {
 		local right = LocalPlayer():EyeAngles():Right();
 		for k,v in pairs(ents.GetAll()) do
 
-			if (!LocalPlayer():IsBoundingBoxVisible(v, 2048, self.Filter)) then continue; end
+			if (!LocalPlayer():NVGBASE_IsBoundingBoxVisible(v, 2048, self.Filter)) then continue; end
 
 			local pos = v:GetPos();
 			local lowerPos = pos + right * 16;

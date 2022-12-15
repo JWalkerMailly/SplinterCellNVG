@@ -25,11 +25,11 @@ CreateClientConVar("NVGBASE_TOGGLE", "0", false, true);
 local player = FindMetaTable("Player");
 local entity = FindMetaTable("Entity");
 
-function player:IsBoundingBoxVisible(target, maxDistance, filtering)
+function player:NVGBASE_IsBoundingBoxVisible(target, maxDistance, filtering)
 
 	local trace = util.TraceHull({
 		start = self:EyePos(),
-		endpos = target:GetCenterPos(),
+		endpos = target:NVGBASE_GetCenterPos(),
 		mins = Vector(1, 1, 1) * -5,
 		maxs = Vector(1, 1, 1) * 5,
 		filter = function(ent)
@@ -40,7 +40,7 @@ function player:IsBoundingBoxVisible(target, maxDistance, filtering)
 	return trace.Hit && target == trace.Entity;
 end
 
-function entity:GetCenterPos()
+function entity:NVGBASE_GetCenterPos()
 	return self:GetPos() + self:OBBCenter();
 end
 
