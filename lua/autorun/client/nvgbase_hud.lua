@@ -15,7 +15,6 @@ NVGBASE_GOGGLES.ShouldCleanupMaterials = false;
 -- is only used to delay the screenspace effects and overlays.
 NVGBASE_GOGGLES.Transition = 0;
 NVGBASE_GOGGLES.NextTransition = 0;
-NVGBASE_GOGGLES.ScreenspaceReady = false;
 NVGBASE_GOGGLES.ProjectedTexture = nil;
 NVGBASE_GOGGLES.PhotoSensitivity = 0;
 
@@ -246,27 +245,10 @@ function NVGBASE_GOGGLES:Render(goggle)
 end
 
 --! 
---! Goggle screenspace rendering hook.
---!
-hook.Add("RenderScreenspaceEffects", "NVGBASE_SHADER", function()
-
-	-- This is the autoload logic for the network var. Network vars will be handled serverside.
-	local currentGoggle = LocalPlayer():GetNWInt("NVGBASE_CURRENT_GOGGLE", 1);
-	if (currentGoggle == 0) then return; end
-
-	-- Render post processing effects for current goggles.
-	local loadout = LocalPlayer():NVGBASE_GetLoadout();
-	if (loadout == nil) then return; end
-	if (NVGBASE_GOGGLES.ScreenspaceReady) then
-		loadout.Goggles[currentGoggle].PostProcess();
-	end
-end);
-
---! 
 --! Draw hook entry point for all goggles. This will use the network var currently set on the player
 --! to determine which goggle to use.
 --!
-hook.Add("PreDrawHUD", "NVGBASE_HUD", function()
+hook.Add("HUDPaint", "NVGBASE_HUD", function()
 
 	-- This is the autoload logic for the network var. Network vars will be handled serverside.
 	local currentGoggle = LocalPlayer():GetNWInt("NVGBASE_CURRENT_GOGGLE", 1);
@@ -283,6 +265,21 @@ hook.Add("PreDrawHUD", "NVGBASE_HUD", function()
 		NVGBASE_GOGGLES.Toggled = toggle;
 		NVGBASE_GOGGLES.CurrentGoggles = currentGoggle;
 	end
+
+	NVGBASE_GOGGLES:PrepareOffScreenRendering();
+	render.PushRenderTarget(__OffScreenRenderingTarget);
+
+		-- Render a world view on top of the screen in order to hide the default viewmodel.
+		render.RenderView({
+			origin = eyePos,
+			angles = eyeAngles,
+			x = 0, y = 0,
+			w = ScrW(), h = ScrH(),
+			drawviewmodel = false,
+			dopostprocess = true
+		});
+
+	render.PopRenderTarget();
 
 	cam.Start2D();
 
@@ -315,7 +312,7 @@ hook.Add("PreDrawHUD", "NVGBASE_HUD", function()
 			if (CurTime() > NVGBASE_GOGGLES.NextTransition) then
 
 				-- Render screen space effects of current config.
-				NVGBASE_GOGGLES.ScreenspaceReady = true;
+				loadout.Goggles[currentGoggle].PostProcess();
 				NVGBASE_GOGGLES:Render(currentConfig);
 
 				-- Handle material overrides for the goggle being used.
@@ -356,7 +353,6 @@ hook.Add("PreDrawHUD", "NVGBASE_HUD", function()
 			-- Reset defaults for next toggle.
 			NVGBASE_GOGGLES.Toggled = false;
 			NVGBASE_GOGGLES.ToggledSound = false;
-			NVGBASE_GOGGLES.ScreenspaceReady = false;
 
 			-- Restore default materials on entities.
 			NVGBASE_GOGGLES:CleanupMaterials();
@@ -372,4 +368,8 @@ hook.Add("PreDrawHUD", "NVGBASE_HUD", function()
 		-- This is always called but will not interfere with other addons.
 		NVGBASE_GOGGLES:DrawOverlay(currentConfig.MaterialOverlay, currentConfig.OverlayFirst, loadout.Settings.Overlays.First);
 	cam.End2D();
+
+	surface.SetDrawColor(Color(255, 255, 255, 255));
+	surface.SetMaterial(__OffScreenRenderingTexture);
+	surface.DrawTexturedRect(0, 0, ScrW() / 2, ScrH() / 2);
 end);
