@@ -248,7 +248,7 @@ end
 --! Draw hook entry point for all goggles. This will use the network var currently set on the player
 --! to determine which goggle to use.
 --!
-hook.Add("HUDPaint", "NVGBASE_HUD", function()
+hook.Add("HUDPaintBackground", "NVGBASE_HUD", function()
 
 	-- This is the autoload logic for the network var. Network vars will be handled serverside.
 	local currentGoggle = LocalPlayer():GetNWInt("NVGBASE_CURRENT_GOGGLE", 1);
@@ -266,28 +266,26 @@ hook.Add("HUDPaint", "NVGBASE_HUD", function()
 		NVGBASE_GOGGLES.CurrentGoggles = currentGoggle;
 	end
 
-	NVGBASE_GOGGLES:PrepareOffScreenRendering();
-	render.PushRenderTarget(__OffScreenRenderingTarget);
-
-		-- Render a world view on top of the screen in order to hide the default viewmodel.
-		render.RenderView({
-			origin = eyePos,
-			angles = eyeAngles,
-			x = 0, y = 0,
-			w = ScrW(), h = ScrH(),
-			drawviewmodel = false,
-			dopostprocess = true
-		});
-
-	render.PopRenderTarget();
-
 	cam.Start2D();
 
 		-- Delegate call to the configuration file for which goggle to render.
 		local currentConfig = loadout.Goggles[currentGoggle];
 		if (toggle) then
 
+			-- Do transition animation and begin rendering to offscreen render target for any goggle using that feature.
 			NVGBASE_GOGGLES:TransitionIn(loadout.Settings.Transition.Rate, loadout.Settings.Overlays.Second);
+			NVGBASE_GOGGLES:PrepareOffScreenRendering();
+			NVGBASE_GOGGLES:CleanupMaterials();
+			render.PushRenderTarget(__OffScreenRenderingTarget);
+				render.RenderView({
+					origin = eyePos,
+					angles = eyeAngles,
+					x = 0, y = 0,
+					w = ScrW(), h = ScrH(),
+					drawviewmodel = false,
+					dopostprocess = false
+				});
+			render.PopRenderTarget();
 
 			-- Play the toggle sound specific to the goggles.
 			if (!NVGBASE_GOGGLES.Toggled) then
@@ -344,6 +342,11 @@ hook.Add("HUDPaint", "NVGBASE_HUD", function()
 					NVGBASE_GOGGLES.ProjectedTexture:SetEnableShadows(false);
 					NVGBASE_GOGGLES.ProjectedTexture:Update();
 				end
+
+				-- Do final post processing pass using offscreen render target sampling for special effects.
+				if (currentConfig.OffscreenRendering != nil) then
+					currentConfig.OffscreenRendering(currentConfig, __OffScreenRenderingTexture);
+				end
 			end
 		else
 
@@ -368,8 +371,4 @@ hook.Add("HUDPaint", "NVGBASE_HUD", function()
 		-- This is always called but will not interfere with other addons.
 		NVGBASE_GOGGLES:DrawOverlay(currentConfig.MaterialOverlay, currentConfig.OverlayFirst, loadout.Settings.Overlays.First);
 	cam.End2D();
-
-	surface.SetDrawColor(Color(255, 255, 255, 255));
-	surface.SetMaterial(__OffScreenRenderingTexture);
-	surface.DrawTexturedRect(0, 0, ScrW() / 2, ScrH() / 2);
 end);

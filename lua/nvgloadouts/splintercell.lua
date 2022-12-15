@@ -415,6 +415,30 @@ SPLINTERCELL_NVG.Goggles[5] = {
 		-- Final bloom pass with motion blur to give a glowing ghosting effect.
 		DrawBloom(0.07, 0.1, 1.75, 0.5, 2, -99.00, 155 / 255, 155 / 255, 155 / 255);
 		DrawMotionBlur(0.3, 1.0, 0);
+	end,
+
+	OffscreenRendering = function(self, texture)
+
+		local right = LocalPlayer():EyeAngles():Right();
+		for k,v in pairs(ents.GetAll()) do
+
+			if (!self.Filter(v) || v == LocalPlayer()) then continue; end
+
+			local pos = v:GetPos();
+			local lowerPos = pos + right * 16;
+			local upperPos = pos + Vector(0, 0, v:OBBMaxs()[3]) - right * 16;
+
+			local rectMin = upperPos:ToScreen();
+			local rectMax = lowerPos:ToScreen();
+			local startU = rectMin.x / ScrW();
+			local startV = rectMin.y / ScrH();
+			local endU = rectMax.x / ScrW();
+			local endV = rectMax.y / ScrH();
+
+			surface.SetMaterial(texture)
+			surface.SetDrawColor(Color(255, 255, 255, 255));
+			surface.DrawTexturedRectUV(rectMin.x, rectMin.y, rectMax.x - rectMin.x, rectMax.y - rectMin.y, startU, startV, endU, endV);
+		end
 	end
 };
 
