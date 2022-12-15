@@ -196,13 +196,6 @@ function NVGBASE_GOGGLES:Render(goggle)
 	dlight.Decay      = lighting.Decay;
 	dlight.DieTime    = CurTime() + lighting.DieTime;
 
-	-- Update projected texture's position and angles to illuminate the world.
-	if (IsValid(NVGBASE_GOGGLES.ProjectedTexture)) then
-		NVGBASE_GOGGLES.ProjectedTexture:SetPos(EyePos());
-		NVGBASE_GOGGLES.ProjectedTexture:SetAngles(EyeAngles());
-		NVGBASE_GOGGLES.ProjectedTexture:Update();
-	end
-
 	local colorCorrect = goggle.ColorCorrection;
 	local finalBrightness = colorCorrect.Brightness;
 
@@ -266,113 +259,112 @@ hook.Add("HUDPaintBackground", "NVGBASE_HUD", function()
 		NVGBASE_GOGGLES.CurrentGoggles = currentGoggle;
 	end
 
-	cam.Start2D();
+	-- Delegate call to the configuration file for which goggle to render.
+	local currentConfig = loadout.Goggles[currentGoggle];
+	if (toggle) then
 
-		-- Delegate call to the configuration file for which goggle to render.
-		local currentConfig = loadout.Goggles[currentGoggle];
-		if (toggle) then
+		-- Do transition animation and begin rendering to offscreen render target for any goggle using that feature.
+		NVGBASE_GOGGLES:TransitionIn(loadout.Settings.Transition.Rate, loadout.Settings.Overlays.Second);
 
-			-- Do transition animation and begin rendering to offscreen render target for any goggle using that feature.
-			NVGBASE_GOGGLES:TransitionIn(loadout.Settings.Transition.Rate, loadout.Settings.Overlays.Second);
-			NVGBASE_GOGGLES:PrepareOffScreenRendering();
+		-- Play the toggle sound specific to the goggles.
+		if (!NVGBASE_GOGGLES.Toggled) then
+			NVGBASE_GOGGLES.NextTransition = CurTime() + loadout.Settings.Transition.Delay;
+			NVGBASE_GOGGLES.Toggled = true;
+		end
+
+		-- Goggles don't match with the cache, use must've switched goggles.
+		if (currentGoggle != NVGBASE_GOGGLES.CurrentGoggles) then
+
+			-- Stop looping sound of previous goggles and cleanup materials.
+			local previousConfig = loadout.Goggles[NVGBASE_GOGGLES.CurrentGoggles];
 			NVGBASE_GOGGLES:CleanupMaterials();
-			render.PushRenderTarget(__OffScreenRenderingTarget);
-				render.RenderView({
-					origin = eyePos,
-					angles = eyeAngles,
-					x = 0, y = 0,
-					w = ScrW(), h = ScrH(),
-					drawviewmodel = true,
-					dopostprocess = false
-				});
-			render.PopRenderTarget();
+			NVGBASE_GOGGLES:StopLoopingSound(previousConfig, 0.5);
 
-			-- Play the toggle sound specific to the goggles.
-			if (!NVGBASE_GOGGLES.Toggled) then
-				NVGBASE_GOGGLES.NextTransition = CurTime() + loadout.Settings.Transition.Delay;
-				NVGBASE_GOGGLES.Toggled = true;
+			-- Play goggle mode switch sound only clientside and start looping sound.
+			NVGBASE_GOGGLES.CurrentGoggles = currentGoggle;
+			NVGBASE_GOGGLES:PlayLoopingSound(currentConfig, 1.5);
+			surface.PlaySound(loadout.Settings.Transition.Sound);
+		end
+
+		if (CurTime() > NVGBASE_GOGGLES.NextTransition) then
+
+			-- Render screen space effects of current config.
+			loadout.Goggles[currentGoggle].PostProcess(currentConfig);
+			NVGBASE_GOGGLES:Render(currentConfig);
+
+			-- Handle material overrides for the goggle being used.
+			if (currentConfig.Filter != nil) then
+				NVGBASE_GOGGLES:HandleMaterialOverrides(currentConfig);
 			end
 
-			-- Goggles don't match with the cache, use must've switched goggles.
-			if (currentGoggle != NVGBASE_GOGGLES.CurrentGoggles) then
-
-				-- Stop looping sound of previous goggles and cleanup materials.
-				local previousConfig = loadout.Goggles[NVGBASE_GOGGLES.CurrentGoggles];
-				NVGBASE_GOGGLES:CleanupMaterials();
-				NVGBASE_GOGGLES:StopLoopingSound(previousConfig, 0.5);
-
-				-- Play goggle mode switch sound only clientside and start looping sound.
-				NVGBASE_GOGGLES.CurrentGoggles = currentGoggle;
+			-- Play activate sound on client only after delay expired and start looping sound.
+			if (!NVGBASE_GOGGLES.ToggledSound) then
+				NVGBASE_GOGGLES.ToggledSound = true;
 				NVGBASE_GOGGLES:PlayLoopingSound(currentConfig, 1.5);
-				surface.PlaySound(loadout.Settings.Transition.Sound);
+				surface.PlaySound(currentConfig.Sounds.Activate);
 			end
 
-			if (CurTime() > NVGBASE_GOGGLES.NextTransition) then
-
-				-- Render screen space effects of current config.
-				loadout.Goggles[currentGoggle].PostProcess(currentConfig);
-				NVGBASE_GOGGLES:Render(currentConfig);
-
-				-- Handle material overrides for the goggle being used.
-				if (currentConfig.Filter != nil) then
-					NVGBASE_GOGGLES:HandleMaterialOverrides(currentConfig);
-				end
-
-				-- Play activate sound on client only after delay expired and start looping sound.
-				if (!NVGBASE_GOGGLES.ToggledSound) then
-					NVGBASE_GOGGLES.ToggledSound = true;
-					NVGBASE_GOGGLES:PlayLoopingSound(currentConfig, 1.5);
-					surface.PlaySound(currentConfig.Sounds.Activate);
-				end
-
-				-- Current config does not use projected texture feature, remove it if it exists.
-				if (currentConfig.ProjectedTexture == nil && IsValid(NVGBASE_GOGGLES.ProjectedTexture)) then
-					NVGBASE_GOGGLES.ProjectedTexture:Remove();
-					NVGBASE_GOGGLES.ProjectedTexture = nil;
-				end
-
-				-- Current config uses a projected texture for lighting, create it if not already done.
-				if (currentConfig.ProjectedTexture != nil && !IsValid(NVGBASE_GOGGLES.ProjectedTexture)) then
-					NVGBASE_GOGGLES.ProjectedTexture = ProjectedTexture();
-					NVGBASE_GOGGLES.ProjectedTexture:SetTexture("effects/flashlight/soft");
-					NVGBASE_GOGGLES.ProjectedTexture:SetEnableShadows(false);
-				end
-
-				-- Update projected texture with current config data.
-				if (currentConfig.ProjectedTexture != nil) then
-					NVGBASE_GOGGLES.ProjectedTexture:SetFOV(currentConfig.ProjectedTexture.FOV);
-					NVGBASE_GOGGLES.ProjectedTexture:SetVerticalFOV(currentConfig.ProjectedTexture.VFOV);
-					NVGBASE_GOGGLES.ProjectedTexture:SetBrightness(currentConfig.ProjectedTexture.Brightness);
-					NVGBASE_GOGGLES.ProjectedTexture:SetFarZ(currentConfig.ProjectedTexture.Distance);
-					NVGBASE_GOGGLES.ProjectedTexture:Update();
-				end
-
-				-- Do final post processing pass using offscreen render target sampling for special effects.
-				if (currentConfig.OffscreenRendering != nil) then
-					currentConfig.OffscreenRendering(currentConfig, __OffScreenRenderingTexture);
-				end
-			end
-		else
-
-			-- Transition lens out.
-			NVGBASE_GOGGLES:TransitionOut(loadout.Settings.Transition.Rate, loadout.Settings.Overlays.Second);
-
-			-- Reset defaults for next toggle.
-			NVGBASE_GOGGLES.Toggled = false;
-			NVGBASE_GOGGLES.ToggledSound = false;
-
-			-- Restore default materials on entities.
-			NVGBASE_GOGGLES:CleanupMaterials();
-			NVGBASE_GOGGLES:StopLoopingSound(currentConfig, 0);
-
-			-- Remove projected texture.
-			if (IsValid(NVGBASE_GOGGLES.ProjectedTexture)) then
+			-- Current config does not use projected texture feature, remove it if it exists.
+			if (currentConfig.ProjectedTexture == nil && IsValid(NVGBASE_GOGGLES.ProjectedTexture)) then
 				NVGBASE_GOGGLES.ProjectedTexture:Remove();
 				NVGBASE_GOGGLES.ProjectedTexture = nil;
 			end
-		end
 
-		-- This is always called but will not interfere with other addons.
-		NVGBASE_GOGGLES:DrawOverlay(currentConfig.MaterialOverlay, currentConfig.OverlayFirst, loadout.Settings.Overlays.First);
-	cam.End2D();
+			-- Current config uses a projected texture for lighting, create it if not already done.
+			if (currentConfig.ProjectedTexture != nil && !IsValid(NVGBASE_GOGGLES.ProjectedTexture)) then
+				NVGBASE_GOGGLES.ProjectedTexture = ProjectedTexture();
+				NVGBASE_GOGGLES.ProjectedTexture:SetTexture("effects/flashlight/soft");
+				NVGBASE_GOGGLES.ProjectedTexture:SetEnableShadows(false);
+			end
+
+			-- Update projected texture with current config data.
+			if (IsValid(NVGBASE_GOGGLES.ProjectedTexture)) then
+				NVGBASE_GOGGLES.ProjectedTexture:SetPos(EyePos());
+				NVGBASE_GOGGLES.ProjectedTexture:SetAngles(EyeAngles());
+				NVGBASE_GOGGLES.ProjectedTexture:SetFOV(currentConfig.ProjectedTexture.FOV);
+				NVGBASE_GOGGLES.ProjectedTexture:SetVerticalFOV(currentConfig.ProjectedTexture.VFOV);
+				NVGBASE_GOGGLES.ProjectedTexture:SetBrightness(currentConfig.ProjectedTexture.Brightness);
+				NVGBASE_GOGGLES.ProjectedTexture:SetFarZ(currentConfig.ProjectedTexture.Distance);
+				NVGBASE_GOGGLES.ProjectedTexture:Update();
+			end
+
+			-- Do final post processing pass using offscreen render target sampling for special effects.
+			if (currentConfig.OffscreenRendering != nil) then
+				NVGBASE_GOGGLES:PrepareOffScreenRendering();
+				NVGBASE_GOGGLES:CleanupMaterials();
+				render.PushRenderTarget(__OffScreenRenderingTarget);
+					render.RenderView({
+						origin = EyePos(),
+						angles = EyeAngles(),
+						x = 0, y = 0,
+						w = ScrW(), h = ScrH(),
+						drawviewmodel = true,
+						dopostprocess = false
+					});
+				render.PopRenderTarget();
+				currentConfig.OffscreenRendering(currentConfig, __OffScreenRenderingTexture);
+			end
+		end
+	else
+
+		-- Transition lens out.
+		NVGBASE_GOGGLES:TransitionOut(loadout.Settings.Transition.Rate, loadout.Settings.Overlays.Second);
+
+		-- Reset defaults for next toggle.
+		NVGBASE_GOGGLES.Toggled = false;
+		NVGBASE_GOGGLES.ToggledSound = false;
+
+		-- Restore default materials on entities.
+		NVGBASE_GOGGLES:CleanupMaterials();
+		NVGBASE_GOGGLES:StopLoopingSound(currentConfig, 0);
+
+		-- Remove projected texture.
+		if (IsValid(NVGBASE_GOGGLES.ProjectedTexture)) then
+			NVGBASE_GOGGLES.ProjectedTexture:Remove();
+			NVGBASE_GOGGLES.ProjectedTexture = nil;
+		end
+	end
+
+	-- This is always called but will not interfere with other addons.
+	NVGBASE_GOGGLES:DrawOverlay(currentConfig.MaterialOverlay, currentConfig.OverlayFirst, loadout.Settings.Overlays.First);
 end);
