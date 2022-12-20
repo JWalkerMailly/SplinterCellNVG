@@ -405,25 +405,49 @@ SPLINTERCELL_NVG.Goggles[5] = {
 
 	OffscreenRendering = function(self, texture)
 
-		local right = LocalPlayer():EyeAngles():Right();
 		for k,v in pairs(ents.GetAll()) do
 
-			if (!LocalPlayer():NVGBASE_IsBoundingBoxVisible(v, 2048, self.Filter)) then continue; end
+			-- Make sure the entity is visible and passing the motion tracking filter.
+			if (!self.Filter(v) || !LocalPlayer():NVGBASE_IsBoundingBoxVisible(v, 2048)) then continue; end
 
-			local pos = v:GetPos();
-			local lowerPos = pos + right * 16;
-			local upperPos = pos + Vector(0, 0, v:OBBMaxs()[3]) - right * 16;
+			-- Setup rendering bounds for target.
+			local mins, maxs = v:GetModelBounds();
+			local pos = v:GetPos() + Vector(0, 0, mins[3]);
+			local right = EyeAngles():Right();
 
-			local rectMin = upperPos:ToScreen();
-			local rectMax = lowerPos:ToScreen();
-			local startU = rectMin.x / ScrW();
-			local startV = rectMin.y / ScrH();
-			local endU = rectMax.x / ScrW();
-			local endV = rectMax.y / ScrH();
+			-- Compute render dimensions.
+			local diff = maxs - mins;
+			local span = right * diff[1] / 2;
+			local height = pos + Vector(0, 0, diff[3]);
 
+			-- Calculate lower-left, lower-right, upper-left and upper-right bounds in view space.
+			local ll = (pos - span):ToScreen();
+			local lr = (pos + span):ToScreen();
+			local ul = (height - span):ToScreen();
+			local ur = (height + span):ToScreen();
+
+			-- Calculate UVs from view space bounds.
+			local llu = ll.x / ScrW();
+			local llv = ll.y / ScrH();
+			local lru = lr.x / ScrW();
+			local lrv = lr.y / ScrH();
+			local ulu = ul.x / ScrW();
+			local ulv = ul.y / ScrH();
+			local uru = ur.x / ScrW();
+			local urv = ur.y / ScrH();
+
+			-- Coords table for surface poly rendering.
+			local coords = {
+				{ x = ll.x, y = ll.y, u = llu, v = llv },
+				{ x = ul.x, y = ul.y, u = ulu, v = ulv },
+				{ x = ur.x, y = ur.y, u = uru, v = urv },
+				{ x = lr.x, y = lr.y, u = lru, v = lrv }
+			};
+
+			-- Render unprocessed texture over entity.
 			surface.SetMaterial(texture)
 			surface.SetDrawColor(Color(255, 255, 255, 255));
-			surface.DrawTexturedRectUV(rectMin.x, rectMin.y, rectMax.x - rectMin.x, rectMax.y - rectMin.y, startU, startV, endU, endV);
+			surface.DrawPoly(coords);
 		end
 	end
 };
