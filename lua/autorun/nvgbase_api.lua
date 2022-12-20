@@ -23,6 +23,24 @@ CreateClientConVar("NVGBASE_CYCLE", "23", true, true, "Which key to cycle goggle
 CreateClientConVar("NVGBASE_TOGGLE", "0", false, true);
 
 local player = FindMetaTable("Player");
+local entity = FindMetaTable("Entity");
+
+function player:NVGBASE_IsBoundingBoxVisible(target, maxDistance)
+
+	local trace = util.TraceHull({
+		start = self:EyePos(),
+		endpos = target:NVGBASE_GetCenterPos(),
+		mins = Vector(1, 1, 1) * -5,
+		maxs = Vector(1, 1, 1) * 5,
+		filter = self
+	});
+
+	return trace.Hit && target == trace.Entity;
+end
+
+function entity:NVGBASE_GetCenterPos()
+	return self:GetPos() + self:OBBCenter();
+end
 
 --!
 --! @brief      Utility function for animating and bodygroup.
