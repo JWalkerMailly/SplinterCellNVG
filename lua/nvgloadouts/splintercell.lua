@@ -367,11 +367,15 @@ SPLINTERCELL_NVG.Goggles[5] = {
 		return ent:IsPlayer() || ent:IsNPC() || ent:IsNextBot();
 	end,
 
+	TagMinVelocity = 100,
+	UntagDelay = 3,
+
 	Sounds = {
 		Loop      = "splinter_cell/goggles/tracking/motion_tracking_lp.wav",
 		ToggleOn  = "splinter_cell/goggles/tracking/toggle_off.wav",
 		ToggleOff = "splinter_cell/goggles/tracking/toggle_off.wav",
-		Activate  = "splinter_cell/goggles/tracking/toggle_on.wav"
+		Activate  = "splinter_cell/goggles/tracking/toggle_on.wav",
+		Alert     = "splinter_cell/goggles/tracking/motion_alert.wav"
 	},
 
 	Lighting = {
@@ -408,7 +412,30 @@ SPLINTERCELL_NVG.Goggles[5] = {
 		for k,v in pairs(ents.GetAll()) do
 
 			-- Make sure the entity is visible and passing the motion tracking filter.
-			if (!self.Filter(v) || !LocalPlayer():NVGBASE_IsBoundingBoxVisible(v, 2048)) then continue; end
+			if (!self.Filter(v) || !LocalPlayer():NVGBASE_IsBoundingBoxVisible(v, 2048)) then
+				v.NVGBASE_MotionTagged = nil;
+				continue;
+			end
+
+			-- Tag targets only if velocity is greater and a certain threshold.
+			if (v:GetVelocity():Length() > self.TagMinVelocity) then
+
+				-- Play sound if tagged for the first time.
+				if (v.NVGBASE_MotionTagged == nil) then
+					surface.PlaySound(self.Sounds.Alert);
+				end
+
+				v.NVGBASE_MotionTagged = CurTime() + self.UntagDelay;
+			else
+
+				-- Target tag expired, reset flag.
+				if (v.NVGBASE_MotionTagged != nil && CurTime() > v.NVGBASE_MotionTagged) then
+					v.NVGBASE_MotionTagged = nil;
+				end
+			end
+
+			-- Entity not tagged, do not render.
+			if (v.NVGBASE_MotionTagged == nil) then return; end
 
 			-- Setup rendering bounds for target.
 			local mins, maxs = v:GetModelBounds();

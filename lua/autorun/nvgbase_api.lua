@@ -30,8 +30,8 @@ function player:NVGBASE_IsBoundingBoxVisible(target, maxDistance)
 	local trace = util.TraceHull({
 		start = self:EyePos(),
 		endpos = target:NVGBASE_GetCenterPos(),
-		mins = Vector(1, 1, 1) * -5,
-		maxs = Vector(1, 1, 1) * 5,
+		mins = Vector(1, 1, 1) * -1,
+		maxs = Vector(1, 1, 1) * 1,
 		filter = self
 	});
 
