@@ -24,6 +24,16 @@ CreateClientConVar("NVGBASE_TOGGLE", "0", false, true);
 
 local player = FindMetaTable("Player");
 local entity = FindMetaTable("Entity");
+local color  = FindMetaTable("Color");
+
+function color:NVGBASE_LerpColor(t, to)
+	return Color(
+		Lerp(t, self.r, to.r),
+		Lerp(t, self.g, to.g),
+		Lerp(t, self.b, to.b),
+		Lerp(t, self.a, to.a)
+	);
+end
 
 function player:NVGBASE_IsBoundingBoxVisible(target, maxDistance)
 

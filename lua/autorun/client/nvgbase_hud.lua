@@ -43,6 +43,28 @@ function NVGBASE_GOGGLES:CleanupMaterials()
 end
 
 --!
+--! @brief      Utility function to cleanup goggle model rendermode overrides.
+--!
+function NVGBASE_GOGGLES:CleanupPreDrawOpaques()
+
+	-- Do nothing if no cleanup is required.
+	if (!self.ShouldCleanupPreDrawOpaques) then return; end
+
+	-- Reset entity material.
+	for k,v in pairs(ents.GetAll()) do
+
+		if (!v.NVGBASE_RENDEROVERRIDE) then continue; end
+
+		v:SetColor(v.NVGBASE_OldColor);
+		v:SetRenderMode(v.NVGBASE_OldRenderMode);
+		v.NVGBASE_RENDEROVERRIDE = nil;
+	end
+
+	-- Cleanup finished, reset flag to avoid using unnecessary CPU time.
+	self.ShouldCleanupPreDrawOpaques = false;
+end
+
+--!
 --! @brief      Utility function to handle model material override when using a goggle.
 --!             It works by using the filter function found in the goggle's config
 --!             to determine if the entity should receive the material. We also raise a flag on the
@@ -288,20 +310,22 @@ hook.Add("HUDPaintBackground", "NVGBASE_HUD", function()
 
 		if (CurTime() > NVGBASE_GOGGLES.NextTransition) then
 
-			-- Render screen space effects of current config.
-			loadout.Goggles[currentGoggle].PostProcess(currentConfig);
-			NVGBASE_GOGGLES:Render(currentConfig);
-
 			-- Handle material overrides for the goggle being used.
 			if (currentConfig.Filter != nil) then
 				NVGBASE_GOGGLES:HandleMaterialOverrides(currentConfig);
 			end
 
+			-- Render screen space effects of current config.
+			loadout.Goggles[currentGoggle].PostProcess(currentConfig);
+			NVGBASE_GOGGLES:Render(currentConfig);
+
 			-- Play activate sound on client only after delay expired and start looping sound.
 			if (!NVGBASE_GOGGLES.ToggledSound) then
 				NVGBASE_GOGGLES.ToggledSound = true;
 				NVGBASE_GOGGLES:PlayLoopingSound(currentConfig, 1.5);
-				surface.PlaySound(currentConfig.Sounds.Activate);
+				if (currentConfig.Sounds.Activate != nil) then
+					surface.PlaySound(currentConfig.Sounds.Activate);
+				end
 			end
 
 			-- Current config does not use projected texture feature, remove it if it exists.
@@ -367,4 +391,31 @@ hook.Add("HUDPaintBackground", "NVGBASE_HUD", function()
 
 	-- This is always called but will not interfere with other addons.
 	NVGBASE_GOGGLES:DrawOverlay(currentConfig.MaterialOverlay, currentConfig.OverlayFirst, loadout.Settings.Overlays.First);
+end);
+
+hook.Add("PreDrawOpaqueRenderables", "NVGBASE_PREDRAW", function(depth, sky, sky3D)
+
+	-- This is the autoload logic for the network var. Network vars will be handled serverside.
+	local currentGoggle = LocalPlayer():GetNWInt("NVGBASE_CURRENT_GOGGLE", 1);
+	if (currentGoggle == 0) then return; end
+
+	-- Initializes the looping sound cache.
+	local loadout = LocalPlayer():NVGBASE_GetLoadout();
+	if (loadout == nil) then return; end
+
+	-- This is gets clientside to handle animations and sounds.
+	local toggle = GetConVar("NVGBASE_TOGGLE"):GetBool();
+
+	-- Delegate call to the configuration file for which goggle to render.
+	local currentConfig = loadout.Goggles[currentGoggle];
+	if (toggle) then
+
+		-- Handle predraw opaques according to current goggle config.
+		if (currentConfig.PreDrawOpaque != nil && CurTime() > NVGBASE_GOGGLES.NextTransition) then
+			currentConfig.PreDrawOpaque(currentConfig);
+			NVGBASE_GOGGLES.ShouldCleanupPreDrawOpaques = true;
+		end
+	else
+		NVGBASE_GOGGLES:CleanupPreDrawOpaques();
+	end
 end);

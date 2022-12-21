@@ -571,11 +571,17 @@ SPLINTERCELL_NVG.Goggles[7] = {
 		return ent:IsPlayer() || ent:IsNPC() || ent:IsNextBot() || ent:IsScripted() || ent:IsVehicle();
 	end,
 
+	TagFadeOut = 2,
+	TagDuration = 6,
+	PingInterval = 10,
+	PingMaxDistance = 1200,
+	PingUnitsPerSecond = 400,
+
 	Sounds = {
 		Loop      = nil,
-		ToggleOn  = "splinter_cell/goggles/standard/goggles_toggle.wav",
-		ToggleOff = "splinter_cell/goggles/standard/goggles_toggle.wav",
-		Activate  = "splinter_cell/goggles/standard/goggles_activate.wav"
+		ToggleOn  = "splinter_cell/goggles/sonar/sonar_goggles_toggle.wav",
+		ToggleOff = "splinter_cell/goggles/sonar/sonar_goggles_toggle_off.wav",
+		Ping      = "splinter_cell/goggles/sonar/sonar_goggles_scan.wav"
 	},
 
 	Lighting = {
@@ -605,6 +611,71 @@ SPLINTERCELL_NVG.Goggles[7] = {
 		-- Final bloom pass with motion blur to give a glowing ghosting effect.
 		DrawBloom(2, 3.10, 1.75, 0.5, 2, -99.00, 155 / 255, 155 / 255, 155 / 255);
 		DrawMotionBlur(0.55, 0.8, 0);
+	end,
+
+	PreDrawOpaque = function(self)
+
+		-- First sonar ping, play sound and raise flag.
+		if (self.SonarPing == nil) then
+			self.SonarPing = CurTime();
+			surface.PlaySound(self.Sounds.Ping);
+		end
+
+		-- Calculate ping travel for entity processing later.
+		local pingTime = CurTime() - self.SonarPing;
+		local pingTravel = pingTime * self.PingUnitsPerSecond;
+		if (pingTravel > self.PingMaxDistance) then pingTravel = 0; end
+
+		-- Render sonar ping sphere.
+		render.SetBlend(0.2);
+		render.CullMode(MATERIAL_CULLMODE_CW);
+		render.SetMaterial(Material("effects/splinter_cell/bright_white_alpha"));
+		render.DrawSphere(EyePos(), pingTravel, 64, 64, Color(255, 255, 255));
+		render.CullMode(MATERIAL_CULLMODE_CCW);
+		render.SetBlend(1);
+
+		-- Ping interval elapsed, reset flags for next ping.
+		if (pingTime > self.PingInterval) then
+			self.SonarPing = nil;
+		end
+
+		for k,v in pairs(ents.GetAll()) do
+
+			-- Make sure the entity is visible and passing the motion tracking filter.
+			if (!self.Filter(v)) then
+				continue;
+			end
+
+			-- Save rendering options for later.
+			if (v.NVGBASE_RENDEROVERRIDE == nil) then
+				v.NVGBASE_RENDEROVERRIDE = true;
+				v.NVGBASE_OldColor = v:GetColor();
+				v.NVGBASE_OldRenderMode = v:GetRenderMode();
+			end
+
+			-- Reset entity rendering if it is visible.
+			if (LocalPlayer():NVGBASE_IsBoundingBoxVisible(v, 2048)) then
+				v:SetColor(v.NVGBASE_OldColor);
+				v:SetRenderMode(v.NVGBASE_OldRenderMode);
+				continue;
+			end
+
+			-- Distance test against sonar ping travel.
+			if (v.NVGBASE_SonarTagTime == nil && v:GetPos():Distance(LocalPlayer():GetPos()) < pingTravel) then
+				v.NVGBASE_SonarTagTime = CurTime() + self.TagDuration;
+			end
+
+			-- Handle sonar target rendering. 
+			if (v.NVGBASE_SonarTagTime == nil) then
+				v:SetColor(Color(255, 255, 255, 0));
+			else
+				local alpha = Lerp(math.Clamp((CurTime() - v.NVGBASE_SonarTagTime) / self.TagFadeOut, 0, 1), 255, 0);
+				v:SetColor(Color(255, 255, 255, alpha));
+				if (alpha == 0) then v.NVGBASE_SonarTagTime = nil; end
+			end
+
+			v:SetRenderMode(RENDERMODE_TRANSALPHA);
+		end
 	end
 };
 
