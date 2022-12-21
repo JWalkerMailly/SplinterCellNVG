@@ -581,7 +581,13 @@ SPLINTERCELL_NVG.Goggles[7] = {
 		Loop      = nil,
 		ToggleOn  = "splinter_cell/goggles/sonar/sonar_goggles_toggle.wav",
 		ToggleOff = "splinter_cell/goggles/sonar/sonar_goggles_toggle_off.wav",
-		Ping      = "splinter_cell/goggles/sonar/sonar_goggles_scan.wav"
+		Ping      = "splinter_cell/goggles/sonar/sonar_goggles_scan.wav",
+		Alert1    = "splinter_cell/goggles/sonar/sonar_detect_1.wav",
+		Alert2    = "splinter_cell/goggles/sonar/sonar_detect_2.wav",
+		Alert3    = "splinter_cell/goggles/sonar/sonar_detect_3.wav",
+		Alert4    = "splinter_cell/goggles/sonar/sonar_detect_4.wav",
+		Alert5    = "splinter_cell/goggles/sonar/sonar_detect_5.wav",
+		Alert6    = "splinter_cell/goggles/sonar/sonar_detect_6.wav"
 	},
 
 	Lighting = {
@@ -663,6 +669,7 @@ SPLINTERCELL_NVG.Goggles[7] = {
 			-- Distance test against sonar ping travel.
 			if (v.NVGBASE_SonarTagTime == nil && v:GetPos():Distance(LocalPlayer():GetPos()) < pingTravel) then
 				v.NVGBASE_SonarTagTime = CurTime() + self.TagDuration;
+				surface.PlaySound(self.Sounds["Alert" .. math.random(1, 6)]);
 			end
 
 			-- Handle sonar target rendering. 
