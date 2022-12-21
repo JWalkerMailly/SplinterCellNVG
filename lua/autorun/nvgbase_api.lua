@@ -1,7 +1,7 @@
 
 -- Server side whitelist convar.
 if (SERVER) then
-	CreateConVar("NVGBASE_WHITELIST", "1");
+	CreateConVar("NVGBASE_WHITELIST", "1", FCVAR_ARCHIVE);
 end
 
 --!
@@ -26,6 +26,14 @@ local player = FindMetaTable("Player");
 local entity = FindMetaTable("Entity");
 local color  = FindMetaTable("Color");
 
+--!
+--! @brief      Utility function to lerp a color towards another color table.
+--!
+--! @param      t     Delta
+--! @param      to    Target color
+--!
+--! @return     Interpolated result.
+--!
 function color:NVGBASE_LerpColor(t, to)
 	return Color(
 		Lerp(t, self.r, to.r),
@@ -35,6 +43,14 @@ function color:NVGBASE_LerpColor(t, to)
 	);
 end
 
+--!
+--! @brief      Trace test to determine if an entity is visible.
+--!
+--! @param      target       The target
+--! @param      maxDistance  The maximum distance to test against
+--!
+--! @return     If entity is visible.
+--!
 function player:NVGBASE_IsBoundingBoxVisible(target, maxDistance)
 
 	local trace = util.TraceHull({
@@ -48,6 +64,11 @@ function player:NVGBASE_IsBoundingBoxVisible(target, maxDistance)
 	return trace.Hit && target == trace.Entity;
 end
 
+--!
+--! @brief      Return the center position of an entity.
+--!
+--! @return     Position + OBBCenter.
+--!
 function entity:NVGBASE_GetCenterPos()
 	return self:GetPos() + self:OBBCenter();
 end
@@ -61,7 +82,7 @@ end
 function player:NVGBASE_AnimGoggle(gogglesActive, anim, bodygroup, on, off)
 
 	if (IsValid(self)) then
-		self:SetBodygroup(bodygroup, !gogglesActive && on || off);
+		if (bodygroup != nil) then self:SetBodygroup(bodygroup, !gogglesActive && on || off); end
 		self:AnimRestartGesture(GESTURE_SLOT_CUSTOM, anim, true);
 	end
 end
