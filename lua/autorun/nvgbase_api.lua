@@ -74,16 +74,40 @@ function entity:NVGBASE_GetCenterPos()
 end
 
 --!
+--! @brief      Utility function to save entity rendering settings for cleanup later.
+--!
+function entity:NVGBASE_SaveRenderingSettings()
+
+	-- Save rendering options for later.
+	if (self.NVGBASE_RENDEROVERRIDE == nil) then
+		self.NVGBASE_RENDEROVERRIDE = true;
+		self.NVGBASE_OldColor = self:GetColor();
+		self.NVGBASE_OldRenderMode = self:GetRenderMode();
+	end
+end
+
+--!
+--! @brief      Utility function to reset the entity's rendering settings to defaults.
+--!
+function entity:NVGBASE_ResetRenderingSettings()
+	self:SetColor(self.NVGBASE_OldColor);
+	self:SetRenderMode(self.NVGBASE_OldRenderMode);
+end
+
+--!
 --! @brief      Utility function for animating and bodygroup.
 --!
 --! @param      gogglesActive  Flag
 --! @param      anim           The animation to play
+--! @param      bodygroup      Playermodel bodygroup to modify
+--! @param      on             Bodygroup value for on
+--! @param      off            Bodygroup value for off
 --!
 function player:NVGBASE_AnimGoggle(gogglesActive, anim, bodygroup, on, off)
 
 	if (IsValid(self)) then
 		if (bodygroup != nil) then self:SetBodygroup(bodygroup, !gogglesActive && on || off); end
-		self:AnimRestartGesture(GESTURE_SLOT_CUSTOM, anim, true);
+		if (anim != nil) then self:AnimRestartGesture(GESTURE_SLOT_CUSTOM, anim, true); end
 	end
 end
 
@@ -140,6 +164,7 @@ end
 --!
 --! @brief      Utility function to toggle a player's goggles.
 --!
+--! @param      loadout Current loadout being used.
 --! @param      silent  Optional, if set to true, will not emit a sound to other players.
 --! @param      force   Optional, used to override the state to on (1) or off (0).
 --!
@@ -162,10 +187,10 @@ function player:NVGBASE_ToggleGoggle(loadout, silent, force)
 		self:SetNWFloat("NVGBASE_NEXT_TOGGLE", CurTime() + loadout.Settings.Transition.Switch);
 	end
 
-	if (!silent) then
-		local goggle = self:NVGBASE_GetGoggle();
-		if (!toggled) then self:EmitSound(goggle.Sounds.ToggleOn, 75, 100, 1, CHAN_ITEM);
-		else self:EmitSound(goggle.Sounds.ToggleOff, 75, 100, 1, CHAN_ITEM); end
+	local goggle = self:NVGBASE_GetGoggle();
+	if (!silent && goggle.Sounds != nil) then
+		if (!toggled) then if (goggle.Sounds.ToggleOn != nil) then self:EmitSound(goggle.Sounds.ToggleOn, 75, 100, 1, CHAN_ITEM); end
+		else if (goggle.Sounds.ToggleOff != nil) then self:EmitSound(goggle.Sounds.ToggleOff, 75, 100, 1, CHAN_ITEM); end end
 	end
 end
 
@@ -282,6 +307,7 @@ end
 --! @brief      Determines if the player is whitelisted for a goggle according to his playermodel.
 --!             If no goggle is supplied, will do a general check to see if he can use the goggle feature.
 --!
+--! @param      loadout Current loadout to test against.
 --! @param      goggle  The goggle to test against (key, or nil for a general check. 
 --!
 --! @return     True if whitelisted, False otherwise.

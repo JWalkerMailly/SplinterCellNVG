@@ -3,7 +3,7 @@
 NVGBASE_GOGGLES = {};
 NVGBASE_GOGGLES.SoundsCacheReady = false;
 
--- Toggle flags use to switch animation states.
+-- Toggle flags used to switch animation states.
 NVGBASE_GOGGLES.Toggled = nil;
 NVGBASE_GOGGLES.ToggledSound = false;
 
@@ -20,7 +20,7 @@ NVGBASE_GOGGLES.PhotoSensitivity = 0;
 
 --!
 --! @brief      Utility function to cleanup goggle model material overrides.
---!             If you are modifying the material of a model in your goggle draw hook,
+--!             If you are modifying the material of a model in your goggle hooks,
 --!             you must raise the flag NVGBASE_MATERIALOVERRIDE on it for
 --!             it to be processed in this hook since we don't want to break other addons.
 --!
@@ -43,7 +43,12 @@ function NVGBASE_GOGGLES:CleanupMaterials()
 end
 
 --!
---! @brief      Utility function to cleanup goggle model rendermode overrides.
+--! @brief      Utility function to cleanup goggle rendermode overrides.
+--!             If you are modifying the rendermode of a model in your goggle hooks,
+--!             you must raise the flag NVGBASE_RENDEROVERRIDE on it for
+--!             it to be processed in this hook since we don't want to break other addons.
+--!             You must use NVGBASE_OldColor and NVGBASE_OldRenderMode on the entity to
+--!             keep references to the old settings in order to be properly cleaned up.
 --!
 function NVGBASE_GOGGLES:CleanupPreDrawOpaques()
 
@@ -54,9 +59,7 @@ function NVGBASE_GOGGLES:CleanupPreDrawOpaques()
 	for k,v in pairs(ents.GetAll()) do
 
 		if (!v.NVGBASE_RENDEROVERRIDE) then continue; end
-
-		v:SetColor(v.NVGBASE_OldColor);
-		v:SetRenderMode(v.NVGBASE_OldRenderMode);
+		v:NVGBASE_ResetRenderingSettings();
 		v.NVGBASE_RENDEROVERRIDE = nil;
 	end
 
@@ -156,9 +159,11 @@ function NVGBASE_GOGGLES:SetupLoopingSounds(loadout)
 
 	-- Initialize looping sound cache, this 
 	for k,goggle in pairs(loadout) do
-		if (goggle.SoundsCache == nil) then goggle.SoundsCache = {}; end
-		if (goggle.Sounds.Loop == nil) then continue; end
-		goggle.SoundsCache["Loop"] = CreateSound(LocalPlayer(), Sound(goggle.Sounds.Loop));
+		if (goggle.Sounds != nil) then
+			if (goggle.SoundsCache == nil) then goggle.SoundsCache = {}; end
+			if (goggle.Sounds.Loop == nil) then continue; end
+			goggle.SoundsCache["Loop"] = CreateSound(LocalPlayer(), Sound(goggle.Sounds.Loop));
+		end
 	end
 
 	loadout.SoundsCacheReady = true;
@@ -205,50 +210,55 @@ local __PostProcessRenderTarget = Material("pp/colour");
 function NVGBASE_GOGGLES:Render(goggle)
 
 	-- Setup lighting from configuration.
-	local lighting    = goggle.Lighting;
-	local dlight      = DynamicLight(LocalPlayer():EntIndex());
-	dlight.r          = lighting.Color.r;
-	dlight.g          = lighting.Color.g;
-	dlight.b          = lighting.Color.b;
-	dlight.minlight   = lighting.Min;
-	dlight.style      = lighting.Style;
-	dlight.Brightness = lighting.Brightness;
-	dlight.Pos        = EyePos();
-	dlight.Size       = lighting.Size;
-	dlight.Decay      = lighting.Decay;
-	dlight.DieTime    = CurTime() + lighting.DieTime;
-
-	local colorCorrect = goggle.ColorCorrection;
-	local finalBrightness = colorCorrect.Brightness;
-
-	-- Apply photo sensitivity.
-	if (goggle.PhotoSensitive != nil) then
-
-		-- Compute light intensity at player's eye position.
-		local light = render.GetLightColor(EyePos());
-		local lightIntensity = light.r / 3 + light.g / 3 + light.b / 3;
-
-		-- Lerp the photosensitivy factor in order to avoid sudden changes in light intensity.
-		NVGBASE_GOGGLES.PhotoSensitivity = Lerp(FrameTime() * 2, NVGBASE_GOGGLES.PhotoSensitivity, lightIntensity);
-		finalBrightness = finalBrightness + NVGBASE_GOGGLES.PhotoSensitivity;
+	local lighting = goggle.Lighting;
+	if (lighting != nil) then
+		local dlight      = DynamicLight(LocalPlayer():EntIndex());
+		dlight.r          = lighting.Color.r;
+		dlight.g          = lighting.Color.g;
+		dlight.b          = lighting.Color.b;
+		dlight.minlight   = lighting.Min;
+		dlight.style      = lighting.Style;
+		dlight.Brightness = lighting.Brightness;
+		dlight.Pos        = EyePos();
+		dlight.Size       = lighting.Size;
+		dlight.Decay      = lighting.Decay;
+		dlight.DieTime    = CurTime() + lighting.DieTime;
 	end
 
-	-- Offload to rendertarget.
-	render.UpdateScreenEffectTexture();
+	local colorCorrect = goggle.ColorCorrection;
+	if (colorCorrect != nil) then
 
-		__PostProcessRenderTarget:SetTexture("$fbtexture",          render.GetScreenEffectTexture());
-		__PostProcessRenderTarget:SetFloat("$pp_colour_addr",       colorCorrect.ColorAdd.r);
-		__PostProcessRenderTarget:SetFloat("$pp_colour_addg",       colorCorrect.ColorAdd.g);
-		__PostProcessRenderTarget:SetFloat("$pp_colour_addb",       colorCorrect.ColorAdd.b);
-		__PostProcessRenderTarget:SetFloat("$pp_colour_mulr",       colorCorrect.ColorMul.r);
-		__PostProcessRenderTarget:SetFloat("$pp_colour_mulg",       colorCorrect.ColorMul.g);
-		__PostProcessRenderTarget:SetFloat("$pp_colour_mulb",       colorCorrect.ColorMul.b);
-		__PostProcessRenderTarget:SetFloat("$pp_colour_brightness", finalBrightness);
-		__PostProcessRenderTarget:SetFloat("$pp_colour_contrast",   colorCorrect.Contrast);
-		__PostProcessRenderTarget:SetFloat("$pp_colour_colour",     colorCorrect.ColorMod);
+		local finalBrightness = colorCorrect.Brightness;
 
-	render.SetMaterial(__PostProcessRenderTarget);
-	render.DrawScreenQuad();
+		-- Apply photo sensitivity.
+		if (goggle.PhotoSensitive != nil) then
+
+			-- Compute light intensity at player's eye position.
+			local light = render.GetLightColor(EyePos());
+			local lightIntensity = light.r / 3 + light.g / 3 + light.b / 3;
+
+			-- Lerp the photosensitivy factor in order to avoid sudden changes in light intensity.
+			NVGBASE_GOGGLES.PhotoSensitivity = Lerp(FrameTime() * 2, NVGBASE_GOGGLES.PhotoSensitivity, lightIntensity);
+			finalBrightness = finalBrightness + NVGBASE_GOGGLES.PhotoSensitivity;
+		end
+
+		-- Offload to rendertarget.
+		render.UpdateScreenEffectTexture();
+
+			__PostProcessRenderTarget:SetTexture("$fbtexture",          render.GetScreenEffectTexture());
+			__PostProcessRenderTarget:SetFloat("$pp_colour_addr",       colorCorrect.ColorAdd.r);
+			__PostProcessRenderTarget:SetFloat("$pp_colour_addg",       colorCorrect.ColorAdd.g);
+			__PostProcessRenderTarget:SetFloat("$pp_colour_addb",       colorCorrect.ColorAdd.b);
+			__PostProcessRenderTarget:SetFloat("$pp_colour_mulr",       colorCorrect.ColorMul.r);
+			__PostProcessRenderTarget:SetFloat("$pp_colour_mulg",       colorCorrect.ColorMul.g);
+			__PostProcessRenderTarget:SetFloat("$pp_colour_mulb",       colorCorrect.ColorMul.b);
+			__PostProcessRenderTarget:SetFloat("$pp_colour_brightness", finalBrightness);
+			__PostProcessRenderTarget:SetFloat("$pp_colour_contrast",   colorCorrect.Contrast);
+			__PostProcessRenderTarget:SetFloat("$pp_colour_colour",     colorCorrect.ColorMod);
+
+		render.SetMaterial(__PostProcessRenderTarget);
+		render.DrawScreenQuad();
+	end
 
 	-- Render interlace material over screen, if provided.
 	if (goggle.MaterialInterlace != nil) then
@@ -286,7 +296,9 @@ hook.Add("HUDPaintBackground", "NVGBASE_HUD", function()
 	if (toggle) then
 
 		-- Do transition animation and begin rendering to offscreen render target for any goggle using that feature.
-		NVGBASE_GOGGLES:TransitionIn(loadout.Settings.Transition.Rate, loadout.Settings.Overlays.Second);
+		if (loadout.Settings.Overlays != nil) then
+			NVGBASE_GOGGLES:TransitionIn(loadout.Settings.Transition.Rate, loadout.Settings.Overlays.Second);
+		end
 
 		-- Play the toggle sound specific to the goggles.
 		if (!NVGBASE_GOGGLES.Toggled) then
@@ -305,7 +317,7 @@ hook.Add("HUDPaintBackground", "NVGBASE_HUD", function()
 			-- Play goggle mode switch sound only clientside and start looping sound.
 			NVGBASE_GOGGLES.CurrentGoggles = currentGoggle;
 			NVGBASE_GOGGLES:PlayLoopingSound(currentConfig, 1.5);
-			surface.PlaySound(loadout.Settings.Transition.Sound);
+			if (loadout.Settings.Transition.Sound != nil) then surface.PlaySound(loadout.Settings.Transition.Sound); end
 		end
 
 		if (CurTime() > NVGBASE_GOGGLES.NextTransition) then
@@ -323,7 +335,7 @@ hook.Add("HUDPaintBackground", "NVGBASE_HUD", function()
 			if (!NVGBASE_GOGGLES.ToggledSound) then
 				NVGBASE_GOGGLES.ToggledSound = true;
 				NVGBASE_GOGGLES:PlayLoopingSound(currentConfig, 1.5);
-				if (currentConfig.Sounds.Activate != nil) then
+				if (currentConfig.Sounds != nil && currentConfig.Sounds.Activate != nil) then
 					surface.PlaySound(currentConfig.Sounds.Activate);
 				end
 			end
@@ -372,7 +384,9 @@ hook.Add("HUDPaintBackground", "NVGBASE_HUD", function()
 	else
 
 		-- Transition lens out.
-		NVGBASE_GOGGLES:TransitionOut(loadout.Settings.Transition.Rate, loadout.Settings.Overlays.Second);
+		if (loadout.Settings.Overlays != nil) then
+			NVGBASE_GOGGLES:TransitionOut(loadout.Settings.Transition.Rate, loadout.Settings.Overlays.Second);
+		end
 
 		-- Reset defaults for next toggle.
 		NVGBASE_GOGGLES.Toggled = false;
@@ -390,7 +404,9 @@ hook.Add("HUDPaintBackground", "NVGBASE_HUD", function()
 	end
 
 	-- This is always called but will not interfere with other addons.
-	NVGBASE_GOGGLES:DrawOverlay(currentConfig.MaterialOverlay, currentConfig.OverlayFirst, loadout.Settings.Overlays.First);
+	if (loadout.Settings.Overlays != nil) then
+		NVGBASE_GOGGLES:DrawOverlay(currentConfig.MaterialOverlay, currentConfig.OverlayFirst, loadout.Settings.Overlays.First);
+	end
 end);
 
 hook.Add("PreDrawOpaqueRenderables", "NVGBASE_PREDRAW", function(depth, sky, sky3D)

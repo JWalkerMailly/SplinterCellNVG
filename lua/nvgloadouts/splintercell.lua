@@ -627,12 +627,10 @@ SPLINTERCELL_NVG.Goggles[7] = {
 		if (pingTravel > self.PingMaxDistance) then pingTravel = 0; end
 
 		-- Render sonar ping sphere.
-		render.SetBlend(0.2);
 		render.CullMode(MATERIAL_CULLMODE_CW);
 		render.SetMaterial(Material("effects/splinter_cell/bright_white_alpha"));
 		render.DrawSphere(EyePos(), pingTravel, 64, 64, Color(255, 255, 255));
 		render.CullMode(MATERIAL_CULLMODE_CCW);
-		render.SetBlend(1);
 
 		-- Ping interval elapsed, reset flags for next ping.
 		if (pingTime > self.PingInterval) then
@@ -647,16 +645,11 @@ SPLINTERCELL_NVG.Goggles[7] = {
 			end
 
 			-- Save rendering options for later.
-			if (v.NVGBASE_RENDEROVERRIDE == nil) then
-				v.NVGBASE_RENDEROVERRIDE = true;
-				v.NVGBASE_OldColor = v:GetColor();
-				v.NVGBASE_OldRenderMode = v:GetRenderMode();
-			end
+			v:NVGBASE_SaveRenderingSettings();
 
 			-- Reset entity rendering if it is visible.
 			if (LocalPlayer():NVGBASE_IsBoundingBoxVisible(v, 2048)) then
-				v:SetColor(v.NVGBASE_OldColor);
-				v:SetRenderMode(v.NVGBASE_OldRenderMode);
+				v:NVGBASE_ResetRenderingSettings()
 				continue;
 			end
 

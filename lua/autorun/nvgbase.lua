@@ -8,12 +8,17 @@ end
 --!
 net.Receive("NVGBASE_TOGGLE_ANIM", function()
 
+	local function cast(int)
+		if (int == -1) then return nil; end
+		return int;
+	end
+
 	local player = net.ReadEntity();
 	local gogglesActive = net.ReadBool();
-	local anim = net.ReadInt(14);
-	local bodygroup = net.ReadInt(14);
-	local bodygroupOn = net.ReadInt(14);
-	local bodygroupOff = net.ReadInt(14);
+	local anim = cast(net.ReadInt(14));
+	local bodygroup = cast(net.ReadInt(14));
+	local bodygroupOn = cast(net.ReadInt(14));
+	local bodygroupOff = cast(net.ReadInt(14));
 
 	player:NVGBASE_AnimGoggle(gogglesActive, anim, bodygroup, bodygroupOn, bodygroupOff);
 end);
@@ -46,28 +51,36 @@ hook.Add("PlayerButtonDown", "NVGBASE_INPUT", function(player, button)
 		-- Play toggle animation.
 		if (loadout.Settings.Gestures != nil && playerWhitelisted) then
 
-			local anim = loadout.Settings.Gestures.Off;
-			if (!gogglesActive) then anim = loadout.Settings.Gestures.On; end
+			local anim = loadout.Settings.Gestures;
+			local bodygroup = loadout.Settings.BodyGroups;
+			local bodygroupOn = nil;
+			local bodygroupOff = nil;
 
-			if (loadout.Settings.BodyGroups != nil) then
-
-				local bodygroup = loadout.Settings.BodyGroups.Group;
-				local bodygroupOn = loadout.Settings.BodyGroups.Values.On;
-				local bodygroupOff = loadout.Settings.BodyGroups.Values.Off;
-
-				-- Will only play server side.
-				player:NVGBASE_AnimGoggle(gogglesActive, anim, bodygroup, bodygroupOn, bodygroupOff);
-
-				-- Send out net message to play animation on client.
-				net.Start("NVGBASE_TOGGLE_ANIM");
-					net.WriteEntity(player);
-					net.WriteBool(gogglesActive);
-					net.WriteInt(anim, 14);
-					net.WriteInt(bodygroup, 14);
-					net.WriteInt(bodygroupOn, 14);
-					net.WriteInt(bodygroupOff, 14);
-				net.Broadcast();
+			-- Loadout uses animations.
+			if (anim != nil) then
+				if (!gogglesActive) then anim = anim.On;
+				else anim = anim.Off; end
 			end
+
+			-- Loadout uses bodygroups.
+			if (bodygroup != nil) then
+				bodygroupOn = bodygroup.Values.On;
+				bodygroupOff = bodygroup.Values.Off;
+				bodygroup = bodygroup.Group;
+			end
+
+			-- Will only play server side.
+			player:NVGBASE_AnimGoggle(gogglesActive, anim, bodygroup, bodygroupOn, bodygroupOff);
+
+			-- Send out net message to play animation on client.
+			net.Start("NVGBASE_TOGGLE_ANIM");
+				net.WriteEntity(player);
+				net.WriteBool(gogglesActive);
+				net.WriteInt(anim || -1, 14);
+				net.WriteInt(bodygroup || -1, 14);
+				net.WriteInt(bodygroupOn || -1, 14);
+				net.WriteInt(bodygroupOff || -1, 14);
+			net.Broadcast();
 		end
 
 		player:NVGBASE_ToggleGoggle(loadout);
