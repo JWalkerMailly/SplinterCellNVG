@@ -48,14 +48,18 @@ SPLINTERCELL_NVG.Goggles[1] = {
 		"models/splinter_cell_4/player/sam_c.mdl",
 
 		"models/splinter_cell_3/player/coop_agent_one.mdl",
-		"models/splinter_cell_3/player/coop_agent_two.mdl"
+		"models/splinter_cell_3/player/coop_agent_one_urban.mdl",
+		"models/splinter_cell_4/player/coop_agent_one_arctic.mdl",
+		"models/splinter_cell_3/player/coop_agent_two.mdl",
+		"models/splinter_cell_3/player/coop_agent_two_urban.mdl",
+		"models/splinter_cell_4/player/coop_agent_two_arctic.mdl"
 	},
 
 	MaterialOverlay   = Material("vgui/splinter_cell/nvg_anim"),
 	OverlayFirst      = false,
 
 	MaterialInterlace = Material("vgui/splinter_cell/noise"),
-	InterlaceColor    = Color(155, 155, 155, 64),
+	InterlaceColor    = Color(155, 155, 155, 32),
 
 	MaterialOverride  = nil,
 	Filter = function(ent)
@@ -119,7 +123,11 @@ SPLINTERCELL_NVG.Goggles[2] = {
 		"models/splinter_cell_4/player/sam_c.mdl",
 
 		"models/splinter_cell_3/player/coop_agent_one.mdl",
-		"models/splinter_cell_3/player/coop_agent_two.mdl"
+		"models/splinter_cell_3/player/coop_agent_one_urban.mdl",
+		"models/splinter_cell_4/player/coop_agent_one_arctic.mdl",
+		"models/splinter_cell_3/player/coop_agent_two.mdl",
+		"models/splinter_cell_3/player/coop_agent_two_urban.mdl",
+		"models/splinter_cell_4/player/coop_agent_two_arctic.mdl"
 	},
 
 	MaterialOverlay   = Material("vgui/splinter_cell/nvg_anim"),
@@ -149,6 +157,7 @@ SPLINTERCELL_NVG.Goggles[2] = {
 		Decay      = 16000,
 		DieTime    = 0.05
 	},
+	
 
 	ColorCorrection = {
 		ColorAdd   = Color(0, 0, 0),
@@ -207,7 +216,11 @@ SPLINTERCELL_NVG.Goggles[3] = {
 		"models/splinter_cell_4/player/sam_f.mdl",
 
 		"models/splinter_cell_3/player/coop_agent_one.mdl",
-		"models/splinter_cell_3/player/coop_agent_two.mdl"
+		"models/splinter_cell_3/player/coop_agent_one_urban.mdl",
+		"models/splinter_cell_4/player/coop_agent_one_arctic.mdl",
+		"models/splinter_cell_3/player/coop_agent_two.mdl",
+		"models/splinter_cell_3/player/coop_agent_two_urban.mdl",
+		"models/splinter_cell_4/player/coop_agent_two_arctic.mdl"
 	},
 
 	MaterialOverlay   = Material("vgui/splinter_cell/nvg_anim"),
@@ -218,7 +231,7 @@ SPLINTERCELL_NVG.Goggles[3] = {
 
 	MaterialOverride  = "effects/splinter_cell/bright_white",
 	Filter = function(ent)
-		return ent:IsScripted() || ent:IsVehicle() || ent:GetClass() == "npc_manhack" || ent:GetClass() == "npc_cscanner" || ent:GetClass() == "npc_clawscanner" || 
+		return ent:IsScripted() && !ent:IsNextBot() || ent:IsVehicle() || ent:GetClass() == "npc_manhack" || ent:GetClass() == "npc_cscanner" || ent:GetClass() == "npc_clawscanner" || 
 		ent:GetClass() == "npc_rollermine" || ent:GetClass() == "npc_rollermine" || ent:GetClass() == "combine_mine" || ent:GetClass() == "gmod_lamp" ||
 		ent:GetClass() == "gmod_light" || ent:GetClass() == "prop_thumper" || ent:GetClass() == "hl2_thumper_large" || ent:GetClass() == "hl2_thumper_large" ||
 		ent:GetClass() == "npc_turret_floor" || ent:GetClass() == "npc_combine_camera" || ent:GetClass() == "npc_turret_ceiling" || ent:GetClass() == "hl2_npc_turret_ground" ||
@@ -317,13 +330,20 @@ SPLINTERCELL_NVG.Goggles[4] = {
 	},
 
 	Lighting = {
-		Color      = Color(45, 60, 15),
+		Color      = Color(25, 25, 25),
 		Min        = 0,
 		Style      = 0,
-		Brightness = 4,
-		Size       = 64000,
-		Decay      = 16000,
+		Brightness = 1,
+		Size       = 200,
+		Decay      = 200,
 		DieTime    = 0.05
+	},
+
+	ProjectedTexture = {
+		FOV        = 140,
+		VFOV       = 100, -- Vertical FOV
+		Brightness = 2,
+		Distance   = 2500
 	},
 
 	ColorCorrection = {
@@ -331,7 +351,7 @@ SPLINTERCELL_NVG.Goggles[4] = {
 		ColorMul   = Color(0, 0, 0),
 		ColorMod   = 0.18,
 		Contrast   = 1,
-		Brightness = 0.15
+		Brightness = 0.02
 	},
 
 	PostProcess = function(self)
@@ -503,7 +523,7 @@ SPLINTERCELL_NVG.Goggles[6] = {
 
 	MaterialOverride  = "effects/splinter_cell/bright_white",
 	Filter = function(ent)
-		return ent:IsScripted() || ent:IsVehicle() || ent:GetClass() == "npc_manhack" || ent:GetClass() == "npc_cscanner" || ent:GetClass() == "npc_clawscanner" || 
+		return ent:IsScripted() && !ent:IsNextBot() || ent:IsVehicle() || ent:GetClass() == "npc_manhack" || ent:GetClass() == "npc_cscanner" || ent:GetClass() == "npc_clawscanner" || 
 		ent:GetClass() == "npc_rollermine" || ent:GetClass() == "npc_rollermine" || ent:GetClass() == "combine_mine" || ent:GetClass() == "gmod_lamp" ||
 		ent:GetClass() == "gmod_light" || ent:GetClass() == "prop_thumper" || ent:GetClass() == "hl2_thumper_large" || ent:GetClass() == "hl2_thumper_large" ||
 		ent:GetClass() == "npc_turret_floor" || ent:GetClass() == "npc_combine_camera" || ent:GetClass() == "npc_turret_ceiling" || ent:GetClass() == "hl2_npc_turret_ground" ||
@@ -557,7 +577,7 @@ SPLINTERCELL_NVG.Goggles[7] = {
 
 	Name = "Sonar",
 	Whitelist = {
-		"models/splinter_cell_1/player/spy_custom.mdl"
+		"models/splinter_cell_1/player/spy_custom.mdl",
 	},
 
 	MaterialOverlay   = Material("vgui/splinter_cell/nvg_filter2"),
@@ -686,11 +706,12 @@ SPLINTERCELL_NVG.Goggles[8] = {
 
 	Name = "Epsilon Thermal",
 	Whitelist = {
+		"models/splinter_cell_4/player/pawnspiette_zero.mdl",
 		"models/splinter_cell_4/player/pawnspy_one.mdl",
 		"models/splinter_cell_4/player/pawnspy_zero.mdl"
 	},
 
-	MaterialOverlay   = Material("vgui/splinter_cell/nvg_anim"),
+	MaterialOverlay   = Material("vgui/splinter_cell/overlay_goggles"),
 	OverlayFirst      = false,
 
 	MaterialInterlace = Material("vgui/splinter_cell/interlace_overlay"),
@@ -762,6 +783,7 @@ SPLINTERCELL_NVG.Goggles[9] = {
 
 	Name = "Epsilon Night",
 	Whitelist = {
+		"models/splinter_cell_4/player/pawnspiette_zero.mdl",
 		"models/splinter_cell_4/player/pawnspy_one.mdl",
 		"models/splinter_cell_4/player/pawnspy_zero.mdl"
 	},
@@ -770,7 +792,7 @@ SPLINTERCELL_NVG.Goggles[9] = {
 	OverlayFirst      = false,
 
 	MaterialInterlace = Material("vgui/splinter_cell/noise"),
-	InterlaceColor    = Color(155, 155, 155, 128),
+	InterlaceColor    = Color(155, 155, 155, 32),
 
 	MaterialOverride  = nil,
 	Filter = function(ent)
@@ -792,6 +814,13 @@ SPLINTERCELL_NVG.Goggles[9] = {
 		Size       = 64000,
 		Decay      = 16000,
 		DieTime    = 0.05
+	},
+	
+	ProjectedTexture = {
+		FOV        = 140,
+		VFOV       = 100, -- Vertical FOV
+		Brightness = 2,
+		Distance   = 2500
 	},
 
 	ColorCorrection = {
