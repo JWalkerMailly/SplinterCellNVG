@@ -322,6 +322,22 @@ hook.Add("HUDPaintBackground", "NVGBASE_HUD", function()
 
 		if (CurTime() > NVGBASE_GOGGLES.NextTransition) then
 
+			-- Do offscreen rendering now before any processing occurs.
+			if (currentConfig.OffscreenRendering != nil) then
+				NVGBASE_GOGGLES:PrepareOffScreenRendering();
+				NVGBASE_GOGGLES:CleanupMaterials();
+				render.PushRenderTarget(__OffScreenRenderingTarget);
+					render.RenderView({
+						origin = EyePos(),
+						angles = EyeAngles(),
+						x = 0, y = 0,
+						w = ScrW(), h = ScrH(),
+						drawviewmodel = true,
+						dopostprocess = false
+					});
+				render.PopRenderTarget();
+			end
+
 			-- Handle material overrides for the goggle being used.
 			if (currentConfig.Filter != nil) then
 				NVGBASE_GOGGLES:HandleMaterialOverrides(currentConfig);
@@ -366,18 +382,6 @@ hook.Add("HUDPaintBackground", "NVGBASE_HUD", function()
 
 			-- Do final post processing pass using offscreen render target sampling for special effects.
 			if (currentConfig.OffscreenRendering != nil) then
-				NVGBASE_GOGGLES:PrepareOffScreenRendering();
-				NVGBASE_GOGGLES:CleanupMaterials();
-				render.PushRenderTarget(__OffScreenRenderingTarget);
-					render.RenderView({
-						origin = EyePos(),
-						angles = EyeAngles(),
-						x = 0, y = 0,
-						w = ScrW(), h = ScrH(),
-						drawviewmodel = true,
-						dopostprocess = false
-					});
-				render.PopRenderTarget();
 				currentConfig.OffscreenRendering(currentConfig, __OffScreenRenderingTexture);
 			end
 		end
