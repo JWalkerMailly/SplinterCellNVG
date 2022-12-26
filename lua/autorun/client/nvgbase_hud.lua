@@ -130,19 +130,21 @@ function NVGBASE_GOGGLES:DrawOverlay(overlay, swap, secondOverlay)
 	local transition = math.Clamp(self.Transition - 1, 0, 1);
 
 	-- Vignetting effect.
-	if (!swap) then
+	if (!swap && secondOverlay != nil) then
 		surface.SetMaterial(secondOverlay);
 		surface.SetDrawColor(255, 255, 255, transition * 255);
 		surface.DrawTexturedRect(0, 0, ScrW(), ScrH());
 	end
 
 	-- Animated overlay texture.
-	surface.SetMaterial(overlay);
-	surface.SetDrawColor(255, 255, 255, transition * 255);
-	surface.DrawTexturedRect(0, 0, ScrW(), ScrH());
+	if (overlay != nil) then
+		surface.SetMaterial(overlay);
+		surface.SetDrawColor(255, 255, 255, transition * 255);
+		surface.DrawTexturedRect(0, 0, ScrW(), ScrH());
+	end
 
 	-- Vignetting effect.
-	if (swap) then
+	if (swap && secondOverlay != nil) then
 		surface.SetMaterial(secondOverlay);
 		surface.SetDrawColor(255, 255, 255, transition * 255);
 		surface.DrawTexturedRect(0, 0, ScrW(), ScrH());
