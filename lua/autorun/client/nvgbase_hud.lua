@@ -286,7 +286,7 @@ hook.Add("HUDPaintBackground", "NVGBASE_HUD", function()
 	if (loadout == nil) then return; end
 	NVGBASE_GOGGLES:SetupLoopingSounds(loadout.Goggles);
 
-	-- This is gets clientside to handle animations and sounds.
+	-- Get clientside var toggle for active status.
 	local toggle = GetConVar("NVGBASE_TOGGLE"):GetBool();
 	if (NVGBASE_GOGGLES.Toggled == nil) then
 		NVGBASE_GOGGLES.Toggled = toggle;
@@ -297,18 +297,17 @@ hook.Add("HUDPaintBackground", "NVGBASE_HUD", function()
 	local currentConfig = loadout.Goggles[currentGoggle];
 	if (toggle) then
 
-		-- Do transition animation and begin rendering to offscreen render target for any goggle using that feature.
+		-- Do transition animation in.
 		if (loadout.Settings.Overlays != nil) then
 			NVGBASE_GOGGLES:TransitionIn(loadout.Settings.Transition.Rate, loadout.Settings.Overlays.Second);
 		end
 
-		-- Play the toggle sound specific to the goggles.
 		if (!NVGBASE_GOGGLES.Toggled) then
 			NVGBASE_GOGGLES.NextTransition = CurTime() + loadout.Settings.Transition.Delay;
 			NVGBASE_GOGGLES.Toggled = true;
 		end
 
-		-- Goggles don't match with the cache, use must've switched goggles.
+		-- Goggles don't match with the cache, user must've switched goggles.
 		if (currentGoggle != NVGBASE_GOGGLES.CurrentGoggles) then
 
 			-- Stop looping sound of previous goggles and cleanup materials.

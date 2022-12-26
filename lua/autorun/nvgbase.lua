@@ -8,6 +8,7 @@ end
 --!
 net.Receive("NVGBASE_TOGGLE_ANIM", function()
 
+	-- Simple conversion function for nil (-1) int on network thread.
 	local function cast(int)
 		if (int == -1) then return nil; end
 		return int;
@@ -28,7 +29,9 @@ end);
 --!
 hook.Add("PlayerButtonDown", "NVGBASE_INPUT", function(player, button)
 
-	-- Server only code.
+	-- Server only code. PlayerButtonDown is not called clientside in singleplayer. It is
+	-- simpler and cleaner to handle everything server-side and do network calls ourselves
+	-- to the client realm for animations. This will ensure compatibility in singleplayer and multiplayer.
 	if (!SERVER) then return; end
 
 	-- Do nothing if the player is not using a loadout at the moment.
@@ -48,7 +51,7 @@ hook.Add("PlayerButtonDown", "NVGBASE_INPUT", function(player, button)
 	-- Toggle goggle on/off.
 	if (player:NVGBASE_CanToggleGoggle(button)) then
 
-		-- Play toggle animation.
+		-- Play toggle animation. Playermodel must be whitelisted even if whitelist is off.
 		if (loadout.Settings.Gestures != nil && playerWhitelisted) then
 
 			local anim = loadout.Settings.Gestures;
@@ -100,5 +103,8 @@ hook.Add("PlayerDeath", "NVGBASE_DEATH", function(victim, inflictor, attacker)
 	-- Do nothing if the player is not using a loadout at the moment.
 	local loadout = victim:NVGBASE_GetLoadout();
 	if (loadout == nil) then return; end
-	victim:NVGBASE_ToggleGoggle(loadout, true, 0);
+
+	if (loadout.Settings.RemoveOnDeath) then
+		victim:NVGBASE_ToggleGoggle(loadout, true, 0);
+	end
 end);

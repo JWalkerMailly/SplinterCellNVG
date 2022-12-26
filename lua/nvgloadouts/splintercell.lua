@@ -28,7 +28,9 @@ SPLINTERCELL_NVG.Settings = {
 		Delay = 0.225,
 		Switch = 0.5,
 		Sound = "splinter_cell/goggles/standard/goggles_mode.wav"
-	}
+	},
+
+	RemoveOnDeath = true
 };
 
 ----------------------------------------------------------------
