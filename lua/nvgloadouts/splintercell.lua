@@ -19,8 +19,8 @@ SPLINTERCELL_NVG.Settings = {
 	},
 
 	Overlays = {
-		First = Material("vgui/splinter_cell/overlay_vignette"),
-		Second = Material("vgui/splinter_cell/nvg_turnon_static")
+		Goggle = Material("vgui/splinter_cell/overlay_vignette"),
+		Transition = Material("vgui/splinter_cell/nvg_turnon_static")
 	},
 
 	Transition = {
