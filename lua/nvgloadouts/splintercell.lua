@@ -1133,4 +1133,4 @@ SPLINTERCELL_NVG.Goggles[13] = {
 };
 
 -- Register the splinter cell NVG into the NVGBASE Goggless.
-NVGBASE_LOADOUTS.Register("Splinter Cell", SPLINTERCELL_NVG);
+NVGBASE.Register("Splinter Cell", SPLINTERCELL_NVG);
