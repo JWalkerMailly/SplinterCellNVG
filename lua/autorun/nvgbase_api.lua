@@ -155,6 +155,16 @@ function player:NVGBASE_GetLoadout()
 end
 
 --!
+--! @brief      Utility function to apply loadout to a player.
+--!
+--! @param      loadoutName  The loadout name to apply. Must match
+--!             the name of the loadout registered in the cache. 
+--!
+function player:NVGBASE_SetLoadout(loadoutName)
+	self:SetNWString("NVGBASE_LOADOUT", loadoutName);
+end
+
+--!
 --! @return     True if the goggles are currently toggled on, False otherwise.
 --!
 function player:NVGBASE_IsGoggleActive()
